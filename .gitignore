@@ -1,0 +1,13 @@
+# Debug release
+Debug/
+Release/
+.intermediater/
+
+# VS stuff
+*.db
+*.opendb
+*.sdf
+*.obj
+*.pdb
+*.exe
+.vs/

@@ -1,0 +1,299 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Object">
+      <UniqueIdentifier>{7fcc72ad-9ba4-4fa0-a1e6-decc2bfe9ba7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Private">
+      <UniqueIdentifier>{2cc218a6-1556-46d2-ac25-62616dcd331c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Controller">
+      <UniqueIdentifier>{e83de588-294b-44b7-a10f-d7fb10f1abbd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Controller\Private">
+      <UniqueIdentifier>{6d55f530-2381-413d-88ee-2dbbaea85f3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager">
+      <UniqueIdentifier>{d53b6985-2a6b-4fa6-b5f1-2f6bb1328102}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager\Private">
+      <UniqueIdentifier>{57b163af-9104-465b-9d10-d9d1698d5e8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{e3363079-c4a6-4762-94c4-827e595d2776}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SubSystem">
+      <UniqueIdentifier>{a755006b-2982-4482-ab76-014bf1d295b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SubSystem\Private">
+      <UniqueIdentifier>{47d4ee45-9f7d-4fa0-92f2-af58e6f49cfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\String">
+      <UniqueIdentifier>{92702df2-8232-4cba-b42e-7e7a9c643730}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Memory">
+      <UniqueIdentifier>{ea6ac3ac-5e01-4eab-890b-bbe7eccb9f8b}</UniqueIdentifier>
+      <Extensions>
+      </Extensions>
+    </Filter>
+    <Filter Include="Core\Math">
+      <UniqueIdentifier>{17e021a1-4bf1-4a6a-b6c0-02e109c54bc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Basic">
+      <UniqueIdentifier>{abc805d2-07d4-4227-87af-6c759e4c2cc4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{ccf8be8a-3fcc-4430-bdcc-24809104c675}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Private">
+      <UniqueIdentifier>{c449647e-c9b3-44d2-b06c-b3b2ae96979c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Template">
+      <UniqueIdentifier>{1ddc6911-987a-41cc-8267-5b5b3c500844}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Private">
+      <UniqueIdentifier>{6abf4d41-9440-4b91-81c0-2613fa8a251b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Private\Memory">
+      <UniqueIdentifier>{412c3528-f9ef-44a5-95d3-07341ae9db42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Private\Math">
+      <UniqueIdentifier>{e6550b54-ddf6-4971-80fd-b8aa682979e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Private\Template">
+      <UniqueIdentifier>{1f8428b3-7f2b-44dc-927c-61971416493d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Private\String">
+      <UniqueIdentifier>{428d7ce7-0a5f-41a2-aa11-128600ab1971}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Private\Basic">
+      <UniqueIdentifier>{e2003390-4e81-48d7-b795-8db90ef738e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Component">
+      <UniqueIdentifier>{170facb0-24de-4150-83f1-ec520f764247}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Component\Private">
+      <UniqueIdentifier>{8ee0da96-10a6-4f6f-a434-5de4b5d610d5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Object\GameObject.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller\PlayerController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="Manager\RealTimeManager.h">
+      <Filter>Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Manager\GameTimeManager.h">
+      <Filter>Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="SubSystem\InputManager.h">
+      <Filter>SubSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="SubSystem\PhysicsManager.h">
+      <Filter>SubSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="SubSystem\PhysicsObject.h">
+      <Filter>SubSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="SubSystem\RenderManager.h">
+      <Filter>SubSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="SubSystem\RenderObject.h">
+      <Filter>SubSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Actor.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Pawn.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Memory\BitArray.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Memory\FixedSizeAllocator.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Memory\HeapAllocators.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Memory\HeapManager.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Memory\StackAllocator.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Math\Box.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Math\MathDefine.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Math\Matrix.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Math\Quaternion.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Math\Triangle.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Math\Vector2.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Math\Vector3.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Math\Vector4.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Basic\Assert.h">
+      <Filter>Core\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Basic\BasicFunctions.h">
+      <Filter>Core\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Basic\BasicTypes.h">
+      <Filter>Core\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Basic\ErrorMessage.h">
+      <Filter>Core\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Basic\Target.h">
+      <Filter>Core\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\String\PooledString.h">
+      <Filter>Core\String</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\String\StringPool.h">
+      <Filter>Core\String</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Template\List.h">
+      <Filter>Core\Template</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Template\Pointers.h">
+      <Filter>Core\Template</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Engine.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\CoreMinimal.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\String\HashedString.h">
+      <Filter>Core\String</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\IComponent.h">
+      <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Transform.h">
+      <Filter>Component</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Math\Rotator.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller\IController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Object\Private\GameObject.cpp">
+      <Filter>Object\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Controller\Private\PlayerController.cpp">
+      <Filter>Controller\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Manager\Private\RealTimeManager.cpp">
+      <Filter>Manager\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Manager\Private\GameTimeManager.cpp">
+      <Filter>Manager\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="SubSystem\Private\InputManager.cpp">
+      <Filter>SubSystem\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="SubSystem\Private\PhysicsManager.cpp">
+      <Filter>SubSystem\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="SubSystem\Private\PhysicsObject.cpp">
+      <Filter>SubSystem\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="SubSystem\Private\RenderManager.cpp">
+      <Filter>SubSystem\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="SubSystem\Private\RenderObject.cpp">
+      <Filter>SubSystem\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Private\Actor.cpp">
+      <Filter>Object\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Private\Pawn.cpp">
+      <Filter>Object\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Private\Basic\Assert.cpp">
+      <Filter>Core\Private\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Private\Basic\BasicFunctions.cpp">
+      <Filter>Core\Private\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Private\Basic\ErrorMessage.cpp">
+      <Filter>Core\Private\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Private\Memory\BitArray.cpp">
+      <Filter>Core\Private\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Private\Memory\FixedSizeAllocator.cpp">
+      <Filter>Core\Private\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Private\Memory\HeapAllocators.cpp">
+      <Filter>Core\Private\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Private\Memory\HeapManager.cpp">
+      <Filter>Core\Private\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Private\Memory\StackAllocator.cpp">
+      <Filter>Core\Private\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Private\Math\Box.cpp">
+      <Filter>Core\Private\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Private\Math\Matrix.cpp">
+      <Filter>Core\Private\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Private\Math\Quaternion.cpp">
+      <Filter>Core\Private\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Private\Math\Triangle.cpp">
+      <Filter>Core\Private\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Private\Math\Vector4.cpp">
+      <Filter>Core\Private\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Private\String\StringPool.cpp">
+      <Filter>Core\Private\String</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Private\Template\List.cpp">
+      <Filter>Core\Private\Template</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Private\Template\Pointers.cpp">
+      <Filter>Core\Private\Template</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Private\Engine.cpp">
+      <Filter>Engine\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Private\String\HashedString.cpp">
+      <Filter>Core\Private\String</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Private\Transform.cpp">
+      <Filter>Component\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Private\Math\Rotator.cpp">
+      <Filter>Core\Private\Math</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\readme please.txt" />
+  </ItemGroup>
+</Project>
