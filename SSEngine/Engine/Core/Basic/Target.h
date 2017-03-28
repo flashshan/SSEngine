@@ -4,7 +4,6 @@
 
 #define TARGET_WINDOWS
 
-//#define TARGET_APPLETV
 //#define TARGET_PS4
 //#define TARGET_XB1
 

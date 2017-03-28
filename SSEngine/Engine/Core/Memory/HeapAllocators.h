@@ -1,12 +1,14 @@
 #pragma once
+
+#include "Core\CoreMinimal.h"
 class HeapManager;
 
 // custom alignment allocators
-enum NewAlignment
+enum class NewAlignment : uint32
 {
-	NEW_ALIGN_DEFAULT,
-	NEW_ALIGN_16 = 16,
-	NEW_ALIGN_32 = 32
+	EAlignDefault,
+	EAlign16 = 16,
+	EAlign32 = 32
 };
 
 HeapManager * getDefaultHeap();
@@ -31,13 +33,13 @@ void operator delete(void * i_ptr, NewAlignment i_align);
 
 // tracking allocators
 // used by TRACK_NEW
-void * operator new(size_t i_size, const char * i_pFile, unsigned int i_Line);
-void operator delete(void * i_ptr, const char * i_pFile, unsigned int i_Line);
+void * operator new(size_t i_size, const char * i_file, unsigned int i_line);
+void operator delete(void * i_ptr, const char * i_file, unsigned int i_line);
 
 // heap allocators
 // i_pHeap = nullptr means grab the default HeapManager
-void * operator new(size_t i_size, HeapManager * i_pHeap);
-void operator delete(void * i_ptr, HeapManager * i_pHeap);
+void * operator new(size_t i_size, HeapManager * i_heap);
+void operator delete(void * i_ptr, HeapManager * i_heap);
 
-void * operator new(size_t i_size, HeapManager * i_pHeap, unsigned int i_align);
-void operator delete(void * i_ptr, HeapManager * i_pHeap, unsigned int i_align);
+void * operator new(size_t i_size, HeapManager * i_heap, unsigned int i_align);
+void operator delete(void * i_ptr, HeapManager * i_heap, unsigned int i_align);

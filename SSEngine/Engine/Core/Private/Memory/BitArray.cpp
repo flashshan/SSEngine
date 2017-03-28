@@ -102,8 +102,8 @@ bool BitScanForwardOne32(uint32 *o_index, uintPtr i_value)
 
 BitArray * BitArray::Create(size_t i_numBits, void * i_pAllocator, size_t i_memorySize, bool i_startClear)
 {
-	SLOW_ASSERT(i_pAllocator, ErrorMessage::kNullPointer);
-	SLOW_ASSERT(i_numBits > 0, ErrorMessage::kNonPostiveValue);
+	SLOW_ASSERT(i_pAllocator, ErrorType::ENullPointer);
+	SLOW_ASSERT(i_numBits > 0, ErrorType::ENonPostiveValue);
 
 	void * pBitArrayMemoryBase = reinterpret_cast<void *>(reinterpret_cast<uintPtr>(i_pAllocator) + sizeof(BitArray));
 	size_t bitArraySize = i_memorySize - sizeof(BitArray);
@@ -141,7 +141,7 @@ bool BitArray::GetFirstClearBit(size_t & o_bitNumber) const
 	}
 	uint32 index;
 #ifdef _WIN64
-	BitScanForwardZero64(&index, m_arrayBase[arrayIndex]);
+	BitScanForwardZero64(&index, arrayBase_[arrayIndex]);
 #else
 	BitScanForwardZero32(&index, arrayBase_[arrayIndex]);
 #endif // _WIN64
@@ -164,7 +164,7 @@ bool BitArray::GetFirstSetBit(size_t & o_bitNumber) const
 	}
 	uint32 index;
 #ifdef _WIN64
-	BitScanForwardZero64(&index, m_arrayBase[arrayIndex]);
+	BitScanForwardZero64(&index, arrayBase_[arrayIndex]);
 #else
 	BitScanForwardZero32(&index, arrayBase_[arrayIndex]);
 #endif // _WIN64

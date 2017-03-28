@@ -4,7 +4,8 @@
 #include "Core\Basic\BasicTypes.h"
 
 // list is used for optimize insert and delete with order required vector
-// list is slow because it has to dynamic new
+// list is slow because it has to dynamic new and delete
+// just a practice
 
 
 template<typename T> struct LinkedListNode {

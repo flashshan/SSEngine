@@ -16,8 +16,8 @@ public:
 	FORCEINLINE StrongPtr(StrongPtr<T> &&i_other);
 	FORCEINLINE ~StrongPtr();
 
-	FORCEINLINE void operator=(const StrongPtr<T> &i_other);
-	FORCEINLINE void operator=(StrongPtr<T> &&i_other);
+	FORCEINLINE StrongPtr<T>& operator=(const StrongPtr<T> &i_other);
+	FORCEINLINE StrongPtr<T>& operator=(StrongPtr<T> &&i_other);
 
 	FORCEINLINE Counter *GetCounter() const { return counter_; }
 
@@ -28,8 +28,7 @@ public:
 
 	FORCEINLINE operator bool() const { return object_ != nullptr; }
 	FORCEINLINE bool operator==(const StrongPtr<T> & i_other) const { return object_ == i_other.object_; }
-
-private:
+	FORCEINLINE bool operator==(T * i_ptr) const { return object_ == i_ptr; }
 
 private:
 	T *object_;
@@ -46,18 +45,20 @@ public:
 	FORCEINLINE WeakPtr(WeakPtr<T> &&i_other);
 	FORCEINLINE ~WeakPtr();
 	
-	FORCEINLINE void operator=(const WeakPtr<T> &i_other);
-	FORCEINLINE void operator=(WeakPtr<T> &&i_other);
+	FORCEINLINE WeakPtr<T>& operator=(const WeakPtr<T> &i_other);
+	FORCEINLINE WeakPtr<T>& operator=(WeakPtr<T> &&i_other);
+	FORCEINLINE WeakPtr<T>& operator=(const StrongPtr<T> &i_other);
 
 	FORCEINLINE StrongPtr<T> Acquire() const;
 	
 	FORCEINLINE void ClearPointer();
 	
-	FORCEINLINE T & operator*() const { return *Aquire(); }
-	FORCEINLINE T * operator->() const { return Aquire(); }
+	FORCEINLINE T & operator*() const { return *Acquire(); }
+	FORCEINLINE T * operator->() const { return Acquire().operator->(); }
 
 	FORCEINLINE operator bool() const { return (object_ != nullptr && counter_ != nullptr && counter_->StrongCounter > 0); }
 	FORCEINLINE bool operator==(const WeakPtr<T> &i_other) const { return object_ == i_other.object_; }
+	FORCEINLINE bool operator==(T * i_ptr) const { return object_ == i_ptr; }
 
 private:
 	T *object_;
@@ -83,6 +84,9 @@ public:
 private:
 	T * object_;
 };
+
+
+
 
 
 
@@ -117,12 +121,12 @@ template<typename T> FORCEINLINE StrongPtr<T>::StrongPtr(T *i_ptr, Counter *i_co
 }
 
 template<typename T> FORCEINLINE StrongPtr<T>::StrongPtr(const StrongPtr<T> &i_other)
+	: object_(i_other.object_), counter_(i_other.counter_)
 {
-	object_ = i_other.object_;
-	counter_ = i_other.counter_;
-
 	if (object_ != nullptr)
+	{
 		++counter_->StrongCounter;
+	}
 }
 
 template<typename T> FORCEINLINE StrongPtr<T>::StrongPtr(StrongPtr<T> &&i_other)
@@ -144,9 +148,9 @@ template<typename T> FORCEINLINE void StrongPtr<T>::ClearPointer()
 				delete counter_;
 			}
 		}
-		object_ = nullptr;
-		counter_ = nullptr;
 	}
+	object_ = nullptr;
+	counter_ = nullptr;
 }
 
 template<typename T> FORCEINLINE StrongPtr<T>::~StrongPtr()
@@ -154,9 +158,9 @@ template<typename T> FORCEINLINE StrongPtr<T>::~StrongPtr()
 	ClearPointer();
 }
 
-template<typename T> FORCEINLINE void StrongPtr<T>::operator=(const StrongPtr<T> & i_other)
+template<typename T> FORCEINLINE StrongPtr<T>& StrongPtr<T>::operator=(const StrongPtr<T> & i_other)
 {
-	if (object_ == i_other.object_) return;
+	if (object_ == i_other.object_) return *this;
 
 	ClearPointer();
 	object_ = i_other.object_;
@@ -166,15 +170,18 @@ template<typename T> FORCEINLINE void StrongPtr<T>::operator=(const StrongPtr<T>
 	{
 		++counter_->StrongCounter;
 	}
+	return *this;
 }
 
-template<typename T> FORCEINLINE void StrongPtr<T>::operator=(StrongPtr<T> &&i_other)
+template<typename T> FORCEINLINE StrongPtr<T>& StrongPtr<T>::operator=(StrongPtr<T> &&i_other)
 {
 	Basic::Swap(object_, i_other.object_);
 	Basic::Swap(counter_, i_other.counter_);
 
 	i_other.ClearPointer();
+	return *this;
 }
+
 
 
 
@@ -186,26 +193,30 @@ template<typename T> FORCEINLINE WeakPtr<T>::WeakPtr()
 }
 
 template<typename T> FORCEINLINE WeakPtr<T>::WeakPtr(const StrongPtr<T> &i_other)
-{
-	object_ = &(*i_other);
-	counter_ = i_other.GetCounter();
-
-	if (object_ != nullptr)
-		++counter_->WeakCounter;
-}
-
-template<typename T> FORCEINLINE WeakPtr<T>::WeakPtr(const WeakPtr<T> &i_other)
+	: object_(nullptr), counter_(nullptr)
 {
 	if (i_other)
 	{
-		StrongPtr<T> tempStrongPointer = i_other.Acquire();
-		object_ = &(*tempStrongPointer);
-		counter_ = tempStrongPointer.GetCounter();
+		object_ = &(*i_other);
+		counter_ = i_other.GetCounter();
+
+		++counter_->WeakCounter;
+	}
+}
+
+template<typename T> FORCEINLINE WeakPtr<T>::WeakPtr(const WeakPtr<T> &i_other)
+	: object_(nullptr), counter_(nullptr)
+{
+	if (i_other)
+	{
+		object_ = i_other.object_;
+		counter_ = i_other.counter_;
 		++counter_->WeakCounter;
 	}
 }
 
 template<typename T> FORCEINLINE WeakPtr<T>::WeakPtr(WeakPtr<T> && i_other)
+	: object_(nullptr), counter_(nullptr)
 {
 	Basic::Swap(object_, i_other.object_);
 	Basic::Swap(counter_, i_other.counter_);
@@ -220,9 +231,9 @@ template<typename T> FORCEINLINE void WeakPtr<T>::ClearPointer()
 		if ((--counter_->WeakCounter) == 0 && counter_->StrongCounter == 0)
 		{
 			delete counter_;
-			counter_ = nullptr;
 		}
 	}
+	counter_ = nullptr;
 }
 
 template<typename T> FORCEINLINE WeakPtr<T>::~WeakPtr()
@@ -230,33 +241,47 @@ template<typename T> FORCEINLINE WeakPtr<T>::~WeakPtr()
 	ClearPointer();
 }
 
-template<typename T> FORCEINLINE void WeakPtr<T>::operator=(const WeakPtr<T> & i_other)
+template<typename T> FORCEINLINE WeakPtr<T>& WeakPtr<T>::operator=(const WeakPtr<T> & i_other)
 {
 	if (i_other)
 	{
-		if (object_ == i_other.object_) return;
+		if (object_ == i_other.object_) return *this;
 
 		ClearPointer();
 		object_ = i_other.object_;
 		counter_ = i_other.counter_;
-		if (object_ != nullptr)
-		{
-			++counter_->weakCounter;
-		}
+		++counter_->WeakCounter;
 	}
 	else
 	{
 		object_ = nullptr;
 		counter_ = nullptr;
 	}
+	return *this;
 }
 
-template<typename T> FORCEINLINE void WeakPtr<T>::operator=(WeakPtr<T> &&i_other)
+template<typename T> FORCEINLINE WeakPtr<T>& WeakPtr<T>::operator=(const StrongPtr<T> &i_other)
+{
+	ClearPointer();
+
+	if (i_other)
+	{
+		object_ = &(*i_other);
+		counter_ = i_other.GetCounter();
+
+		++counter_->WeakCounter;
+	}
+	return *this;
+}
+
+
+template<typename T> FORCEINLINE WeakPtr<T>& WeakPtr<T>::operator=(WeakPtr<T> &&i_other)
 {
 	Basic::Swap(object_, i_other.object_);
 	Basic::Swap(counter_, i_other.counter_);
 
 	i_other.ClearPointer();
+	return *this;
 }
 
 template<typename T> FORCEINLINE StrongPtr<T> WeakPtr<T>::Acquire() const

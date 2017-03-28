@@ -5,8 +5,9 @@
 
 class Transform
 {
+public:
 	FORCEINLINE Transform();
-	FORCEINLINE Transform(const Vector3 &i_location, const Vector3 &i_rotation, const Vector3 &i_scale);
+	FORCEINLINE Transform(const Vector3 &i_location, const Vector3 &i_rotation = Vector3(0.0f, 0.0f, 0.0f), const Vector3 &i_scale = Vector3(1.0f, 1.0f, 1.0f));
 	FORCEINLINE Transform(const Transform &i_other);
 	FORCEINLINE ~Transform();
 

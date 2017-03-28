@@ -9,11 +9,11 @@ public:
 		float i_21, float i_22, float i_23, float i_24,
 		float i_31, float i_32, float i_33, float i_34,
 		float i_41, float i_42, float i_43, float i_44);
-	FORCEINLINE explicit Matrix(float *i_val);
+	explicit FORCEINLINE Matrix(const float *i_floatArray);
 	FORCEINLINE Matrix(const Vector4 &i_v1, const Vector4 &i_v2, const Vector4 &i_v3, const Vector4 &i_v4);
 	FORCEINLINE Matrix(const Matrix &i_other);
 
-	FORCEINLINE void operator =(const Matrix &i_other);
+	Matrix& operator =(const Matrix &i_other);
 
 	FORCEINLINE static Matrix CreateZero();
 	FORCEINLINE static Matrix CreateIdentity();
@@ -26,14 +26,17 @@ public:
 
 	FORCEINLINE bool IsSingular() const;
 
-	FORCEINLINE void Transpose();
+	Matrix& Transpose();
 	FORCEINLINE Matrix GetTranspose() const;
 
-	void Inverse();
+	Matrix& Inverse();
 	Matrix GetInverse() const;
 
+	Matrix operator*(const float i_float) const;
+	Matrix& operator*=(const float i_float);
 	Matrix operator*(const Matrix &i_other) const;
-	void operator*=(const Matrix &i_other);
+	Matrix& operator*=(const Matrix &i_other);
+
 	FORCEINLINE float operator [](const int i_index) const;
 
 	Vector4 MultiplyLeft(const Vector4 &i_vector) const;
@@ -56,14 +59,16 @@ FORCEINLINE Matrix::Matrix(float i_11, float i_12, float i_13, float i_14,
 	float i_21, float i_22, float i_23, float i_24,
 	float i_31, float i_32, float i_33, float i_34,
 	float i_41, float i_42, float i_43, float i_44)
-	:M{ i_11, i_12, i_13, i_14, i_21, i_22, i_23, i_24, i_31, i_32, i_33, i_34, i_41, i_42, i_43, i_44 }
+	: M{ i_11, i_12, i_13, i_14, i_21, i_22, i_23, i_24, i_31, i_32, i_33, i_34, i_41, i_42, i_43, i_44 }
 {
 }
 
-FORCEINLINE Matrix::Matrix(float *i_val)
+FORCEINLINE Matrix::Matrix(const float *i_floatArray)
+	: M{ i_floatArray[0], i_floatArray[1], i_floatArray[2], i_floatArray[3],
+		 i_floatArray[4], i_floatArray[5], i_floatArray[6], i_floatArray[7], 
+		 i_floatArray[8], i_floatArray[9], i_floatArray[10], i_floatArray[11], 
+		 i_floatArray[12], i_floatArray[13], i_floatArray[14], i_floatArray[15] }
 {
-	for (int i = 0;i < 16;++i)
-		M[i / 4][i % 4] = i_val[i];
 }
 
 FORCEINLINE Matrix::Matrix(const Vector4 &i_v1, const Vector4 &i_v2, const Vector4 &i_v3, const Vector4 &i_v4)
@@ -80,13 +85,6 @@ FORCEINLINE Matrix::Matrix(const Matrix &i_other)
 		 i_other.M[2][0], i_other.M[2][1], i_other.M[2][2], i_other.M[2][3],
 		 i_other.M[3][0], i_other.M[3][1], i_other.M[3][2], i_other.M[3][3] }
 {
-}
-
-FORCEINLINE void Matrix::operator =(const Matrix &i_other)
-{
-	for (int i = 0; i < 4; i++)
-		for (int j = 0; j < 4; j++)
-			M[i][j] = i_other.M[i][j];
 }
 
 FORCEINLINE Matrix Matrix::CreateZero()
@@ -156,17 +154,6 @@ FORCEINLINE bool Matrix::IsSingular() const
 			Float::IsZero((M[3][0] * M[3][0] + M[3][1] * M[3][1] + M[3][2] * M[3][2] + M[3][3] * M[3][3])));
 }
 
-FORCEINLINE void Matrix::Transpose()
-{
-	float temp;
-	temp = M[0][1]; M[0][1] = M[1][0]; M[1][0] = temp;
-	temp = M[0][2]; M[0][2] = M[2][0]; M[2][0] = temp;
-	temp = M[0][3]; M[0][3] = M[3][0]; M[3][0] = temp;
-	temp = M[1][2]; M[1][2] = M[2][1]; M[2][1] = temp;
-	temp = M[1][3]; M[1][3] = M[3][1]; M[3][1] = temp;
-	temp = M[2][3]; M[2][3] = M[3][2]; M[3][2] = temp;
-}
-
 FORCEINLINE Matrix Matrix::GetTranspose() const
 {
 	return Matrix(M[0][0], M[1][0], M[2][0], M[3][0],
@@ -184,7 +171,9 @@ FORCEINLINE float Matrix::operator [](const int i_index) const
 
 
 // for Vector4
-FORCEINLINE Vector4 Vector4::Transform(const Matrix &i_matrix) const
+
+FORCEINLINE Vector4 Vector4::Mul(const Matrix &i_matrix) const
 {
 	return i_matrix.MultiplyLeft(*this);
 }
+

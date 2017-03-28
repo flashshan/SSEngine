@@ -152,15 +152,18 @@
   <ItemGroup>
     <ClInclude Include="Component\IComponent.h" />
     <ClInclude Include="Component\Transform.h" />
+    <ClInclude Include="Controller\ControllerManager.h" />
+    <ClInclude Include="Controller\FocusMoveController.h" />
     <ClInclude Include="Controller\IController.h" />
     <ClInclude Include="Controller\PlayerController.h" />
+    <ClInclude Include="Controller\RandomMoveController.h" />
     <ClInclude Include="Core\Basic\Assert.h" />
     <ClInclude Include="Core\Basic\BasicFunctions.h" />
     <ClInclude Include="Core\Basic\BasicTypes.h" />
     <ClInclude Include="Core\Basic\ErrorMessage.h" />
     <ClInclude Include="Core\Basic\Target.h" />
     <ClInclude Include="Core\CoreMinimal.h" />
-    <ClInclude Include="Core\Math\Box.h" />
+    <ClInclude Include="Core\Math\Box2D.h" />
     <ClInclude Include="Core\Math\MathDefine.h" />
     <ClInclude Include="Core\Math\Matrix.h" />
     <ClInclude Include="Core\Math\Quaternion.h" />
@@ -182,6 +185,7 @@
     <ClInclude Include="Engine\Engine.h" />
     <ClInclude Include="Manager\GameTimeManager.h" />
     <ClInclude Include="Manager\RealTimeManager.h" />
+    <ClInclude Include="Manager\WorldManager.h" />
     <ClInclude Include="Object\Actor.h" />
     <ClInclude Include="Object\GameObject.h" />
     <ClInclude Include="Object\Pawn.h" />
@@ -193,11 +197,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Component\Private\Transform.cpp" />
+    <ClCompile Include="Controller\Private\ControllerManager.cpp" />
+    <ClCompile Include="Controller\Private\FocusMoveController.cpp" />
     <ClCompile Include="Controller\Private\PlayerController.cpp" />
+    <ClCompile Include="Controller\Private\RandomMoveController.cpp" />
     <ClCompile Include="Core\Private\Basic\Assert.cpp" />
     <ClCompile Include="Core\Private\Basic\BasicFunctions.cpp" />
     <ClCompile Include="Core\Private\Basic\ErrorMessage.cpp" />
-    <ClCompile Include="Core\Private\Math\Box.cpp" />
+    <ClCompile Include="Core\Private\Math\Box2D.cpp" />
     <ClCompile Include="Core\Private\Math\Matrix.cpp" />
     <ClCompile Include="Core\Private\Math\Quaternion.cpp" />
     <ClCompile Include="Core\Private\Math\Rotator.cpp" />
@@ -209,6 +216,7 @@
     <ClCompile Include="Core\Private\Memory\HeapManager.cpp" />
     <ClCompile Include="Core\Private\Memory\StackAllocator.cpp" />
     <ClCompile Include="Core\Private\String\HashedString.cpp" />
+    <ClCompile Include="Core\Private\String\PooledString.cpp" />
     <ClCompile Include="Core\Private\String\StringPool.cpp" />
     <ClCompile Include="Core\Private\Template\List.cpp" />
     <ClCompile Include="Core\Private\Template\Pointers.cpp" />

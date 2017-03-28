@@ -1,19 +1,33 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{7b97753d-a720-44c1-837a-1a17527dea60}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{007df169-cd19-43f3-97ad-46c229b21ff8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files">
       <UniqueIdentifier>{8c3013df-69d1-4163-9a50-dd3ce2c7961b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object">
+      <UniqueIdentifier>{398425a9-64c0-4b38-af41-bf6abe5b901d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Private">
+      <UniqueIdentifier>{f0fe66ba-e604-4ba5-b45c-e6854938c27f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Object\Private\Monster.cpp">
+      <Filter>Object\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Private\Player.cpp">
+      <Filter>Object\Private</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Object\Monster.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Player.h">
+      <Filter>Object</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

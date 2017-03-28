@@ -22,6 +22,27 @@ static Matrix FastMatrix(1.0f, 0.0f, 0.0f, 0.0f,
 						 0.0f, 0.0f, 1.0f, 0.0f,
 						 0.0f, 0.0f, 0.0f, 1.0f);
 
+
+Matrix& Matrix::operator =(const Matrix &i_other)
+{
+	for (int i = 0; i < 16; ++i)
+	{
+		M[i / 4][i % 4] = i_other.M[i / 4][i % 4];
+	}
+	return *this;
+}
+
+Matrix& Matrix::Transpose()
+{
+	float temp;
+	temp = M[0][1]; M[0][1] = M[1][0]; M[1][0] = temp;
+	temp = M[0][2]; M[0][2] = M[2][0]; M[2][0] = temp;
+	temp = M[0][3]; M[0][3] = M[3][0]; M[3][0] = temp;
+	temp = M[1][2]; M[1][2] = M[2][1]; M[2][1] = temp;
+	temp = M[1][3]; M[1][3] = M[3][1]; M[3][1] = temp;
+	temp = M[2][3]; M[2][3] = M[3][2]; M[3][2] = temp;
+	return *this;
+}
 //fast inverse from Unreal
 static inline void Inverse4x4(float *o_dst, const float *i_src)
 {
@@ -53,17 +74,18 @@ static inline void Inverse4x4(float *o_dst, const float *i_src)
 	{
 		det = 1.0 / det;
 	}
-	for (int i = 0; i < 16; i++)
+	for (int i = 0; i < 16; ++i)
 	{
 		o_dst[i] = static_cast<float>(inv[i] * det);
 	}
 }
 
-void Matrix::Inverse()
+Matrix& Matrix::Inverse()
 {
 	if (IsSingular())
 	{
-		for (int i = 0;i < 16;i++)
+		DEBUG_PRINT("Inverse Singular Matrix!\n");
+		for (int i = 0;i < 16; ++i)
 		{
 			if (i / 4 == i % 4) M[i / 4][i % 4] = 1;
 			else M[i / 4][i % 4] = 0;
@@ -78,17 +100,38 @@ void Matrix::Inverse()
 			M[i / 4][i % 4] = res[i];
 		}
 	}
+	return *this;
 }
 
 
 Matrix Matrix::GetInverse() const
 {
 	if (IsSingular())
+	{
+		DEBUG_PRINT("Inverse Singular Matrix!\n");
 		return Matrix::CreateIdentity();
+	}
 
 	float res[16];
 	Inverse4x4(res, M[0]);
 	return Matrix(res);
+}
+
+Matrix Matrix::operator*(const float i_float) const
+{
+	return Matrix(M[0][0] * i_float, M[0][1] * i_float, M[0][2] * i_float, M[0][3] * i_float,
+				  M[1][0] * i_float, M[1][1] * i_float, M[1][2] * i_float, M[1][3] * i_float,
+				  M[2][0] * i_float, M[2][1] * i_float, M[2][2] * i_float, M[2][3] * i_float,
+				  M[3][0] * i_float, M[3][1] * i_float, M[3][2] * i_float, M[3][3] * i_float);
+}
+
+Matrix& Matrix::operator*=(const float i_float)
+{
+	for (int i = 0;i < 16;++i)
+	{
+		M[i / 4][i % 4] *= i_float;
+	}
+	return *this;
 }
 
 Matrix Matrix::operator*(const Matrix &i_other) const
@@ -132,7 +175,7 @@ Matrix Matrix::operator*(const Matrix &i_other) const
 				  row4[0], row4[1], row4[2], row4[3]);
 }
 
-void Matrix::operator*=(const Matrix &i_other)
+Matrix& Matrix::operator*=(const Matrix &i_other)
 {
 	__m128 r11 = _mm_load_ps(&M[0][0]), r12 = _mm_load_ps(&M[1][0]), r13 = _mm_load_ps(&M[2][0]), r14 = _mm_load_ps(&M[3][0]);
 	__m128 r21 = _mm_load_ps(&i_other.M[0][0]), r22 = _mm_load_ps(&i_other.M[1][0]), r23 = _mm_load_ps(&i_other.M[2][0]), r24 = _mm_load_ps(&i_other.M[3][0]);
@@ -161,6 +204,7 @@ void Matrix::operator*=(const Matrix &i_other)
 	result = _mm_add_ps(_mm_mul_ps(_mm_replicate_z_ps(r14), r23), result);
 	result = _mm_add_ps(_mm_mul_ps(_mm_replicate_w_ps(r14), r24), result);
 	_mm_store_ps(&M[3][0], result);
+	return *this;
 }
 
 // normally used

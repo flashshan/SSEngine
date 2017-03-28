@@ -1,36 +1,36 @@
 ﻿#pragma once
 
-#include "Engine\Core\Math\Vector3.h"
-#include "Engine\Controller\PlayerController.h"
-#include <utility>
-
-#define DEFAULT_CHAR_LENGTH 50
-
-class Player
-{
-public:
-	FORCEINLINE Player();
-	explicit FORCEINLINE Player(const char* i_Name);
-	FORCEINLINE Player(const char* i_Name, const Vector3 &i_Position);
-	
-	FORCEINLINE Player(const Player & i_Player);
-	FORCEINLINE Player(Player && i_Player);
-	FORCEINLINE Player & operator= (const Player &i_Player);
-	FORCEINLINE Player & operator= (Player &&i_Player);
-	FORCEINLINE ~Player();
-
-	FORCEINLINE const char* GetName() const { return name_; }
-	FORCEINLINE PlayerController *GetController() const { return playerController_; }
-	FORCEINLINE Vector3 GetPosition() const { return playerController_->GetPosition(); };
-
-	FORCEINLINE void Move() const;
-	FORCEINLINE void Update() const;
-
-private:
-	char *name_;
-	PlayerController *playerController_;
-};
-
+//#include "Engine\Core\Math\Vector3.h"
+//#include "Engine\Controller\PlayerController.h"
+//#include <utility>
+//
+//#define DEFAULT_CHAR_LENGTH 50
+//
+//class Player
+//{
+//public:
+//	FORCEINLINE Player();
+//	explicit FORCEINLINE Player(const char* i_Name);
+//	FORCEINLINE Player(const char* i_Name, const Vector3 &i_Position);
+//	
+//	FORCEINLINE Player(const Player & i_Player);
+//	FORCEINLINE Player(Player && i_Player);
+//	FORCEINLINE Player & operator= (const Player &i_Player);
+//	FORCEINLINE Player & operator= (Player &&i_Player);
+//	FORCEINLINE ~Player();
+//
+//	FORCEINLINE const char* GetName() const { return name_; }
+//	FORCEINLINE PlayerController *GetController() const { return playerController_; }
+//	FORCEINLINE Vector3 GetPosition() const { return playerController_->GetPosition(); };
+//
+//	FORCEINLINE void Move() const;
+//	FORCEINLINE void Update() const;
+//
+//private:
+//	char *name_;
+//	PlayerController *playerController_;
+//};
+//
 
 
 

@@ -2,14 +2,13 @@
 
 #include "Core\CoreMinimal.h"
 
-namespace Key {
-	enum KeyName {
-		ESC = 0x1b,
-		A = 0x41,
-		D = 0x44,
-		S = 0x53,
-		W = 0x57,
-	};
+
+enum class Key : uint32 {
+	ESC = 0x1b,
+	A = 0x41,
+	D = 0x44,
+	S = 0x53,
+	W = 0x57,
 };
 
 class InputManager
@@ -17,11 +16,11 @@ class InputManager
 public:
 	static FORCEINLINE InputManager *GetInstance();
 
-	FORCEINLINE void SetState(const unsigned int i_KeyID, const bool i_Press);
-	FORCEINLINE bool GetState(const unsigned int i_KeyID) const;
+	FORCEINLINE void SetState(const uint32 i_Key, const bool i_Press);
+	FORCEINLINE bool GetState(const uint32 i_Key) const;
 
 private:
-	FORCEINLINE InputManager();
+	InputManager();
 
 private:
 	bool keyState_[256];
@@ -44,18 +43,14 @@ FORCEINLINE InputManager *InputManager::GetInstance()
 	return globalInstance;
 }
 
-FORCEINLINE void InputManager::SetState(const unsigned int i_KeyID, const bool i_Press)
+
+FORCEINLINE void InputManager::SetState(const uint32 i_Key, const bool i_Press)
 {
-	keyState_[i_KeyID] = i_Press;
+	keyState_[i_Key] = i_Press;
 }
 
-FORCEINLINE bool InputManager::GetState(const unsigned int i_KeyID) const
+FORCEINLINE bool InputManager::GetState(const uint32 i_Key) const
 {
-	return keyState_[i_KeyID];
+	return keyState_[static_cast<uint8>(i_Key)];
 }
 
-FORCEINLINE InputManager::InputManager()
-{
-	for (int i = 0; i < 256; i++)
-		keyState_[i] = false;
-}

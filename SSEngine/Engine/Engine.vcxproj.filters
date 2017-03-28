@@ -125,9 +125,6 @@
     <ClInclude Include="Core\Memory\StackAllocator.h">
       <Filter>Core\Memory</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Math\Box.h">
-      <Filter>Core\Math</Filter>
-    </ClInclude>
     <ClInclude Include="Core\Math\MathDefine.h">
       <Filter>Core\Math</Filter>
     </ClInclude>
@@ -197,6 +194,21 @@
     <ClInclude Include="Controller\IController.h">
       <Filter>Controller</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Math\Box2D.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller\ControllerManager.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="Manager\WorldManager.h">
+      <Filter>Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller\FocusMoveController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller\RandomMoveController.h">
+      <Filter>Controller</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Object\Private\GameObject.cpp">
@@ -256,9 +268,6 @@
     <ClCompile Include="Core\Private\Memory\StackAllocator.cpp">
       <Filter>Core\Private\Memory</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Private\Math\Box.cpp">
-      <Filter>Core\Private\Math</Filter>
-    </ClCompile>
     <ClCompile Include="Core\Private\Math\Matrix.cpp">
       <Filter>Core\Private\Math</Filter>
     </ClCompile>
@@ -291,6 +300,21 @@
     </ClCompile>
     <ClCompile Include="Core\Private\Math\Rotator.cpp">
       <Filter>Core\Private\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Private\Math\Box2D.cpp">
+      <Filter>Core\Private\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Controller\Private\ControllerManager.cpp">
+      <Filter>Controller\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Controller\Private\FocusMoveController.cpp">
+      <Filter>Controller\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Controller\Private\RandomMoveController.cpp">
+      <Filter>Controller\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Private\String\PooledString.cpp">
+      <Filter>Core\Private\String</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

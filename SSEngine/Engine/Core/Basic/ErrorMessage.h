@@ -4,23 +4,26 @@
 
 #include "BasicTypes.h"
 
+enum class ErrorType : int32 {
+	// Pointer issue
+	ENullPointer = 1001,
+
+	// Memory issue
+	EHeapOverflow = 1101,
+	EStackOverflow = 1102,
+
+	// Value issue
+	ENonPostiveValue = 2001,
+	ENonZeroValue = 2002,
+};
+
 class ErrorMessage {
 public:
-	enum ERROR_TYPE
-	{
-		kNullPointer = 1001,
-		kHeapOverflow = 1101,
-		kStackOverflow = 1102,
-
-		kNonPostiveValue = 2001,
-		kNonZeroValue = 2002,
-	};
-
-	static FORCEINLINE ErrorMessage *GetInstance();
-	FORCEINLINE const char *GetErrorMessage(const int32 i_errorCode) const;
+	static inline ErrorMessage *GetInstance();
+	FORCEINLINE const char *GetErrorMessage(const ErrorType i_errorCode) const;
 
 private:
-	FORCEINLINE ErrorMessage();
+	inline ErrorMessage();
 	void initialMessage();
 
 	//static ErrorMessage *globalInstance;
@@ -33,12 +36,12 @@ private:
 
 // implement forceinline
 
-FORCEINLINE ErrorMessage::ErrorMessage()
+inline ErrorMessage::ErrorMessage()
 {
 	initialMessage();
 }
 
-FORCEINLINE ErrorMessage* ErrorMessage::GetInstance()
+inline ErrorMessage* ErrorMessage::GetInstance()
 {
 	static ErrorMessage *globalInstance;
 	if (globalInstance == nullptr) {
@@ -47,9 +50,9 @@ FORCEINLINE ErrorMessage* ErrorMessage::GetInstance()
 	return globalInstance;
 }
 
-FORCEINLINE const char* ErrorMessage::GetErrorMessage(const int32 i_errorCode) const
+FORCEINLINE const char* ErrorMessage::GetErrorMessage(const ErrorType i_errorCode) const
 {
-	auto it = messages_.find(i_errorCode);
+	auto it = messages_.find(static_cast<int32>(i_errorCode));
 
 	if (it == messages_.end())
 	{

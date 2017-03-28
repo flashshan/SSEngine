@@ -2,21 +2,24 @@
 
 #include "Glib\Glib.h"
 
-#include "Core\CoreMinimal.h"
+#include "Core\Template\Pointers.h"
 #include "Object\GameObject.h"
-
-void * LoadFile(const char * i_pFilename, size_t & o_sizeFile);
-
-GLib::Sprites::Sprite * CreateSprite(const char * i_pFilename);
 
 class RenderObject {
 public:
-	explicit FORCEINLINE RenderObject(GameObject *i_other, const char *i_fileName = nullptr);
-	explicit FORCEINLINE RenderObject(const StrongPtr<GameObject> &i_strongPointer, const char *i_fileName = nullptr);
-	
+	FORCEINLINE RenderObject(const StrongPtr<GameObject> &i_gameOject, GLib::Sprites::Sprite *i_sprite);
+	inline ~RenderObject();
+
 	FORCEINLINE bool HasSprite() const;
-	FORCEINLINE void SetSprite(const char *i_fileName);
-	FORCEINLINE void DoRender() const;
+	FORCEINLINE void SetSprite(GLib::Sprites::Sprite *i_sprite);
+
+	FORCEINLINE bool IsValid() const;
+	FORCEINLINE void DoRender();
+
+	FORCEINLINE void RemoveRenderObject();
+private:
+	// No copy constructor
+	FORCEINLINE RenderObject(const RenderObject &i_other) {}
 
 private:
 	WeakPtr<GameObject> gameObject_;
@@ -29,57 +32,45 @@ private:
 
 
 
+
 // implement forceinline
 
-FORCEINLINE RenderObject::RenderObject(GameObject *i_other, const char *i_fileName)
+FORCEINLINE RenderObject::RenderObject(const StrongPtr<GameObject> &i_gameObject, GLib::Sprites::Sprite *i_sprite)
+	: gameObject_(i_gameObject), sprite_(i_sprite)
 {
-	ASSERT(i_other != nullptr);
-	StrongPtr<GameObject> strongPointer(i_other);
-	gameObject_ = WeakPtr<GameObject>(strongPointer);
-	if (i_fileName == nullptr)
-	{
-		sprite_ = nullptr;
-	}
-	else
-	{
-		sprite_ = CreateSprite(i_fileName);
-	}
 }
-
-
-FORCEINLINE RenderObject::RenderObject(const StrongPtr<GameObject> &i_strongPointer, const char *i_fileName)
-{
-	gameObject_ = WeakPtr<GameObject>(i_strongPointer);
-	if (i_fileName == nullptr)
-	{
-		sprite_ = nullptr;
-	}
-	else
-	{
-		sprite_ = CreateSprite(i_fileName);
-	}
-}
-
 
 FORCEINLINE bool RenderObject::HasSprite() const
 {
-	return sprite_ == nullptr;
+	return sprite_ != nullptr;
 }
 
-FORCEINLINE void RenderObject::SetSprite(const char *i_fileName)
+FORCEINLINE void RenderObject::SetSprite(GLib::Sprites::Sprite *i_sprite)
 {
-	if (i_fileName == nullptr)
+	sprite_ = i_sprite;
+}
+
+FORCEINLINE bool RenderObject::IsValid() const
+{
+	return gameObject_;
+}
+
+FORCEINLINE void RenderObject::DoRender()
+{
+	if (gameObject_)
 	{
-		sprite_ = nullptr;
+		if (sprite_ != nullptr)
+		{
+			GLib::Sprites::RenderSprite(*sprite_, GLib::Point2D((*gameObject_).GetLocation().X, (*gameObject_).GetLocation().Y), 0.0f);
+		}
 	}
 	else
 	{
-		sprite_ = CreateSprite(i_fileName);
+		RemoveRenderObject();
 	}
 }
 
-FORCEINLINE void RenderObject::DoRender() const 
+
+inline RenderObject::~RenderObject()
 {
-	GameObject tempObject = *gameObject_.Acquire();
-	GLib::Sprites::RenderSprite(*sprite_, GLib::Point2D(tempObject.GetPosition().X, tempObject.GetPosition().Y), 0.0f);
 }

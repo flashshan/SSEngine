@@ -10,9 +10,7 @@
 
 #include "Engine\SubSystem\InputManager.h"
 #include "Engine\SubSystem\RenderManager.h"
-
-#include "MonsterChase\Object\Player.h"
-#include "MonsterChase\Object\Monster.h"
+#include "Manager\WorldManager.h"
 
 //#if defined _DEBUG
 //#define _CRTDBG_MAP_ALLOC
@@ -40,12 +38,12 @@ void TestKeyCallback(unsigned int i_VKeyID, bool bWentDown)
 #define DEFAULT_MONSTER_NUMBER 10
 
 
-int Monster::s_count;
-
 int WINAPI wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_lpCmdLine, int i_nCmdShow)
 {
 	// first we need to initialize GLib
 	bool bSuccess = GLib::Initialize(i_hInstance, i_nCmdShow, "MonsterChase", -1, 800, 600);
+
+	const float ScreenSize = 100;
 
 	if (bSuccess)
 	{
@@ -58,40 +56,27 @@ int WINAPI wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_l
 		srand(static_cast<unsigned int>(time(0)));
 
 		// assign player
-		StrongPtr<Player> player = new Player("Player1");
-		SLOW_ASSERT(player, ErrorMessage::kNullPointer);
-
-		StrongPtr<GameObject> playerPtr = player->GetController()->GetGameObject();
-		RenderManager::GetInstance()->AddToRenderList(new RenderObject(playerPtr, "data\\player.dds"));
+		Pawn* player = WorldManager::GetInstance()->SpawnPawn<Pawn>(Transform(Vector3(0.0f, 0.0f, 0.0f)), "Player1", "Player");
+		SLOW_ASSERT(player, ErrorType::ENullPointer);
+		player->AddRenderObject("data\\player.dds");
+		player->AddPhysicsObject(100.0f);
 
 		// assign monsters
-		int monsterNumber = DEFAULT_MONSTER_NUMBER;
+		int32 monsterNumber = DEFAULT_MONSTER_NUMBER;
 
-		Monster::s_count = 0;
-
-		std::vector<StrongPtr<Monster>> monsters;
-		monsters.reserve(monsterNumber);
-
-		std::vector<StrongPtr<GameObject>> monstersPtr;
-		monstersPtr.reserve(monsterNumber);
-
-		StrongPtr<Monster> tempMonster;
+		Pawn* tempMonster;
 		for (int i = 0; i < monsterNumber; i++)
 		{
 #if defined RANDOM_MOVE_MONSTER
-			tempMonster = new Monster();
+			tempMonster = WorldManager::GetInstance()->SpawnPawn<Pawn>(Transform(Vector3(Vector2::RandomNormal() * ScreenSize)), "RMonster", "RandomMoveMonster");
 #elif defined FOCUS_MOVE_MONSTER 
-			tempMonster = new Monster(Monster::FocusMoveMonster, player->GetController()->GetGameObject());
+			tempMonster = WorldManager::GetInstance()->SpawnPawn<Pawn>(Transform(Vector3(Vector2::RandomNormal() * ScreenSize)), "FMonster", "FocusMoveMonster");
 #endif // 
-			SLOW_ASSERT(tempMonster, ErrorMessage::kNullPointer);
-			monsters.push_back(tempMonster);
-
-			monstersPtr.push_back(StrongPtr<GameObject>(tempMonster->GetController()->GetGameObject()));
-			RenderManager::GetInstance()->AddToRenderList(new RenderObject(monstersPtr.back(), "data\\monster.dds"));
+			SLOW_ASSERT(tempMonster, ErrorType::ENullPointer);
+			tempMonster->AddRenderObject("data\\monster.dds");
 		}
 
 		bool bQuit = false;
-
 		do
 		{
 			// We need to let GLib do it's thing. 
@@ -101,20 +86,21 @@ int WINAPI wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_l
 
 			if (!bQuit)
 			{
-				//printf_s("\nPress A to move left, D to move right, W to move up, S to move down, M to generate monster, R to remove the first monster, or Q to quit.\n");
-				player->Move();
-				player->Update();
+				WorldManager::GetInstance()->EarlyUpdate();
 
-				for (uint32 i = 0; i < monsters.size(); i++)
-				{
-					monsters[i]->Update();
-				}
+				ControllerManager::GetInstance()->UpdatePlayerController();
+				ControllerManager::GetInstance()->UpdateMonsterController();
 
+				PhysicsManager::GetInstance()->PhysicsUpdate();
+
+				WorldManager::GetInstance()->Update();
 				//render part
 				RenderManager::GetInstance()->RenderUpdate();
+
+				WorldManager::GetInstance()->LateUpdate();
 			}
 
-			bQuit = bSuccess = InputManager::GetInstance()->GetState(Key::ESC);
+			bQuit = bSuccess = InputManager::GetInstance()->GetState(static_cast<uint32>(Key::ESC));
 		} while (bQuit == false);
 		
 		//GLib::Shutdown();

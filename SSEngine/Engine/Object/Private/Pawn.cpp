@@ -1,1 +1,10 @@
-#include "Object\GameObject.h"
+#include "Object\Pawn.h"
+
+Pawn::~Pawn()
+{
+}
+
+void Pawn::Update()
+{
+	Actor::Update();
+}

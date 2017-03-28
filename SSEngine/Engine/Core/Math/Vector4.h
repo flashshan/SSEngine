@@ -7,17 +7,17 @@ struct Matrix;
 ALIGN(16) struct Vector4 {
 public:
 	Vector4() {}
-	FORCEINLINE Vector4(const Vector4 & i_vector);
 	FORCEINLINE Vector4(const float i_x, const float i_y, const float i_z, const float i_w = 0.0f);
+	FORCEINLINE Vector4(const Vector4 & i_other);
 	FORCEINLINE explicit Vector4(const Vector2 & i_vector, const float i_z = 0.0f, const float i_w = 0.0f);
 	FORCEINLINE explicit Vector4(const Vector3 & i_vector, const float i_w = 0.0f);
 
-	FORCEINLINE void operator =(const Vector4 &i_vector);
+	FORCEINLINE Vector4& operator =(const Vector4 &i_vector);
 
 	FORCEINLINE static Vector4 Zero();
 	FORCEINLINE static Vector4 Unit();
 
-	FORCEINLINE void Normalize(float i_tolerance = 0.0000001);
+	FORCEINLINE Vector4& Normalize(float i_tolerance = 0.0000001);
 
 	FORCEINLINE static float Dot(const Vector4 &i_vector1, const Vector4 &i_vector2);
 	FORCEINLINE float Dot(const Vector4 &i_vector) const;
@@ -28,8 +28,8 @@ public:
 	FORCEINLINE float Length() const;
 	FORCEINLINE float LengthSquare() const;
 
-	FORCEINLINE void ToVector();
-	FORCEINLINE void ToPoint();
+	FORCEINLINE Vector4& ToVector();
+	FORCEINLINE Vector4& ToPoint();
 	FORCEINLINE bool Equal(const Vector4 &i_vector, float i_tolerance) const;
 
 	FORCEINLINE Vector4 operator -() const;
@@ -40,16 +40,17 @@ public:
 	FORCEINLINE Vector4 operator /(const float i_float) const;
 	FORCEINLINE Vector4 operator /(const Vector4 &i_vector) const;
 
-	FORCEINLINE void operator +=(const Vector4 &i_vector);
-	FORCEINLINE void operator -=(const Vector4 &i_vector);
-	FORCEINLINE void operator *=(const float i_float);
-	FORCEINLINE void operator *=(const Vector4 &i_vector);
-	FORCEINLINE void operator /=(const float i_float);
-	FORCEINLINE void operator /=(const Vector4 &i_vector);
+	FORCEINLINE Vector4& operator +=(const Vector4 &i_vector);
+	FORCEINLINE Vector4& operator -=(const Vector4 &i_vector);
+	FORCEINLINE Vector4& operator *=(const float i_float);
+	FORCEINLINE Vector4& operator *=(const Vector4 &i_vector);
+	FORCEINLINE Vector4& operator /=(const float i_float);
+	FORCEINLINE Vector4& operator /=(const Vector4 &i_vector);
 
 	FORCEINLINE float operator[](const uint32 i_index) const;
 
-	FORCEINLINE Vector4 Transform(const Matrix &i_matrix) const;
+	FORCEINLINE Vector4 Mul(const Matrix &i_matrix) const;
+
 public:
 	float X, Y, Z, W;
 };
@@ -66,8 +67,8 @@ public:
 FORCEINLINE Vector4::Vector4(const float i_x, const float i_y, const float i_z, const float i_w)
 	: X(i_x), Y(i_y), Z(i_z), W(i_w) {}
 
-FORCEINLINE Vector4::Vector4(const Vector4 & i_vector)
-	: X(i_vector.X), Y(i_vector.Y), Z(i_vector.Z), W(i_vector.W) {}
+FORCEINLINE Vector4::Vector4(const Vector4 & i_other)
+	: X(i_other.X), Y(i_other.Y), Z(i_other.Z), W(i_other.W) {}
 
 FORCEINLINE Vector4::Vector4(const Vector2 & i_vector, const float i_z, const float i_w)
 	: X(i_vector.X), Y(i_vector.Y), Z(i_z), W(i_w) {}
@@ -75,12 +76,13 @@ FORCEINLINE Vector4::Vector4(const Vector2 & i_vector, const float i_z, const fl
 FORCEINLINE Vector4::Vector4(const Vector3 & i_vector, const float i_w)
 	: X(i_vector.X), Y(i_vector.Y), Z(i_vector.Z), W(i_w) {}
 
-FORCEINLINE void Vector4::operator =(const Vector4 &i_vector)
+FORCEINLINE Vector4& Vector4::operator =(const Vector4 &i_vector)
 {
 	X = i_vector.X;
 	Y = i_vector.Y;
 	Z = i_vector.Z;
 	W = i_vector.W;
+	return *this;
 }
 
 FORCEINLINE Vector4 Vector4::Zero()
@@ -93,7 +95,7 @@ FORCEINLINE Vector4 Vector4::Unit()
 	return Vector4(1.0f, 1.0f, 1.0f, 0.0f);
 }
 
-FORCEINLINE void Vector4::Normalize(float i_tolerance)
+FORCEINLINE Vector4& Vector4::Normalize(float i_tolerance)
 {
 	const float magSq = Length();
 	ASSERT(magSq > i_tolerance);
@@ -101,6 +103,7 @@ FORCEINLINE void Vector4::Normalize(float i_tolerance)
 	Y /= magSq;
 	Z /= magSq;
 	W /= magSq;
+	return *this;
 }
 
 FORCEINLINE float Vector4::Dot(const Vector4 &i_vector1, const Vector4 &i_vector2)
@@ -139,14 +142,16 @@ FORCEINLINE float Vector4::LengthSquare() const
 	return X * X + Y * Y + Z * Z + W * W;
 }
 
-FORCEINLINE void Vector4::ToVector()
+FORCEINLINE Vector4& Vector4::ToVector()
 {
 	W = 0.0f;
+	return *this;
 }
 
-FORCEINLINE void Vector4::ToPoint()
+FORCEINLINE Vector4& Vector4::ToPoint()
 {
 	W = 1.0f;
+	return *this;
 }
 
 FORCEINLINE bool Vector4::Equal(const Vector4 &i_vector, float i_tolerance) const
@@ -184,47 +189,53 @@ FORCEINLINE Vector4 Vector4::operator /(const Vector4 &i_vector) const
 	return Vector4(X / i_vector.X, Y / i_vector.Y, Z / i_vector.Z, W / i_vector.W);
 }
 
-FORCEINLINE void Vector4::operator +=(const Vector4 &i_vector)
+FORCEINLINE Vector4& Vector4::operator +=(const Vector4 &i_vector)
 {
 	X += i_vector.X;
 	Y += i_vector.Y;
 	Z += i_vector.Z;
 	W += i_vector.W;
+	return *this;
 }
-FORCEINLINE void Vector4::operator -=(const Vector4 &i_vector)
+FORCEINLINE Vector4& Vector4::operator -=(const Vector4 &i_vector)
 {
 	X -= i_vector.X;
 	Y -= i_vector.Y;
 	Z -= i_vector.Z;
 	W -= i_vector.W;
+	return *this;
 }
-FORCEINLINE void Vector4::operator *=(const float i_float)
+FORCEINLINE Vector4& Vector4::operator *=(const float i_float)
 {
 	X *= i_float;
 	Y *= i_float;
 	Z *= i_float;
 	W *= i_float;
+	return *this;
 }
-FORCEINLINE void Vector4::operator *=(const Vector4 &i_vector)
+FORCEINLINE Vector4& Vector4::operator *=(const Vector4 &i_vector)
 {
 	X *= i_vector.X;
 	Y *= i_vector.Y;
 	Z *= i_vector.Z;
 	W *= i_vector.W;
+	return *this;
 }
-FORCEINLINE void Vector4::operator /=(const float i_float)
+FORCEINLINE Vector4& Vector4::operator /=(const float i_float)
 {
 	X /= i_float;
 	Y /= i_float;
 	Z /= i_float;
 	W /= i_float;
+	return *this;
 }
-FORCEINLINE void Vector4::operator /=(const Vector4 &i_vector)
+FORCEINLINE Vector4& Vector4::operator /=(const Vector4 &i_vector)
 {
 	X /= i_vector.X;
 	Y /= i_vector.Y;
 	Z /= i_vector.Z;
 	W /= i_vector.W;
+	return *this;
 }
 
 FORCEINLINE float Vector4::operator[](const uint32 i_index) const
