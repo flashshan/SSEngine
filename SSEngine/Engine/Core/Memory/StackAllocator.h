@@ -8,6 +8,8 @@ class StackAllocator
 public:
 	static StackAllocator *CreateStackAllocator(void *i_pMemory, const size_t i_sizeMemory);
 	
+	~StackAllocator();
+
 	void destroy();
 
 	void freeToMarker();
@@ -18,7 +20,7 @@ public:
 
 private:
 	StackAllocator(void *i_pMemory, const size_t i_sizeMemory);
-	StackAllocator(StackAllocator &i_other) {}
+	FORCEINLINE StackAllocator(const StackAllocator &i_other) {}
 
 private:
 	void * stackMemoryBase_;

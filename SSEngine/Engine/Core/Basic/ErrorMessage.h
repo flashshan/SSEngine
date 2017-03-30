@@ -19,14 +19,20 @@ enum class ErrorType : int32 {
 
 class ErrorMessage {
 public:
-	static inline ErrorMessage *GetInstance();
+	static FORCEINLINE ErrorMessage *CreateInstance();
+	static FORCEINLINE ErrorMessage *GetInstance();
+	static FORCEINLINE void DestroyInstance();
+	inline ~ErrorMessage();
+
 	FORCEINLINE const char *GetErrorMessage(const ErrorType i_errorCode) const;
 
 private:
-	inline ErrorMessage();
+	FORCEINLINE ErrorMessage();
+	FORCEINLINE ErrorMessage(const ErrorMessage &i_other) {}
+	static ErrorMessage *globalInstance_;
+
 	void initialMessage();
 
-	//static ErrorMessage *globalInstance;
 private:
 	std::unordered_map<int32, char *> messages_;
 };
@@ -36,18 +42,30 @@ private:
 
 // implement forceinline
 
-inline ErrorMessage::ErrorMessage()
+
+
+FORCEINLINE ErrorMessage *ErrorMessage::CreateInstance()
 {
-	initialMessage();
+	ErrorMessage::globalInstance_ = new ErrorMessage();
+	return ErrorMessage::globalInstance_;
 }
 
-inline ErrorMessage* ErrorMessage::GetInstance()
+FORCEINLINE ErrorMessage* ErrorMessage::GetInstance()
 {
-	static ErrorMessage *globalInstance;
-	if (globalInstance == nullptr) {
-		globalInstance = new ErrorMessage();
-	}
-	return globalInstance;
+	if (ErrorMessage::globalInstance_ == nullptr)
+		ErrorMessage::globalInstance_ = new ErrorMessage();
+	return ErrorMessage::globalInstance_;
+}
+
+FORCEINLINE void ErrorMessage::DestroyInstance()
+{
+	//ASSERT(ErrorMessage::globalInstance_ != nullptr);
+	delete ErrorMessage::globalInstance_;
+}
+
+FORCEINLINE ErrorMessage::ErrorMessage()
+{
+	initialMessage();
 }
 
 FORCEINLINE const char* ErrorMessage::GetErrorMessage(const ErrorType i_errorCode) const
@@ -64,3 +82,7 @@ FORCEINLINE const char* ErrorMessage::GetErrorMessage(const ErrorType i_errorCod
 	}
 }
 
+inline ErrorMessage::~ErrorMessage()
+{
+	messages_.clear();
+}

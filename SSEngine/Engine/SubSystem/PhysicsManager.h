@@ -1,13 +1,18 @@
 #pragma once
 
-#include "PhysicsObject.h"
 #include "Core\Template\List.h"
+#include "Core\Memory\New.h"
+
+#include "PhysicsObject.h"
+
 
 class PhysicsManager
 {
 public:
+	static FORCEINLINE PhysicsManager *CreateInstance();
 	static FORCEINLINE PhysicsManager *GetInstance();
-	FORCEINLINE ~PhysicsManager();
+	static FORCEINLINE void DestroyInstance();
+	inline ~PhysicsManager();
 
 	void PhysicsUpdate() const;
 	StrongPtr<PhysicsObject>& AddPhysicsObject(const StrongPtr<GameObject> &i_gameObject, const float i_mass);
@@ -15,8 +20,12 @@ public:
 
 private:
 	FORCEINLINE PhysicsManager();
+	FORCEINLINE PhysicsManager(PhysicsManager &i_other) {}
+
+	static PhysicsManager* globalInstance_;
 
 private:
+	// for test, change to vector in future
 	LinkedList<StrongPtr<PhysicsObject>> physicsObjectList_;
 };
 
@@ -27,23 +36,32 @@ private:
 
 // implement physics
 
+FORCEINLINE PhysicsManager *PhysicsManager::CreateInstance()
+{
+	ASSERT(PhysicsManager::globalInstance_ == nullptr);
+	PhysicsManager::globalInstance_ = new PhysicsManager();
+	return PhysicsManager::globalInstance_;
+}
+
 FORCEINLINE PhysicsManager *PhysicsManager::GetInstance()
 {
-	static PhysicsManager *globalInstance;
-	if (globalInstance == nullptr)
-	{
-		globalInstance = new PhysicsManager();
-	}
-	return globalInstance;
+	ASSERT(PhysicsManager::globalInstance_ != nullptr);
+	return PhysicsManager::globalInstance_;
+}
+
+FORCEINLINE void PhysicsManager::DestroyInstance()
+{
+	ASSERT(PhysicsManager::globalInstance_ != nullptr);
+	delete PhysicsManager::globalInstance_;
 }
 
 FORCEINLINE PhysicsManager::PhysicsManager()
 {
 }
 
-FORCEINLINE PhysicsManager::~PhysicsManager()
+inline PhysicsManager::~PhysicsManager()
 {
-	physicsObjectList_.Clear();
+	//physicsObjectList_.Clear();
 }
 
 

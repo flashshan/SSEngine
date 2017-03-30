@@ -5,7 +5,6 @@ FixedSizeAllocator *FixedSizeAllocator::Create(void *i_pMemory, const size_t i_s
 	ASSERT(i_pMemory);
 	void *pBitArrayBase = reinterpret_cast<void *>(reinterpret_cast<uintPtr>(i_pMemory) + sizeof(FixedSizeAllocator));
 	size_t fixedAllocatorSize = i_sizeMemory - sizeof(FixedSizeAllocator);
-
 	FixedSizeAllocator *pFixedSizeAllocator = new (i_pMemory) FixedSizeAllocator(pBitArrayBase, fixedAllocatorSize, i_numBlocks, i_blockSize);
 	return pFixedSizeAllocator;
 }
@@ -18,5 +17,8 @@ FixedSizeAllocator::FixedSizeAllocator(void *i_pTotalMemory, const size_t i_size
 	bitArray_ = BitArray::Create(i_numBlocks - 1, i_pTotalMemory, bitArrayTotalSize, true);
 
 	blocksMemoryBase_ = reinterpret_cast<void *>(reinterpret_cast<uintPtr>(i_pTotalMemory) + bitArrayTotalSize);
-	memorySize_ = i_sizeMemory - bitArrayTotalSize;
+	
+	// keep alignment
+	blocksMemoryBase_ = reinterpret_cast<void *>(((reinterpret_cast<uintPtr>(blocksMemoryBase_) - 1) / i_blockSize + 1) * i_blockSize);
+	memorySize_ = i_numBlocks * i_blockSize;
 }

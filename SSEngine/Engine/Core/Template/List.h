@@ -2,7 +2,7 @@
 
 #include "Core\Basic\Assert.h"
 #include "Core\Basic\BasicTypes.h"
-
+#include "Core\Memory\New.h"
 // list is used for optimize insert and delete with order required vector
 // list is slow because it has to dynamic new and delete
 // just a practice

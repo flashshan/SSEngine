@@ -85,6 +85,18 @@ void * LoadFile(const char * i_pFilename, size_t & o_sizeFile)
 
 
 
+RenderManager *RenderManager::globalInstance_ = nullptr;
+
+RenderManager::~RenderManager()
+{
+	//renderObjectList_.Clear();
+	for (auto it = spriteResources_.begin();it != spriteResources_.end(); ++it)
+	{
+		GLib::Sprites::Release(it->second);
+	}
+	spriteResources_.clear();
+}
+
 void RenderManager::RenderUpdate() const
 {
 	GLib::BeginRendering();

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core\CoreMinimal.h"
-
+#include "Core\Memory\New.h"
 
 enum class Key : uint32 {
 	ESC = 0x1b,
@@ -14,13 +14,18 @@ enum class Key : uint32 {
 class InputManager
 {
 public:
+	static FORCEINLINE InputManager *CreateInstance();
 	static FORCEINLINE InputManager *GetInstance();
+	static FORCEINLINE void DestroyInstance();
 
 	FORCEINLINE void SetState(const uint32 i_Key, const bool i_Press);
 	FORCEINLINE bool GetState(const uint32 i_Key) const;
 
 private:
 	InputManager();
+	FORCEINLINE InputManager(const InputManager &i_other) {}
+
+	static InputManager *globalInstance_;
 
 private:
 	bool keyState_[256];
@@ -32,15 +37,23 @@ private:
 
 
 // implement
+FORCEINLINE InputManager *InputManager::CreateInstance()
+{
+	ASSERT(InputManager::globalInstance_ == nullptr);
+	InputManager::globalInstance_ = new InputManager();
+	return InputManager::globalInstance_;
+}
 
 FORCEINLINE InputManager *InputManager::GetInstance()
 {
-	static InputManager *globalInstance;
-	if (globalInstance == nullptr)
-	{
-		globalInstance = new InputManager();
-	}
-	return globalInstance;
+	ASSERT(InputManager::globalInstance_ != nullptr);
+	return InputManager::globalInstance_;
+}
+
+FORCEINLINE void InputManager::DestroyInstance()
+{
+	ASSERT(InputManager::globalInstance_ != nullptr);
+	delete InputManager::globalInstance_;
 }
 
 

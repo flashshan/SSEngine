@@ -1,8 +1,9 @@
 #pragma once
 
 #include "Core\Template\List.h"
-#include "Core\Template\Pointers.h"
 #include "Core\String\HashedString.h"
+#include "Core\Memory\New.h"
+
 #include "RenderObject.h"
 
 void * LoadFile(const char * i_pFilename, size_t & o_sizeFile);
@@ -12,8 +13,10 @@ GLib::Sprites::Sprite * CreateSprite(const char * i_pFilename);
 class RenderManager
 {
 public:
+	static FORCEINLINE RenderManager *CreateInstance();
 	static FORCEINLINE RenderManager *GetInstance();
-	FORCEINLINE ~RenderManager();
+	static FORCEINLINE void DestroyInstance();
+	~RenderManager();
 
 	void RenderUpdate() const;
 	StrongPtr<RenderObject>& AddRenderObject(const StrongPtr<GameObject> &i_gameObject, const char *i_filePath);
@@ -21,8 +24,12 @@ public:
 
 private:
 	FORCEINLINE RenderManager();
+	FORCEINLINE RenderManager(RenderManager &i_other) {}
+
+	static RenderManager *globalInstance_;
 
 private:
+	// for test, change to vector in future
 	LinkedList<StrongPtr<RenderObject>> renderObjectList_;
 	std::unordered_map<uint32, GLib::Sprites::Sprite*> spriteResources_;
 };
@@ -34,14 +41,23 @@ private:
 
 // implement
 
+FORCEINLINE RenderManager *RenderManager::CreateInstance()
+{
+	ASSERT(RenderManager::globalInstance_ == nullptr);
+	RenderManager::globalInstance_ = new RenderManager();
+	return RenderManager::globalInstance_;
+}
+
 FORCEINLINE RenderManager *RenderManager::GetInstance()
 {
-	static RenderManager *globalInstance;
-	if (globalInstance == nullptr)
-	{
-		globalInstance = new RenderManager();
-	}
-	return globalInstance;
+	ASSERT(RenderManager::globalInstance_ != nullptr);
+	return RenderManager::globalInstance_;
+}
+
+FORCEINLINE void RenderManager::DestroyInstance()
+{
+	ASSERT(RenderManager::globalInstance_ != nullptr);
+	delete RenderManager::globalInstance_;
 }
 
 
@@ -51,15 +67,6 @@ FORCEINLINE RenderManager::RenderManager()
 	spriteResources_.reserve(maxSprites);
 }
 
-FORCEINLINE RenderManager::~RenderManager()
-{
-	renderObjectList_.Clear();
-	for (auto it = spriteResources_.begin();it != spriteResources_.end(); ++it)
-	{
-		GLib::Sprites::Release(it->second);
-	}
-	spriteResources_.clear();
-}
 
 
 // for renderObject

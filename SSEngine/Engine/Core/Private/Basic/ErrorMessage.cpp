@@ -1,5 +1,6 @@
 #include "Core\Basic\ErrorMessage.h"
 
+ErrorMessage* ErrorMessage::globalInstance_ = nullptr;
 
 void ErrorMessage::initialMessage()
 {

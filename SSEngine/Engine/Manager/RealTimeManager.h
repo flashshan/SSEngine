@@ -1,8 +1,6 @@
 #pragma once
 
 #include <Windows.h>
-#include <memory>
-
 #include "Core\CoreMinimal.h"
 
 #define DESIRED_FPS		60.0f
@@ -12,7 +10,9 @@
 class RealTimeManager
 {
 public:
+	static FORCEINLINE RealTimeManager *CreateInstance();
 	static FORCEINLINE RealTimeManager *GetInstance();
+	static FORCEINLINE void DestroyInstance();
 
 	void CalcLastFrameTime_ms();
 
@@ -21,6 +21,9 @@ public:
 
 private:
 	FORCEINLINE RealTimeManager();
+	FORCEINLINE RealTimeManager(const RealTimeManager &i_other) {}
+
+	static RealTimeManager *globalInstance_;
 
 private:
 	LARGE_INTEGER lastFrameStartTick_;
@@ -34,17 +37,25 @@ private:
 
 
 // implement forceinline
+FORCEINLINE RealTimeManager *RealTimeManager::CreateInstance()
+{
+	ASSERT(RealTimeManager::globalInstance_ == nullptr);
+	RealTimeManager::globalInstance_ = new RealTimeManager();
+	return RealTimeManager::globalInstance_;
+}
 
 FORCEINLINE RealTimeManager *RealTimeManager::GetInstance()
 {
-	static RealTimeManager *globalInstance;
-	if (globalInstance == nullptr)
-	{
-		globalInstance = new RealTimeManager();
-	}
-
-	return globalInstance;
+	ASSERT(RealTimeManager::globalInstance_ != nullptr);
+	return RealTimeManager::globalInstance_;
 }
+
+FORCEINLINE void RealTimeManager::DestroyInstance()
+{
+	ASSERT(RealTimeManager::globalInstance_ != nullptr);
+	delete RealTimeManager::globalInstance_;
+}
+
 
 FORCEINLINE float RealTimeManager::GetLastFrameTimeMS() const
 {

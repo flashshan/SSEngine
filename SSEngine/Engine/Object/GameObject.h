@@ -3,7 +3,6 @@
 #include "Core\Math\Vector3.h"
 #include "Core\Math\Box2D.h"
 #include "Component\Transform.h"
-#include "Manager\RealTimeManager.h"
 
 class GameObject
 {
@@ -36,7 +35,7 @@ public:
 	FORCEINLINE void SetVelocity(const Vector3 i_velocity) { velocity_ = i_velocity; }
 	FORCEINLINE void SetBoundingBox(const Box2D i_boundingBox) { boundingBox_ = i_boundingBox; }
 
-	FORCEINLINE void Update();
+	void Update();
 
 private:
 	Transform transform_;
@@ -100,8 +99,3 @@ FORCEINLINE GameObject& GameObject::operator =(GameObject &&i_other)
 	Basic::Swap(boundingBox_, i_other.boundingBox_);
 }
 
-
-FORCEINLINE void GameObject::Update()
-{
-	transform_.Translate(velocity_ * RealTimeManager::GetInstance()->GetLastFrameTimeS());
-}

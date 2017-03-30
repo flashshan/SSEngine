@@ -19,11 +19,12 @@ class FixedSizeAllocator
 public:
 	static FixedSizeAllocator *Create(void *i_pMemory, const size_t i_sizeMemory, const size_t i_numBlocks, const size_t i_blockSize);
 	// destroy the HeapManager
+	inline ~FixedSizeAllocator();
 
 	FORCEINLINE void destroy();
 
 	// allocate - with and without alignment requirement
-	FORCEINLINE void *alloc();
+	inline void *alloc();
 
 	// free
 	FORCEINLINE bool free(const void *i_ptr);
@@ -34,15 +35,15 @@ public:
 	// query whether a given pounsigned_inter is an outstanding allocation
 	FORCEINLINE bool IsAllocated(const void * i_ptr) const;
 
-	FORCEINLINE uint32 getFreeCount() const;
-	FORCEINLINE uint32 getUsedCount() const;
+	FORCEINLINE size_t getFreeCount() const;
+	FORCEINLINE size_t getUsedCount() const;
 
 private:
 	// create a new HeapManager
 	FixedSizeAllocator(void *i_pTotalMemory, const size_t i_sizeMemory, const size_t i_numBlocks, const size_t i_blockSize);
 	
 	// hide copy constructor
-	FixedSizeAllocator(FixedSizeAllocator &i_other) {}
+	FORCEINLINE FixedSizeAllocator(const FixedSizeAllocator &i_other) {}
 
 private:
 	void *blocksMemoryBase_;
@@ -62,8 +63,21 @@ private:
 
 // implement inline
 
+inline FixedSizeAllocator::~FixedSizeAllocator()
+{
+	destroy();
+}
+
+FORCEINLINE void FixedSizeAllocator::destroy()
+{
+	if (bitArray_ != nullptr)
+	{
+		delete bitArray_;
+	}
+}
+
 // allocate - with and without alignment requirement
-FORCEINLINE void *FixedSizeAllocator::alloc()
+inline void *FixedSizeAllocator::alloc()
 {
 	size_t i_firstAvailable;
 
@@ -76,13 +90,9 @@ FORCEINLINE void *FixedSizeAllocator::alloc()
 		return reinterpret_cast<void *>(reinterpret_cast<uintPtr>(blocksMemoryBase_) + (i_firstAvailable * blockSize_));
 	}
 	else
+	{
 		return nullptr;
-}
-
-FORCEINLINE void FixedSizeAllocator::destroy()
-{
-	if (bitArray_ != nullptr)
-		delete bitArray_;
+	}
 }
 
 // free
@@ -108,19 +118,15 @@ FORCEINLINE bool FixedSizeAllocator::IsAllocated(const void * i_ptr) const
 	return bitArray_->IsBitSet((reinterpret_cast<uintPtr>(i_ptr) - reinterpret_cast<uintPtr>(blocksMemoryBase_)) / blockSize_);
 }
 
-FORCEINLINE uint32 FixedSizeAllocator::getFreeCount() const
+FORCEINLINE size_t FixedSizeAllocator::getFreeCount() const
 {
-	// TO DO
-
-	return 0;
+	return bitArray_->GetClearCount();
 }
 
 
-FORCEINLINE uint32 FixedSizeAllocator::getUsedCount() const
+FORCEINLINE size_t FixedSizeAllocator::getUsedCount() const
 {
-	// TO DO
-
-	return 0;
+	return bitArray_->GetSetCount();
 }
 
 

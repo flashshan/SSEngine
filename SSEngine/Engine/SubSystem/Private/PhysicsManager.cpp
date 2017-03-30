@@ -1,6 +1,7 @@
 #include "SubSystem\PhysicsManager.h"
 
 
+PhysicsManager *PhysicsManager::globalInstance_ = nullptr;
 
 void PhysicsManager::PhysicsUpdate() const
 {

@@ -1,5 +1,7 @@
 #include "Manager\RealTimeManager.h"
 
+RealTimeManager *RealTimeManager::globalInstance_ = nullptr;
+
 void RealTimeManager::CalcLastFrameTime_ms()
 {
 #if defined( CONSTANT_FRAMETIME )

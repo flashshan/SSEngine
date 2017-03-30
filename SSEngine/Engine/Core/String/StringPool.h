@@ -5,7 +5,10 @@
 
 class StringPool {
 public:
-	static inline StringPool * Create(void *i_memoryBase, size_t i_bytes);
+	static inline StringPool * CreateInstance(void *i_memoryBase, size_t i_bytes);
+	static FORCEINLINE StringPool * GetInstance();
+	static FORCEINLINE void DestroyInstance();
+
 	inline ~StringPool();
 
 	const char *add(const char *i_string);
@@ -13,8 +16,9 @@ public:
 
 private:
 	FORCEINLINE StringPool(void *i_poolBuffer, size_t i_poolSize);
-	FORCEINLINE StringPool(StringPool &i_other) {}
+	FORCEINLINE StringPool(const StringPool &i_other) {}
 
+	static StringPool *globalInstance_;
 private:
 	uint8 *poolBuffer_;
 	size_t poolSize_;
@@ -25,17 +29,30 @@ private:
 
 
 
-inline StringPool *StringPool::Create(void *i_memoryBase, size_t i_bytes)
+inline StringPool *StringPool::CreateInstance(void *i_memoryBase, size_t i_bytes)
 {
+	ASSERT(StringPool::globalInstance_ == nullptr);
 	ASSERT(i_memoryBase);
 	ASSERT(i_bytes > 0);
 
 	void * stringPoolMemoryBase = reinterpret_cast<void *>(reinterpret_cast<uintPtr>(i_memoryBase) + sizeof(StringPool));
 	size_t stringPoolSize = i_bytes - sizeof(StringPool);
 
-	StringPool * stringPool = new (i_memoryBase) StringPool(stringPoolMemoryBase, stringPoolSize);
+	StringPool::globalInstance_ = new (i_memoryBase) StringPool(stringPoolMemoryBase, stringPoolSize);
 
-	return stringPool;
+	return StringPool::globalInstance_;
+}
+
+FORCEINLINE StringPool *StringPool::GetInstance()
+{
+	ASSERT(StringPool::globalInstance_ != nullptr);
+	return StringPool::globalInstance_;
+}
+
+FORCEINLINE void StringPool::DestroyInstance()
+{
+	ASSERT(StringPool::globalInstance_ != nullptr);
+	delete StringPool::globalInstance_;
 }
 
 inline StringPool::~StringPool()

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core\Basic\BasicFunctions.h"
+#include "Core\Memory\New.h"
 
 struct Counter {
 	uint32 StrongCounter;
@@ -85,7 +86,13 @@ private:
 	T * object_;
 };
 
+// type cast for Strong pointer
+template<typename From, typename To> 
+StrongPtr<To> CastStrongPtr(StrongPtr<From> &i_from);
 
+//type cast for weak pointer
+template<typename From, typename To>
+WeakPtr<To> CastWeakPtr(WeakPtr<From> &i_from);
 
 
 

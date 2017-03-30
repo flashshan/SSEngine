@@ -1,5 +1,6 @@
-#include "SubSystem\InputManager.h"
+#include "Manager\InputManager.h"
 
+InputManager *InputManager::globalInstance_ = nullptr;
 
 InputManager::InputManager()
 {

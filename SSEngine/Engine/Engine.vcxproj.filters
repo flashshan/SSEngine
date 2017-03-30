@@ -89,9 +89,6 @@
     <ClInclude Include="Manager\GameTimeManager.h">
       <Filter>Manager</Filter>
     </ClInclude>
-    <ClInclude Include="SubSystem\InputManager.h">
-      <Filter>SubSystem</Filter>
-    </ClInclude>
     <ClInclude Include="SubSystem\PhysicsManager.h">
       <Filter>SubSystem</Filter>
     </ClInclude>
@@ -114,15 +111,6 @@
       <Filter>Core\Memory</Filter>
     </ClInclude>
     <ClInclude Include="Core\Memory\FixedSizeAllocator.h">
-      <Filter>Core\Memory</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Memory\HeapAllocators.h">
-      <Filter>Core\Memory</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Memory\HeapManager.h">
-      <Filter>Core\Memory</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Memory\StackAllocator.h">
       <Filter>Core\Memory</Filter>
     </ClInclude>
     <ClInclude Include="Core\Math\MathDefine.h">
@@ -209,6 +197,21 @@
     <ClInclude Include="Controller\RandomMoveController.h">
       <Filter>Controller</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Memory\HeapAllocator.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Memory\StackAllocator.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Memory\HeapManager.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Manager\InputManager.h">
+      <Filter>Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Memory\New.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Object\Private\GameObject.cpp">
@@ -222,9 +225,6 @@
     </ClCompile>
     <ClCompile Include="Manager\Private\GameTimeManager.cpp">
       <Filter>Manager\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="SubSystem\Private\InputManager.cpp">
-      <Filter>SubSystem\Private</Filter>
     </ClCompile>
     <ClCompile Include="SubSystem\Private\PhysicsManager.cpp">
       <Filter>SubSystem\Private</Filter>
@@ -257,12 +257,6 @@
       <Filter>Core\Private\Memory</Filter>
     </ClCompile>
     <ClCompile Include="Core\Private\Memory\FixedSizeAllocator.cpp">
-      <Filter>Core\Private\Memory</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\Private\Memory\HeapAllocators.cpp">
-      <Filter>Core\Private\Memory</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\Private\Memory\HeapManager.cpp">
       <Filter>Core\Private\Memory</Filter>
     </ClCompile>
     <ClCompile Include="Core\Private\Memory\StackAllocator.cpp">
@@ -315,6 +309,21 @@
     </ClCompile>
     <ClCompile Include="Core\Private\String\PooledString.cpp">
       <Filter>Core\Private\String</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Private\Memory\HeapAllocator.cpp">
+      <Filter>Core\Private\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Private\Memory\HeapManager.cpp">
+      <Filter>Core\Private\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="Manager\Private\WorldManager.cpp">
+      <Filter>Manager\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Manager\Private\InputManager.cpp">
+      <Filter>Manager\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Private\Memory\New.cpp">
+      <Filter>Core\Private\Memory</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -14,12 +14,15 @@ public:
 
 private:
 	void engineMemoryInit();
-	void engineInstancceInit();
+	void engineSubsystemInit();
+	void engineManagerInit();
 
-	void engineInstanceDestroy();
+	void engineManagerDestroy();
+	void engineSubsystemDestroy();
 	void engineMemoryFree();
 
 private:
-
+	void *memoryBase_;
+	size_t memorySize_;
 };
 

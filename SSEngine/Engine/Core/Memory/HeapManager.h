@@ -2,144 +2,60 @@
 
 #include "Core\CoreMinimal.h"
 
-#if defined(_WIN64)
-#define BLOCK_SIZE 40
-#define BLOCK_POINTER 8					  // this is the length of BlockDescriptor's pointer
-#define FIT_LENGTH 48   
-#else
-#define BLOCK_SIZE 20
-#define BLOCK_POINTER 4					  // this is the length of BlockDescriptor's pointer
-#define FIT_LENGTH 24   
-#endif
+#include "Core\Memory\HeapAllocator.h"
+#include "Core\Memory\FixedSizeAllocator.h"
 
-#define DEFAULT_ALIGNMENT 4
-#define GUARD_BANDING_LENGTH 4				      // default Guard banding's length
-#define GUARD_BANDING_VALUE 0xdead	  // default Guard banding's value
-
-// double list
-struct BlockDescriptor
-{
-	BlockDescriptor *Previous;
-	BlockDescriptor *Next;
-	void *MemoryBase;   // pointer to actual memory's start position (useful in _alloc_align)
-	void *BlockBase;	// pointer to useful memory's start position
-	size_t SizeBlock;	// size of that block of memory
-};
-
-class HeapManager
-{
+class HeapManager {
 public:
-	static HeapManager *CreateHeapManager(void *i_pMemory, const size_t i_sizeMemory, const uint32 i_numDescriptors);
-	
-	FORCEINLINE void destroy();
+	static inline HeapManager *CreateInstance(void *i_heapManagerBase, size_t i_heapSize);
+	static FORCEINLINE HeapManager *GetInstance();
+	static FORCEINLINE void DestroyInstance();
 
-	// allocate - with and without alignment requirement
-	void *alloc(const size_t i_size);
-	void *alloc(const size_t i_size, const uint32 i_alignment);
+	inline ~HeapManager();
 
-	// free
-	bool free(const void *i_ptr);
+	void *Alloc(size_t i_size, uint32 i_alignment = DEFAULT_ALIGNMENT);
+	bool Free(void *i_ptr);
 
-	// run garbage collection
-	void collect();
-
-	// query whether a given pounsigned_inter is within this Heaps memory range
-	FORCEINLINE bool Contains(const void * i_ptr) const;
-	// query whether a given pounsigned_inter is an outstanding allocation
-	FORCEINLINE bool IsAllocated(const void * i_ptr) const;
-
-	size_t getLargestFreeBlock() const;
-	size_t getTotalFreeMemory() const;
-
-	size_t getLargestUsedBlock() const;
-	size_t getTotalUsedMemory() const;
-
-	uint32 getFreeCount() const;
-	uint32 getUsedCount() const;
-
-	FORCEINLINE void ShowFreeBlocks() const;
-	FORCEINLINE void ShowUsedBlocks() const;
+	HeapAllocator *GetDefaultHeap() const { return heapAllocator_; }
 
 private:
-	// create a new HeapManager
-	HeapManager(void *i_pMemory, const size_t i_sizeMemory, const uint32 i_numDescriptors);
-
-	// return previous alignment position 
-	inline uintPtr alignment(const uintPtr i_pos, const uint32 i_align) const
-	{
-		return i_pos - i_pos % i_align;
-	}
-
-	// double list quick sort
-	BlockDescriptor *qsort(BlockDescriptor *i_head);
-
-	// double list append
-	BlockDescriptor *append(BlockDescriptor *i_h1, BlockDescriptor *i_h2);
-
-	// free list combination
-	BlockDescriptor *combineList(BlockDescriptor *i_list);
+	HeapManager(void *i_heapBase, size_t i_heapSize);
+	FORCEINLINE HeapManager(const HeapManager &i_other) {}
 
 private:
-	void *heapMemoryBase_;
-	size_t memorySize_;
-	unsigned int blockLength_;
-	unsigned int blockMaxLength_;
+	static HeapManager *globalInstance_;
 
-	BlockDescriptor* freeList_;
-	BlockDescriptor *usedList_;
+	HeapAllocator *heapAllocator_;
+	FixedSizeAllocator *fixedSizeAllocator8_;
+	FixedSizeAllocator *fixedSizeAllocator16_;
+	FixedSizeAllocator *fixedSizeAllocator32_;
+	FixedSizeAllocator *fixedSizeAllocator64_;
+	FixedSizeAllocator *fixedSizeAllocator128_;
 };
 
 
-
-
-
-
-
-// implement forceinline
-
-FORCEINLINE void HeapManager::destroy()
+inline HeapManager *HeapManager::CreateInstance(void *i_heapManagerBase, size_t i_heapSize)
 {
-	heapMemoryBase_ = nullptr;
-	freeList_ = nullptr;
-	usedList_ = nullptr;
+	ASSERT(HeapManager::globalInstance_ == nullptr);
+	void *heapBase = reinterpret_cast<void *>(reinterpret_cast<uintPtr>(i_heapManagerBase) + sizeof(HeapManager));
+	HeapManager::globalInstance_ = new (i_heapManagerBase) HeapManager(heapBase, i_heapSize - sizeof(HeapManager));
+	return HeapManager::globalInstance_;
 }
 
-FORCEINLINE bool HeapManager::Contains(const void * i_ptr) const
+FORCEINLINE HeapManager *HeapManager::GetInstance()
 {
-	if (heapMemoryBase_ <= i_ptr && reinterpret_cast<uintPtr>(heapMemoryBase_) + memorySize_ - blockMaxLength_ * BLOCK_SIZE > reinterpret_cast<uintPtr>(i_ptr))
-		return true;
-	else 
-		return false;
+	ASSERT(HeapManager::globalInstance_ != nullptr);
+	return HeapManager::globalInstance_;
 }
 
-FORCEINLINE bool HeapManager::IsAllocated(const void * i_ptr) const
+FORCEINLINE void HeapManager::DestroyInstance()
 {
-#ifdef _DEBUG
-	unsigned int forward = BLOCK_POINTER + GUARD_BANDING_LENGTH;
-#else
-	unsigned int forward = BLOCK_POINTER;
-#endif // _DEBUG
-
-	BlockDescriptor * temp = reinterpret_cast<BlockDescriptor *>(*reinterpret_cast<uintPtr *>(reinterpret_cast<uintPtr>(i_ptr) - forward));
-	if (temp == nullptr) return false;
-
-	if (reinterpret_cast<uintPtr>(temp->BlockBase) != reinterpret_cast<uintPtr>(i_ptr) - forward) return false;
-
-	return true;
+	ASSERT(HeapManager::globalInstance_ != nullptr);
+	delete HeapManager::globalInstance_;
 }
 
-FORCEINLINE void HeapManager::ShowFreeBlocks() const
+inline HeapManager::~HeapManager()
 {
-	printf_s("Total Free block number is %d \n", getFreeCount());
-	printf_s("Total Free block size is %zu \n", getTotalFreeMemory());
-	printf_s("The largest block size is %zu \n", getLargestFreeBlock());
-	printf_s("\n");
+	heapAllocator_->destroy();
 }
 
-FORCEINLINE void HeapManager::ShowUsedBlocks() const
-{
-	printf_s("Total Used block number is %d \n", getUsedCount());
-	printf_s("Total Used block size is %zu \n", getTotalUsedMemory());
-	printf_s("The largest block size is %zu \n", getLargestUsedBlock());
-	printf_s("\n");
-}

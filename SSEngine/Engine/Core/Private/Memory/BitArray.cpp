@@ -1,8 +1,6 @@
 #include "Core\Memory\BitArray.h"
 
-#include "Core\Basic\ErrorMessage.h"
-
-// Branch Free Scan 0 from forward
+// Branch Free Scan 0 from forward, return 1 - 32  or 1 - 64
 #ifdef _WIN64
 bool BitScanForwardZero64(uint32 *o_index, uintPtr i_value)
 {
@@ -25,7 +23,7 @@ bool BitScanForwardZero64(uint32 *o_index, uintPtr i_value)
 
 	if (((i_value >> i1) & 1) == 1) return false;
 	
-	*o_index = i32 + i16 + i8 + i4 + i2 + i1;
+	*o_index = i32 + i16 + i8 + i4 + i2 + i1 + 1;
 	return true;
 }
 
@@ -49,7 +47,7 @@ bool BitScanForwardOne64(uint32 *o_index, uintPtr i_value)
 	uint32 i1 = ((i_value | 0x2) == 0x2);
 
 	if (((i_value >> i1) | 0) == 0) return false;
-	*o_index = i32 + i16 + i8 + i4 + i2 + i1;
+	*o_index = i32 + i16 + i8 + i4 + i2 + i1 + 1;
 	return true;
 }
 #else
@@ -70,7 +68,7 @@ bool BitScanForwardZero32(uint32 *o_index, uintPtr i_value)
 	uint32 i1 = ((i_value & 0x1) == 0x1);
 
 	if(((i_value >> i1) & 1) == 1) return false;
-	*o_index = i16 + i8 + i4 + i2 + i1;
+	*o_index = i16 + i8 + i4 + i2 + i1 + 1;
 	return true;
 }
 
@@ -91,7 +89,7 @@ bool BitScanForwardOne32(uint32 *o_index, uintPtr i_value)
 	uint32 i1 = ((i_value | 0x2) == 0x2);
 
 	if (((i_value >> i1) | 0) == 0) return false;
-	*o_index = i16 + i8 + i4 + i2 + i1;
+	*o_index = i16 + i8 + i4 + i2 + i1 + 1;
 	return true;
 }
 
@@ -113,18 +111,25 @@ BitArray * BitArray::Create(size_t i_numBits, void * i_pAllocator, size_t i_memo
 	return pBitArray;
 }
 
-BitArray::BitArray(size_t i_numBits, void * i_memoryBase, bool i_startClear) : numBits_(i_numBits)
+BitArray::BitArray(size_t i_numBits, void * i_memoryBase, bool i_startClear)
+	: numBits_(i_numBits)
 {
 	arrayBits_ = sizeof(uintPtr) * 8;
-	roundUpBits_ = (i_numBits / arrayBits_ + 1) * arrayBits_;
+	roundUpBits_ = ((i_numBits - 1) / arrayBits_ + 1) * arrayBits_;
 
 	arrayBase_ = new (i_memoryBase) uintPtr[roundUpBits_ / arrayBits_];
 	ASSERT(arrayBase_);
 
-	if(i_startClear)
-		memset(arrayBase_, 0xffffffff, roundUpBits_);
+	if (i_startClear)
+	{
+		memset(arrayBase_, 0xff, roundUpBits_);
+		clearCount_ = numBits_;
+	}
 	else
-		memset(arrayBase_, 0x00000000, roundUpBits_);
+	{
+		memset(arrayBase_, 0x00, roundUpBits_);
+		clearCount_ = 0;
+	}
 }
 
 
@@ -141,7 +146,7 @@ bool BitArray::GetFirstClearBit(size_t & o_bitNumber) const
 	}
 	uint32 index;
 #ifdef _WIN64
-	BitScanForwardZero64(&index, arrayBase_[arrayIndex]);
+	BitScanForwardZero64(&index, m_arrayBase[arrayIndex]);
 #else
 	BitScanForwardZero32(&index, arrayBase_[arrayIndex]);
 #endif // _WIN64
@@ -164,13 +169,13 @@ bool BitArray::GetFirstSetBit(size_t & o_bitNumber) const
 	}
 	uint32 index;
 #ifdef _WIN64
-	BitScanForwardZero64(&index, arrayBase_[arrayIndex]);
+	BitScanForwardZero64(&index, m_arrayBase[arrayIndex]);
 #else
 	BitScanForwardZero32(&index, arrayBase_[arrayIndex]);
 #endif // _WIN64
 	if (arrayIndex * arrayBits_ + index > numBits_)
 		return false;
+
 	o_bitNumber = arrayIndex * arrayBits_ + index;
 	return true;
 }
-

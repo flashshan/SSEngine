@@ -18,9 +18,9 @@ public:
 
 	FORCEINLINE void SetController(const StrongPtr<IController> i_controller);
 
-	virtual void EarlyUpdate() override {}
+	virtual void EarlyUpdate() override;
 	virtual void Update() override;
-	virtual void LateUpdate() override {}
+	virtual void LateUpdate() override;
 
 private:
 	// Controller's life cycle is longer than pawn

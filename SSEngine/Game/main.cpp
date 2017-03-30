@@ -8,10 +8,12 @@
 #include <time.h>
 #include <vector>
 
-#include "Engine\SubSystem\InputManager.h"
-#include "Engine\SubSystem\RenderManager.h"
+#include "Engine\Manager\InputManager.h"
+#include "Engine\Manager\RealTimeManager.h"
+
 #include "Manager\WorldManager.h"
 
+#include "Engine\Engine.h"
 //#if defined _DEBUG
 //#define _CRTDBG_MAP_ALLOC
 //#include <crtdbg.h>
@@ -40,6 +42,9 @@ void TestKeyCallback(unsigned int i_VKeyID, bool bWentDown)
 
 int WINAPI wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_lpCmdLine, int i_nCmdShow)
 {
+	Engine engine;
+	engine.EngineInit();
+
 	// first we need to initialize GLib
 	bool bSuccess = GLib::Initialize(i_hInstance, i_nCmdShow, "MonsterChase", -1, 800, 600);
 
@@ -82,29 +87,18 @@ int WINAPI wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_l
 			// We need to let GLib do it's thing. 
 			GLib::Service(bQuit);
 
-			DEBUG_PRINT("FPS: %f", (1.0f / RealTimeManager::GetInstance()->GetLastFrameTimeS()));
-
+			//DEBUG_PRINT("FPS: %f", (1.0f / RealTimeManager::GetInstance()->GetLastFrameTimeS()));
 			if (!bQuit)
 			{
-				WorldManager::GetInstance()->EarlyUpdate();
-
-				ControllerManager::GetInstance()->UpdatePlayerController();
-				ControllerManager::GetInstance()->UpdateMonsterController();
-
-				PhysicsManager::GetInstance()->PhysicsUpdate();
-
-				WorldManager::GetInstance()->Update();
-				//render part
-				RenderManager::GetInstance()->RenderUpdate();
-
-				WorldManager::GetInstance()->LateUpdate();
+				engine.Run();
 			}
-
 			bQuit = bSuccess = InputManager::GetInstance()->GetState(static_cast<uint32>(Key::ESC));
 		} while (bQuit == false);
 		
 		//GLib::Shutdown();
 	}
+
+	engine.EngineQuit();
 
 #if defined _DEBUG
 	_CrtDumpMemoryLeaks();

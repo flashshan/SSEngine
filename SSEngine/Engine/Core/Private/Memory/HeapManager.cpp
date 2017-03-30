@@ -1,547 +1,117 @@
 #include "Core\Memory\HeapManager.h"
 
-#include <memory.h>
-#include <new>
-#include <stdlib.h>
 
-	// create a new HeapManager
-HeapManager::HeapManager(void *i_pMemory, const size_t i_sizeMemory, const uint32 i_numDescriptors)
-	:heapMemoryBase_(i_pMemory), memorySize_(i_sizeMemory), blockMaxLength_(i_numDescriptors)
+HeapManager* HeapManager::globalInstance_ = nullptr;
+
+HeapManager::HeapManager(void *i_heapBase, size_t i_heapSize)
 {
-	ASSERT(i_pMemory);
-	ASSERT(i_sizeMemory);
-	ASSERT(i_numDescriptors * sizeof(BlockDescriptor) < i_sizeMemory);
+	const uint32 numDescriptors = 4096;
 
-	// initialize free list and used list
-	freeList_ = reinterpret_cast<BlockDescriptor *>(reinterpret_cast<uintPtr>(heapMemoryBase_) + memorySize_ - blockMaxLength_ * BLOCK_SIZE);
-	freeList_->BlockBase = heapMemoryBase_;
-	freeList_->SizeBlock = memorySize_ - blockMaxLength_ * BLOCK_SIZE;
-	freeList_->MemoryBase =  heapMemoryBase_;
-	freeList_->Previous = nullptr;
-	freeList_->Next = nullptr;
+	const size_t defaultAlignment = 4;
 
-	usedList_ = nullptr;
+	// Create a heap manager for my test heap.
+	heapAllocator_ = HeapAllocator::Create(i_heapBase, i_heapSize, numDescriptors);
+	ASSERT(heapAllocator_ != nullptr);
 
-	blockLength_ = 1;
-}
-	
-HeapManager* HeapManager::CreateHeapManager(void *i_pMemory, const size_t i_sizeMemory, const uint32 i_numDescriptors)
-{
-	ASSERT(i_sizeMemory > sizeof(HeapManager) + (sizeof(BlockDescriptor) * i_numDescriptors));
+	// create fixedSizeAllocator
+	const size_t fixedBlockNumber8 = 80000;
+	const size_t fixedBlockNumber16 = 40000;
+	const size_t fixedBlockNumber32 = 20000;
+	const size_t fixedBlockNumber64 = 10000;
+	const size_t fixedBlockNumber128 = 5000;
 
-	void * pManagerMemory = reinterpret_cast<void *>(reinterpret_cast<uintPtr>(i_pMemory) + sizeof(HeapManager));
-	size_t pManagerSize = i_sizeMemory - sizeof(HeapManager);
+	const size_t additionalSize = 11000;
 
-	HeapManager * pHeapManager = new (i_pMemory) HeapManager(pManagerMemory, pManagerSize, i_numDescriptors);
+	const size_t fixedMemorySize8 = fixedBlockNumber8 * 8 + additionalSize;
+	size_t fixedMemorySize16 = fixedBlockNumber16 * 16 + additionalSize;
+	size_t fixedMemorySize32 = fixedBlockNumber32 * 32 + additionalSize;
+	size_t fixedMemorySize64 = fixedBlockNumber64 * 64 + additionalSize;
+	size_t fixedMemorySize128 = fixedBlockNumber128 * 128 + additionalSize;
 
-	return pHeapManager;
-}
+	void *fixedMemoryBase8 = heapAllocator_->alloc(fixedMemorySize8, 8);
+	void *fixedMemoryBase16 = heapAllocator_->alloc(fixedMemorySize16, 16);
+	void *fixedMemoryBase32 = heapAllocator_->alloc(fixedMemorySize32, 32);
+	void *fixedMemoryBase64 = heapAllocator_->alloc(fixedMemorySize64, 64);
+	void *fixedMemoryBase128 = heapAllocator_->alloc(fixedMemorySize128, 128);
 
-void* HeapManager::alloc(size_t i_size)
-{
-	BlockDescriptor * temp = freeList_;
-
-	if (temp == nullptr) return nullptr;
-
-	// store addtional length in head and tail according to _DEBUG
-#if defined(_DEBUG)
-	uint32 headLength = BLOCK_POINTER + GUARD_BANDING_LENGTH;
-	uint32 tailLength = GUARD_BANDING_LENGTH;
-#else
-	uint32 headLength = BLOCK_POINTER;
-	uint32 tailLength = 0;
-#endif
-
-	void *res = nullptr;
-
-	//search the free list to find useable memory
-	while (temp != nullptr)
-	{
-		if (temp->SizeBlock - i_size >= headLength + tailLength)
-		{
-			BlockDescriptor *innerTemp;
-			if (temp->SizeBlock - i_size <= headLength + tailLength + FIT_LENGTH)
-			{
-
-				// set BlockDescriptor's position before GUARD BANDING
-				*static_cast<uintPtr *>(temp->BlockBase) = reinterpret_cast<uintPtr>(temp);
-				
-				// set GUARD BANDING and return position according to _DEBUG
-#if defined(_DEBUG)
-				*reinterpret_cast<uint32 *>(reinterpret_cast<uintPtr>(temp->BlockBase) + BLOCK_POINTER) = GUARD_BANDING_VALUE;
-				res = reinterpret_cast<void *>(reinterpret_cast<uintPtr>(temp->BlockBase) + BLOCK_POINTER + GUARD_BANDING_LENGTH);
-				*reinterpret_cast<uint32 *>(reinterpret_cast<uintPtr>(temp->BlockBase) + BLOCK_POINTER + GUARD_BANDING_LENGTH + i_size) = GUARD_BANDING_VALUE;
-#else
-				res = reinterpret_cast<void *>(reinterpret_cast<uintPtr>(temp->m_pBlockBase) + BLOCK_POINTER);
-#endif
-				// operate free list node and used list
-				if (temp->Next != nullptr)
-					temp->Next->Previous = temp->Previous;
-				if (temp->Previous != nullptr)
-					temp->Previous->Next = temp->Next;
-				if (temp == freeList_)
-					freeList_ = temp->Next;
-
-				if (usedList_ != nullptr)
-					usedList_->Previous = temp;
-				temp->Next = usedList_;
-				temp->Previous = nullptr;
-				usedList_ = temp;
-			}
-			else
-			{
-				innerTemp = usedList_;
-
-				// split block in free list and assign new used block 
-				ASSERT(blockLength_ < blockMaxLength_);
-
-				usedList_ = reinterpret_cast<BlockDescriptor *>(reinterpret_cast<uintPtr>(heapMemoryBase_) + memorySize_ - (blockMaxLength_ - blockLength_) * BLOCK_SIZE);
-				usedList_->MemoryBase = reinterpret_cast<void *>(reinterpret_cast<uintPtr>(temp->MemoryBase) + temp->SizeBlock - tailLength - i_size - headLength);
-				usedList_->BlockBase = usedList_->MemoryBase;
-				usedList_->SizeBlock = i_size + headLength + tailLength;
-
-				// set BlockDescriptor's position before GUARD BANDING
-				*static_cast<uintPtr *>(usedList_->BlockBase) = (uintPtr)(usedList_);
-				
-				// set GUARD BANDING and return position according to _DEBUG
-#if defined(_DEBUG)
-				*reinterpret_cast<uint32 *>(reinterpret_cast<uintPtr>(usedList_->BlockBase) + BLOCK_POINTER) = GUARD_BANDING_VALUE;
-				res = reinterpret_cast<void *>(reinterpret_cast<uintPtr>(usedList_->BlockBase) + BLOCK_POINTER + GUARD_BANDING_LENGTH);
-				*reinterpret_cast<uint32 *>(reinterpret_cast<uintPtr>(usedList_->BlockBase) + BLOCK_POINTER + GUARD_BANDING_LENGTH + i_size) = GUARD_BANDING_VALUE;
-#else
-				res = reinterpret_cast<void *>(reinterpret_cast<uintPtr>(usedList_->m_pBlockBase) + BLOCK_POINTER);
-#endif
-				// operate free list node and used list
-				usedList_->Previous = nullptr;
-				usedList_->Next = innerTemp;
-				if (innerTemp != nullptr)
-					innerTemp->Previous = usedList_;
-
-				temp->SizeBlock -= i_size + headLength + tailLength;
-				blockLength_++;
-			}
-			return res;
-		}
-		else
-			temp = temp->Next;
-	}
-	return nullptr;
+	fixedSizeAllocator8_ = FixedSizeAllocator::Create(fixedMemoryBase8, fixedMemorySize8, fixedBlockNumber8, 8);
+	fixedSizeAllocator16_ = FixedSizeAllocator::Create(fixedMemoryBase16, fixedMemorySize16, fixedBlockNumber16, 16);
+	fixedSizeAllocator32_ = FixedSizeAllocator::Create(fixedMemoryBase32, fixedMemorySize32, fixedBlockNumber32, 32);
+	fixedSizeAllocator64_ = FixedSizeAllocator::Create(fixedMemoryBase64, fixedMemorySize64, fixedBlockNumber64, 64);
+	fixedSizeAllocator128_ = FixedSizeAllocator::Create(fixedMemoryBase128, fixedMemorySize128, fixedBlockNumber128, 128);
 }
 
 
-void *	HeapManager::alloc(size_t i_size, uint32 i_alignment)
+void *HeapManager::Alloc(size_t i_size, uint32 i_alignment)
 {
-	BlockDescriptor * temp = freeList_;
-
-	if (temp == nullptr) return nullptr;
-
-	// store addtional length in head and tail according to _DEBUG
-#if defined(_DEBUG)
-	uint32 headLength = BLOCK_POINTER + GUARD_BANDING_LENGTH;
-	uint32 tailLength = GUARD_BANDING_LENGTH;
-#else
-	uint32 headLength = BLOCK_POINTER;
-	uint32 tailLength = 0;
-#endif
-
-	void *res = nullptr;
-	while (temp != nullptr)
+	void *ptr = nullptr;
+	if (i_size <= 8)
 	{
-		// find alignment position
-		uintPtr tempAlignment = alignment(reinterpret_cast<uintPtr>(temp->MemoryBase) + temp->SizeBlock - tailLength - i_size, i_alignment);
-		if (tempAlignment >= reinterpret_cast<uintPtr>(temp->MemoryBase) + headLength)
-		{
-			BlockDescriptor *innerTemp;
-
-			// use alignment position to judge whether blocks' size is enough
-			if (tempAlignment <= reinterpret_cast<uintPtr>(temp->MemoryBase) + FIT_LENGTH + headLength)
-			{
-				// change m_pBlockBase into the start of useful memory
-				temp->BlockBase = reinterpret_cast<void*>(tempAlignment - headLength);
-
-				// set BlockDescriptor's position before GUARD BANDING
-				*static_cast<uintPtr *>(temp->BlockBase) = reinterpret_cast<uintPtr>(temp);
-
-				// set GUARD BANDING and return position according to _DEBUG
-#if defined(_DEBUG)
-				*reinterpret_cast<uint32 *>(reinterpret_cast<uintPtr>(temp->BlockBase) + BLOCK_POINTER) = GUARD_BANDING_VALUE;
-				res = reinterpret_cast<void *>(reinterpret_cast<uintPtr>(temp->BlockBase) + BLOCK_POINTER + GUARD_BANDING_LENGTH);
-				*reinterpret_cast<uint32 *>(reinterpret_cast<uintPtr>(temp->BlockBase) + BLOCK_POINTER + GUARD_BANDING_LENGTH + i_size) = GUARD_BANDING_VALUE;
-#else
-				res = reinterpret_cast<void *>(reinterpret_cast<uintPtr>(temp->m_pBlockBase) + BLOCK_POINTER);
-#endif
-
-				// operate free list node and used list
-				if (temp->Next != nullptr)
-					temp->Next->Previous = temp->Previous;
-				if (temp->Previous != nullptr)
-					temp->Previous->Next = temp->Next;
-				if(temp == freeList_)
-					freeList_ = temp->Next;
-
-				if (usedList_ != nullptr)
-					usedList_->Previous = temp;
-				temp->Next = usedList_;
-				temp->Previous = nullptr;
-				usedList_ = temp;
-			}
-			else
-			{
-				innerTemp = usedList_;
-
-				// split block in free list and assign new used block 
-				ASSERT(blockLength_ < blockMaxLength_);
-
-				usedList_ = reinterpret_cast<BlockDescriptor *>(reinterpret_cast<uintPtr>(heapMemoryBase_) + memorySize_ - (blockMaxLength_ - blockLength_) * BLOCK_SIZE);
-				usedList_->MemoryBase = reinterpret_cast<void *>(tempAlignment - headLength);
-				usedList_->BlockBase = usedList_->MemoryBase;
-				usedList_->SizeBlock = reinterpret_cast<uintPtr>(temp->MemoryBase) + temp->SizeBlock - tempAlignment + headLength;
-
-				// set BlockDescriptor's position before GUARD BANDING
-				*static_cast<uintPtr *>(usedList_->BlockBase) = (uintPtr)usedList_;
-
-				// set GUARD BANDING and return position according to _DEBUG
-#if defined(_DEBUG)
-				*reinterpret_cast<uint32 *>(reinterpret_cast<uintPtr>(usedList_->BlockBase) + BLOCK_POINTER) = GUARD_BANDING_VALUE;
-				res = reinterpret_cast<void *>(reinterpret_cast<uintPtr>(usedList_->BlockBase) + BLOCK_POINTER + GUARD_BANDING_LENGTH);
-				*reinterpret_cast<uint32 *>(reinterpret_cast<uintPtr>(usedList_->BlockBase) + BLOCK_POINTER + GUARD_BANDING_LENGTH + i_size) = GUARD_BANDING_VALUE;
-#else
-				res = reinterpret_cast<void *>(reinterpret_cast<uintPtr>(usedList_->m_pBlockBase) + BLOCK_POINTER);
-#endif
-
-				// operate free list node and used list
-				usedList_->Previous = nullptr;
-				usedList_->Next = innerTemp;
-				if (innerTemp != nullptr)
-					innerTemp->Previous = usedList_;
-
-				temp->SizeBlock = reinterpret_cast<uintPtr>(usedList_->MemoryBase) - reinterpret_cast<uintPtr>(temp->MemoryBase);
-				blockLength_++;
-			}
-			return res;
-		}
-		else
-			temp = temp->Next;
+		ptr = fixedSizeAllocator8_->alloc();
 	}
-	return nullptr;
-}
-
-bool	HeapManager::free(const void * i_ptr)
-{
-#ifdef _DEBUG
-	uint32 forward = BLOCK_POINTER + GUARD_BANDING_LENGTH;
-#else
-	uint32 forward = BLOCK_POINTER;
-#endif // _DEBUG
-
-	BlockDescriptor * temp = reinterpret_cast<BlockDescriptor *>(*reinterpret_cast<uintPtr *>(reinterpret_cast<uintPtr>(i_ptr) - forward));
-	ASSERT(temp != nullptr);
-
-	//check GUARD BANDING (now can only support the previous check)
-	uint32 firstGuardBand = *reinterpret_cast<uint32 *>(reinterpret_cast<uintPtr>(i_ptr) - GUARD_BANDING_LENGTH);
-	//uint32 secondGUARDBAND = *(uint32 *)(uint32)
-	ASSERT(firstGuardBand == GUARD_BANDING_VALUE);
-
-	// modify free list and used list
-	if (temp->Previous == nullptr && temp->Next == nullptr)
-		usedList_ = nullptr;
-	if(temp->Previous != nullptr)
-		temp->Previous->Next = temp->Next;
-	if(temp->Next != nullptr)
-		temp->Next->Previous = temp->Previous;
-	usedList_ = temp->Next;
-
-	if (freeList_ != nullptr)
-		freeList_->Previous = temp;
-	temp->Next = freeList_;
-
-	// reset m_pBlockBase to m_pMemoryBase
-	temp->BlockBase = temp->MemoryBase;
-	temp->Next = freeList_;
-	temp->Previous = nullptr;
-	freeList_ = temp;
-	return true;
-}
-
-void	HeapManager::collect()
-{
-	// quick sort free list
-	freeList_ = qsort(freeList_);
-
-	// combine fragment in free list
-	freeList_ = combineList(freeList_);
-
-	// reset free list and used list's BlockDescriptor's memory position
-	// handle the situation that freelist or usedlist only has one node
-	bool singleFree = false, singleUsed = false;
-	void *freeBase = nullptr, *usedBase = nullptr;
-	if (freeList_ != nullptr &&freeList_->Next == nullptr)
+	else if (i_size <= 16)
 	{
-		singleFree = true;
-		freeBase = freeList_;
+		ptr = fixedSizeAllocator16_->alloc();
 	}
-	if (usedList_ != nullptr && usedList_->Next == nullptr)
+	else if (i_size <= 32)
 	{
-		singleUsed = true;
-		usedBase = usedList_;
+		ptr = fixedSizeAllocator32_->alloc();
 	}
-	
-	// search reasonable position of BlockDescriptor and reorgnize their position
-	BlockDescriptor * temp1 = freeList_;
-	BlockDescriptor * temp2 = usedList_;
-	BlockDescriptor * temp;
-
-	uintPtr maxAddress = reinterpret_cast<uintPtr>(heapMemoryBase_) + memorySize_ - (blockMaxLength_ - blockLength_) * BLOCK_SIZE;
-	bool mark = true;
-
-	for (uint32 i = 0; i < blockLength_;i++)
+	else if (i_size <= 64)
 	{
-		uintPtr address = reinterpret_cast<uintPtr>(heapMemoryBase_) + memorySize_ - (blockMaxLength_ - i) * BLOCK_SIZE;
-		temp = reinterpret_cast<BlockDescriptor *>(address);
-		if (temp->Previous == nullptr && temp->Next == nullptr)
-		{
-			while (temp1 != nullptr || temp2 != nullptr)
-			{
-				if (mark)
-				{
-					while (reinterpret_cast<uintPtr>(temp1) < maxAddress)
-					{
-						if (temp1 == nullptr)
-						{
-							mark = false;
-							break;
-						}
-						temp1 = temp1->Next;	
-					}
-				}
-				if (!mark)
-				{
-					while (temp2 != nullptr && reinterpret_cast<uintPtr>(temp2) < maxAddress)
-					{
-						temp2 = temp2->Next;
-					}
-				}
-
-				if (mark)
-				{
-					*temp = *temp1;
-					if (!singleFree || (singleFree && freeBase != temp1))
-					{
-						if (temp->Previous != nullptr)
-							temp->Previous->Next = temp;
-						if (temp->Next != nullptr)
-							temp->Next->Previous = temp;
-						if (temp1 == freeList_) 
-							freeList_ = temp;
-#ifdef _DEBUG
-						uint32 forward = BLOCK_POINTER + GUARD_BANDING_LENGTH;
-#else
-						uint32 forward = BLOCK_POINTER;
-#endif // _DEBUG
-						*static_cast<uintPtr *>(temp->BlockBase) = reinterpret_cast<uintPtr>(temp);
-
-						temp1->Previous = nullptr;
-						temp1->Next = nullptr;
-					}
-					temp1 = temp->Next;
-					break;
-				}
-				else if(temp2 != nullptr)
-				{
-					*temp = *temp2;
-					if (!singleUsed || (singleUsed && usedBase != temp2))
-					{
-						if(temp->Previous != nullptr)
-							temp->Previous->Next = temp;
-						if(temp->Next != nullptr)
-							temp->Next->Previous = temp;
-						if (temp2 == usedList_) 
-							usedList_ = temp;
-#ifdef _DEBUG
-						uint32 forward = BLOCK_POINTER + GUARD_BANDING_LENGTH;
-#else
-						uint32 forward = BLOCK_POINTER;
-#endif // _DEBUG
-						*static_cast<uintPtr *>(temp->BlockBase) = reinterpret_cast<uintPtr>(temp);
-
-						temp2->Previous = nullptr;
-						temp2->Next = nullptr;
-					}
-					temp2 = temp->Next;
-					break;
-				}
-			}
-		}
+		ptr = fixedSizeAllocator64_->alloc();
 	}
-}
-
-size_t	HeapManager::getLargestFreeBlock() const
-{
-	size_t res = 0;
-	BlockDescriptor *temp = freeList_;
-	while (temp != nullptr)
+	else if (i_size <= 128)
 	{
-		if (temp->SizeBlock > res)
-			res = temp->SizeBlock;
-		temp = temp->Next;
+		ptr = fixedSizeAllocator128_->alloc();
 	}
-	return res;
-}
 
-size_t  HeapManager::getLargestUsedBlock() const
-{
-	size_t res = 0;
-	BlockDescriptor *temp = usedList_;
-	while (temp != nullptr)
+	if (ptr == nullptr || i_size > 128)
 	{
-		if (temp->SizeBlock > res)
-			res = temp->SizeBlock;
-		temp = temp->Next;
+		ptr = heapAllocator_->alloc(i_size, i_alignment);
 	}
-	return res;
-}
+	if (ptr == nullptr)
+	{
+		heapAllocator_->collect();
 
-size_t	HeapManager::getTotalFreeMemory() const
-{
-	size_t res = 0;
-	BlockDescriptor *temp = freeList_;
-	while (temp != nullptr)
-	{
-		res += temp->SizeBlock;
-		temp = temp->Next;
-	}
-	return res;
-}
+		ptr = heapAllocator_->alloc(i_size, i_alignment);
 
-size_t	HeapManager::getTotalUsedMemory() const
-{
-	size_t res = 0;
-	BlockDescriptor *temp = usedList_;
-	while (temp != nullptr)
-	{
-		res += temp->SizeBlock;
-		temp = temp->Next;
+		SLOW_ASSERT(ptr, ErrorType::EHeapOverflow);
 	}
-	return res;
-}
-
-uint32 HeapManager::getFreeCount() const
-{
-	uint32 res = 0;
-	BlockDescriptor *temp = freeList_;
-	while (temp != nullptr)
-	{
-		res++;
-		temp = temp->Next;
-	}
-	return res;
-}
-
-uint32 HeapManager::getUsedCount() const
-{
-	uint32 res = 0;
-	BlockDescriptor *temp = usedList_;
-	while (temp != nullptr)
-	{
-		res++;
-		temp = temp->Next;
-	}
-	return res;
+	return ptr;
 }
 
 
-BlockDescriptor* HeapManager::qsort(BlockDescriptor *i_head)
+bool HeapManager::Free(void *i_ptr)
 {
-	if (i_head == nullptr || i_head->Next == nullptr) return i_head;
-	BlockDescriptor *h1 = nullptr, *h2 = nullptr;
-	BlockDescriptor *temp1 = h1, *temp2 = h2, *temp = i_head->Next;
-	i_head->Previous = nullptr;
-	i_head->Next = nullptr;
-	//BlockDescriptor *innerTemp;
-	while (temp != nullptr)
+	if (fixedSizeAllocator8_->Contains(i_ptr))
 	{
-		//innerTemp = temp->m_next;
-		if (temp->MemoryBase < i_head->MemoryBase)
-		{
-			if (temp1 == nullptr)
-			{
-				h1 = temp;
-				temp1 = temp;
-				h1->Previous = nullptr;
-			}
-			else
-			{
-				temp->Previous = temp1;
-				temp1->Next = temp;
-				temp1 = temp;
-			}
-		}
-		else
-		{
-			if (temp2 == nullptr)
-			{
-				h2 = temp;
-				temp2 = temp;
-				h2->Previous = nullptr;
-			}
-			else
-			{
-				temp->Previous = temp2;
-				temp2->Next = temp;
-				temp2 = temp;
-			}
-		}
-		temp = temp->Next;
+		ASSERT(fixedSizeAllocator8_->IsAllocated(i_ptr));
+		return fixedSizeAllocator8_->free(i_ptr);
 	}
-	if(temp1 != nullptr)
-		temp1->Next = nullptr;
-	if(temp2 != nullptr)
-		temp2->Next = nullptr;
-	return append(append(qsort(h1), i_head), qsort(h2));
-}
-
-BlockDescriptor * HeapManager::append(BlockDescriptor *i_h1, BlockDescriptor *i_h2)
-{
-	if (i_h1 == nullptr) return i_h2;
-	if (i_h2 == nullptr) return i_h1;
-	BlockDescriptor * temp = i_h1;
-	while (temp->Next != nullptr)
+	else if (fixedSizeAllocator16_->Contains(i_ptr))
 	{
-		temp = temp->Next;
+		ASSERT(fixedSizeAllocator16_->IsAllocated(i_ptr));
+		return fixedSizeAllocator16_->free(i_ptr);
 	}
-	temp->Next = i_h2;
-	i_h2->Previous = temp;
-	return i_h1;
-}
-
-BlockDescriptor* HeapManager::combineList(BlockDescriptor *i_list)
-{
-	if (i_list == nullptr) return nullptr;
-	BlockDescriptor *temp = i_list;
-	while (temp->Next != nullptr)
+	else if (fixedSizeAllocator32_->Contains(i_ptr))
 	{
-		uintPtr distance = reinterpret_cast<uintPtr>(temp->Next->MemoryBase) - reinterpret_cast<uintPtr>(temp->MemoryBase);
-
-		if (reinterpret_cast<uintPtr>(temp->MemoryBase) + temp->SizeBlock == reinterpret_cast<uintPtr>(temp->Next->MemoryBase))
-		{
-			temp->SizeBlock += temp->Next->SizeBlock;
-			if (temp->Next->Next != nullptr)
-			{
-				temp->Next = temp->Next->Next;
-				temp->Next->Previous->Previous = nullptr;
-				temp->Next->Previous->Next = nullptr;
-				temp->Next->Previous = temp;
-			}
-			else
-			{
-				temp->Next->Previous = nullptr;
-				temp->Next->Next = nullptr;
-				temp->Next = nullptr;
-			}
-			blockLength_--;
-		}
-		else
-			temp = temp->Next;
+		ASSERT(fixedSizeAllocator32_->IsAllocated(i_ptr));
+		return fixedSizeAllocator32_->free(i_ptr);
 	}
-	return i_list;
+	else if (fixedSizeAllocator64_->Contains(i_ptr))
+	{
+		ASSERT(fixedSizeAllocator64_->IsAllocated(i_ptr));
+		return fixedSizeAllocator64_->free(i_ptr);
+	}
+	else if (fixedSizeAllocator128_->Contains(i_ptr))
+	{
+		ASSERT(fixedSizeAllocator128_->IsAllocated(i_ptr));
+		return fixedSizeAllocator128_->free(i_ptr);
+	}
+	else
+	{
+		ASSERT(heapAllocator_->IsAllocated(i_ptr));
+		return heapAllocator_->free(i_ptr);
+	}
 }
