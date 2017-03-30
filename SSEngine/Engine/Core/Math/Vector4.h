@@ -1,5 +1,7 @@
 #pragma once
 
+#include <xmmintrin.h>
+
 #include "Vector3.h"
 
 struct Matrix;

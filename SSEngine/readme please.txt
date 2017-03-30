@@ -38,3 +38,22 @@ Add RenerObject and RenderManager, RenderManager is a subsystem in this game whi
 A renderObject is related to a gameobject																		// Engine/Subsystem/RenderObject.h
 Replace normal pointer to smart pointer	as more as possible														// Game/main.cpp
 Add StringPool, HashString and pooledString and their functions							// Engine/Core/String/
+
+
+V1.04 
+Reconstruct engine(maybe the last time), change file structure, change code standard.
+Add stringPool into use																				         // Init in Engine/Engine/Private/Engine.cpp and use in Object/Actor.h (which store type and name)
+add actor and pawn object structure																			 // Actor own gameObject and observe components, pawn inherites from Actor and observe a controller
+add three kinds of controller, which control pawns, include player and monsters							     // Engine/Controller/Controller.h 
+add ControllerManager, singleton which owns all controllers	(should move out of engine in the future)		 // Engine/Controller/ControllerManager.h
+add WorldManager, singleton which owns all actors and pawns (Game Scene)									 // Engine/Manager/WorldManager.h	
+fix bugs in FixedSizeAllocator
+
+V1.05
+add Physics objects, controllered by controller and update gameobject's parameters							 // Engine/Subsystem/PhysicsObject.h
+add Physics Manager, singleton who owns all physics objects and update them				                     // Engine/SubSystem/PhysicsManage.h 
+add Engine states, add Engine functions, rewrite code in Game/main.cpp relate to new structure				 // Game/main.cpp    Engine/Engine/Engine.h
+add HeapManage, singleton init when the engine start. control all other new									 // Engine/Core/Memory/HeapManager.h
+separate new into a new file, overload new use functions in HeapManager                                      // Engine/Core/Memory/New.h
+Control all other singletons in Engine. Add static function Create, Get, Destroy into all singletons         // All singletons
+add box2D class into gameobject

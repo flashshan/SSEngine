@@ -37,8 +37,8 @@ void TestKeyCallback(unsigned int i_VKeyID, bool bWentDown)
 //#define RANDOM_MOVE_MONSTER
 #define FOCUS_MOVE_MONSTER
 
-#define DEFAULT_MONSTER_NUMBER 10
-
+#define FOCUS_MONSTER_NUMBER 10
+#define RANDOM_MONSTER_NUMBER 10
 
 int WINAPI wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_lpCmdLine, int i_nCmdShow)
 {
@@ -67,18 +67,23 @@ int WINAPI wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_l
 		player->AddPhysicsObject(100.0f);
 
 		// assign monsters
-		int32 monsterNumber = DEFAULT_MONSTER_NUMBER;
+		int32 focusMonsterNumber = FOCUS_MONSTER_NUMBER;
 
 		Pawn* tempMonster;
-		for (int i = 0; i < monsterNumber; i++)
+		for (int i = 0; i < focusMonsterNumber; i++)
 		{
-#if defined RANDOM_MOVE_MONSTER
-			tempMonster = WorldManager::GetInstance()->SpawnPawn<Pawn>(Transform(Vector3(Vector2::RandomNormal() * ScreenSize)), "RMonster", "RandomMoveMonster");
-#elif defined FOCUS_MOVE_MONSTER 
 			tempMonster = WorldManager::GetInstance()->SpawnPawn<Pawn>(Transform(Vector3(Vector2::RandomNormal() * ScreenSize)), "FMonster", "FocusMoveMonster");
-#endif // 
 			SLOW_ASSERT(tempMonster, ErrorType::ENullPointer);
-			tempMonster->AddRenderObject("data\\monster.dds");
+			tempMonster->AddRenderObject("data\\focusMonster.dds");
+		}
+
+		int32 randomMonsterNumber = RANDOM_MONSTER_NUMBER;
+
+		for (int i = 0; i < randomMonsterNumber; i++)
+		{
+			tempMonster = WorldManager::GetInstance()->SpawnPawn<Pawn>(Transform(Vector3(Vector2::RandomNormal() * ScreenSize)), "RMonster", "RandomMoveMonster");
+			SLOW_ASSERT(tempMonster, ErrorType::ENullPointer);
+			tempMonster->AddRenderObject("data\\randomMonster.dds");
 		}
 
 		bool bQuit = false;
