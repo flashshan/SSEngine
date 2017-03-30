@@ -11,8 +11,8 @@ public:
 
 	inline ~StringPool();
 
-	const char *add(const char *i_string);
-	const char *find(const char *i_string);
+	char *add(const char *i_string);
+	char *find(const char *i_string);
 
 private:
 	FORCEINLINE StringPool(void *i_poolBuffer, size_t i_poolSize);
@@ -53,6 +53,7 @@ FORCEINLINE void StringPool::DestroyInstance()
 {
 	ASSERT(StringPool::globalInstance_ != nullptr);
 	delete StringPool::globalInstance_;
+	StringPool::globalInstance_ = nullptr;
 }
 
 inline StringPool::~StringPool()

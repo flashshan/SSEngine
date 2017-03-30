@@ -4,6 +4,7 @@
 #include "SubSystem\PhysicsManager.h"
 #include "Core\String\HashedString.h"
 #include "Component\IComponent.h"
+#include "Core\String\StringPool.h"
 
 #define NAME_LENGTH  50
 
@@ -75,18 +76,19 @@ private:
 // implement forceinline
 
 FORCEINLINE Actor::Actor()
-	: name_(_strdup("defaultName")), type_(HashedString("defaultType")), gameObject_(new GameObject()), renderObject_(nullptr)
+	: name_(StringPool::GetInstance()->add("defaultName")), type_(HashedString("defaultType")), 
+	gameObject_(new GameObject()), renderObject_(nullptr), physicsObject_(nullptr)
 {
 }
 
 FORCEINLINE Actor::Actor(const Transform &i_transform, const char *i_name, const char *i_type)
-	: name_(_strdup(i_name)), type_(HashedString(i_type)), gameObject_(new GameObject(i_transform)), renderObject_(nullptr)
+	: name_(StringPool::GetInstance()->add(i_name)), type_(HashedString(i_type)), 
+	gameObject_(new GameObject(i_transform)), renderObject_(nullptr), physicsObject_(nullptr)
 {
-
 }
 
 FORCEINLINE Actor::Actor(const Actor &i_other)
-	: name_(_strdup(i_other.name_)), type_(i_other.type_), gameObject_(i_other.gameObject_), renderObject_(i_other.renderObject_)
+	: name_(i_other.name_), type_(i_other.type_), gameObject_(i_other.gameObject_), renderObject_(i_other.renderObject_)
 {
 	components_ = i_other.components_;
 }
@@ -104,7 +106,7 @@ FORCEINLINE Actor::Actor(Actor &&i_other)
 
 FORCEINLINE Actor& Actor::operator =(const Actor &i_other)
 {
-	name_ = _strdup(i_other.name_); 
+	name_ = i_other.name_; 
 	type_ = i_other.type_;
 	gameObject_ = i_other.gameObject_; 
 	renderObject_ = i_other.renderObject_;

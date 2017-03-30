@@ -24,9 +24,9 @@
 //#define TestVector
 //#define TestFixedAllocator
 //#define TestBitArray
-//#define TestContainer
+#define TestContainer
 //#define TestSmartPointer
-#define TestMatrix
+//#define TestMatrix
 
 
 #ifdef TestHeapManager
@@ -723,6 +723,8 @@ bool Container_UnitTest()
 	testLinkedList.InsertNext(testLinkedList.Head(), Vector3(1, 1, 1));
 	testLinkedList.DeleteNext(testLinkedList.Head());
 	testLinkedList.PopHead();
+	testLinkedList.Clear();
+
 
 	List<Vector3> testList;
 	testList.PushHead(Vector3(0, 0, 0));
@@ -731,6 +733,7 @@ bool Container_UnitTest()
 	testList.Delete(testList.Head());
 	testList.PopTail();
 	testList.PopHead();
+	//testList.Clear();
 
 	return true;
 }

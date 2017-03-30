@@ -53,6 +53,7 @@ FORCEINLINE void PhysicsManager::DestroyInstance()
 {
 	ASSERT(PhysicsManager::globalInstance_ != nullptr);
 	delete PhysicsManager::globalInstance_;
+	PhysicsManager::globalInstance_ = nullptr;
 }
 
 FORCEINLINE PhysicsManager::PhysicsManager()

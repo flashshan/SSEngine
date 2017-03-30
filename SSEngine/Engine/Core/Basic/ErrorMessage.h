@@ -61,6 +61,7 @@ FORCEINLINE void ErrorMessage::DestroyInstance()
 {
 	//ASSERT(ErrorMessage::globalInstance_ != nullptr);
 	delete ErrorMessage::globalInstance_;
+	ErrorMessage::globalInstance_ = nullptr;
 }
 
 FORCEINLINE ErrorMessage::ErrorMessage()

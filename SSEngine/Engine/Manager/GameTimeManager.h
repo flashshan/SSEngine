@@ -40,6 +40,7 @@ FORCEINLINE void GameTimeManager::DestroyInstance()
 {
 	ASSERT(GameTimeManager::globalInstance_ != nullptr);
 	delete GameTimeManager::globalInstance_;
+	GameTimeManager::globalInstance_ = nullptr;
 }
 
 

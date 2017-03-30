@@ -88,13 +88,31 @@ private:
 
 // type cast for Strong pointer
 template<typename From, typename To> 
-StrongPtr<To> CastStrongPtr(StrongPtr<From> &i_from);
+FORCEINLINE StrongPtr<To> CastStrongPtr(StrongPtr<From> &i_from)
+{
+	if (i_from)
+	{
+		return StrongPtr<To>(reinterpret_cast<To*>(&(*i_from)), i_from.GetCounter());
+	}
+	else
+	{
+		return StrongPtr<To>(nullptr);
+	}
+}
 
 //type cast for weak pointer
 template<typename From, typename To>
-WeakPtr<To> CastWeakPtr(WeakPtr<From> &i_from);
-
-
+FORCEINLINE WeakPtr<To> CastWeakPtr(WeakPtr<From> &i_from)
+{
+	if (i_from)
+	{
+		return WeakPtr<To>(CastStrongPtr<From, To>(i_from.Acquire()));
+	}
+	else
+	{
+		return WeakPtr<To>();
+	}
+}
 
 
 // implement forceinline

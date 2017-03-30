@@ -35,7 +35,7 @@ public:
 	FORCEINLINE void InsertNext(LinkedListNode<T> *i_pos, const T &i_val);
 	FORCEINLINE void DeleteNext(LinkedListNode<T> *i_pos);
 
-	void Clear();
+	FORCEINLINE void Clear();
 
 private:
 	LinkedListNode<T> *head_;
@@ -55,7 +55,7 @@ public:
 	FORCEINLINE void InsertNext(ListNode<T> *i_pos, const T &i_node);
 	FORCEINLINE void Delete(ListNode<T> *i_pos);
 	
-	void Clear();
+	FORCEINLINE void Clear();
 
 private:
 	ListNode<T> *head_;
@@ -104,6 +104,20 @@ template<typename T> FORCEINLINE void LinkedList<T>::DeleteNext(LinkedListNode<T
 	delete i_pos->Next;
 	i_pos->Next = temp;
 }
+
+template<typename T> FORCEINLINE void LinkedList<T>::Clear()
+{
+	if (head_ == nullptr) return;
+
+	LinkedListNode<T> *temp;
+	do
+	{
+		temp = head_->Next;
+		delete head_;
+		head_ = temp;
+	} while (head_ != nullptr);
+}
+
 
 
 
@@ -210,5 +224,18 @@ template<typename T> FORCEINLINE void List<T>::Delete(ListNode<T> *i_pos)
 		tail_ = i_pos->Previous;
 	}
 	delete i_pos;
+}
+
+template<typename T> FORCEINLINE void List<T>::Clear()
+{
+	if (head_ == nullptr) return;
+
+	ListNode<T> *temp;
+	do
+	{
+		temp = head_->Next;
+		delete head_;
+		head_ = temp;
+	} while (head_ != nullptr);
 }
 

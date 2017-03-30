@@ -87,7 +87,7 @@ inline void *FixedSizeAllocator::alloc()
 		bitArray_->SetBit(i_firstAvailable);
 
 		// calculate it’s address and return it to user
-		return reinterpret_cast<void *>(reinterpret_cast<uintPtr>(blocksMemoryBase_) + (i_firstAvailable * blockSize_));
+		return reinterpret_cast<void *>(reinterpret_cast<uintPtr>(blocksMemoryBase_) + ((i_firstAvailable - 1) * blockSize_));
 	}
 	else
 	{
@@ -99,7 +99,7 @@ inline void *FixedSizeAllocator::alloc()
 FORCEINLINE bool FixedSizeAllocator::free(const void *i_ptr)
 {
 	ASSERT(i_ptr);
-	bitArray_->ClearBit((reinterpret_cast<uintPtr>(i_ptr) - reinterpret_cast<uintPtr>(blocksMemoryBase_)) / blockSize_);
+	bitArray_->ClearBit((reinterpret_cast<uintPtr>(i_ptr) - reinterpret_cast<uintPtr>(blocksMemoryBase_)) / blockSize_ + 1);
 	return true;
 }
 
@@ -107,7 +107,7 @@ FORCEINLINE bool FixedSizeAllocator::free(const void *i_ptr)
 FORCEINLINE bool FixedSizeAllocator::Contains(const void * i_ptr) const
 {
 	ASSERT(i_ptr);
-	return i_ptr >= blocksMemoryBase_ && i_ptr < reinterpret_cast<void *>(reinterpret_cast<uintPtr>(blocksMemoryBase_) + blockSize_ * numBlocks_);
+	return i_ptr >= blocksMemoryBase_ && i_ptr < reinterpret_cast<void *>(reinterpret_cast<uintPtr>(blocksMemoryBase_) + memorySize_);
 	//return i_ptr >= m_blocksMemoryBase && i_ptr <= reinterpret_cast<void *>(reinterpret_cast<uintPtr>(m_blocksMemoryBase) + m_blockSize * m_numBlocks);
 }
 
@@ -115,7 +115,7 @@ FORCEINLINE bool FixedSizeAllocator::Contains(const void * i_ptr) const
 FORCEINLINE bool FixedSizeAllocator::IsAllocated(const void * i_ptr) const
 {
 	ASSERT(i_ptr);
-	return bitArray_->IsBitSet((reinterpret_cast<uintPtr>(i_ptr) - reinterpret_cast<uintPtr>(blocksMemoryBase_)) / blockSize_);
+	return bitArray_->IsBitSet((reinterpret_cast<uintPtr>(i_ptr) - reinterpret_cast<uintPtr>(blocksMemoryBase_)) / blockSize_ + 1);
 }
 
 FORCEINLINE size_t FixedSizeAllocator::getFreeCount() const

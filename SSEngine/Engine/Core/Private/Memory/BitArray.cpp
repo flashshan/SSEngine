@@ -2,7 +2,7 @@
 
 // Branch Free Scan 0 from forward, return 1 - 32  or 1 - 64
 #ifdef _WIN64
-bool BitScanForwardZero64(uint32 *o_index, uintPtr i_value)
+void BitScanForwardZero64(uint32 *o_index, uintPtr i_value)
 {
 	uint32 i32 = ((i_value & 0xffffffff) == 0xffffffff) << 5;
 	i_value >>= i32;
@@ -21,37 +21,35 @@ bool BitScanForwardZero64(uint32 *o_index, uintPtr i_value)
 
 	uint32 i1 = ((i_value & 0x1) == 0x1);
 
-	if (((i_value >> i1) & 1) == 1) return false;
+	//if (((i_value >> i1) & 1) == 1) return false;
 	
 	*o_index = i32 + i16 + i8 + i4 + i2 + i1 + 1;
-	return true;
 }
 
-bool BitScanForwardOne64(uint32 *o_index, uintPtr i_value)
+void BitScanForwardOne64(uint32 *o_index, uintPtr i_value)
 {
 	uint32 i32 = ((i_value | 0xffffffff00000000) == 0xffffffff00000000) << 5;
 	i_value >>= i32;
 
-	uint32 i16 = ((i_value | 0xffff0000) == 0xffff0000) << 4;
+	uint32 i16 = ((i_value | 0xffffffffffff0000) == 0xffffffffffff0000) << 4;
 	i_value >>= i16;
 
-	uint32 i8 = ((i_value | 0xff00) == 0xff00) << 3;
+	uint32 i8 = ((i_value | 0xffffffffffffff00) == 0xffffffffffffff00) << 3;
 	i_value >>= i8;
 
-	uint32 i4 = ((i_value | 0xf0) == 0xf0) << 2;
+	uint32 i4 = ((i_value | 0xfffffffffffffff0) == 0xfffffffffffffff0) << 2;
 	i_value >>= i4;
 
-	uint32 i2 = ((i_value | 0xc) == 0xc) << 1;
+	uint32 i2 = ((i_value | 0xfffffffffffffffc) == 0xfffffffffffffffc) << 1;
 	i_value >>= i2;
 
-	uint32 i1 = ((i_value | 0x2) == 0x2);
+	uint32 i1 = ((i_value | 0xfffffffffffffffe) == 0xfffffffffffffffe);
 
-	if (((i_value >> i1) | 0) == 0) return false;
+	//if (((i_value >> i1) | 0) == 0) return false;
 	*o_index = i32 + i16 + i8 + i4 + i2 + i1 + 1;
-	return true;
 }
 #else
-bool BitScanForwardZero32(uint32 *o_index, uintPtr i_value)
+void BitScanForwardZero32(uint32 *o_index, uintPtr i_value)
 {
 	uint32 i16 = ((i_value & 0xffff) == 0xffff) << 4;
 	i_value >>= i16;
@@ -67,30 +65,28 @@ bool BitScanForwardZero32(uint32 *o_index, uintPtr i_value)
 
 	uint32 i1 = ((i_value & 0x1) == 0x1);
 
-	if(((i_value >> i1) & 1) == 1) return false;
+	//if(((i_value >> i1) & 1) == 1) 
 	*o_index = i16 + i8 + i4 + i2 + i1 + 1;
-	return true;
 }
 
-bool BitScanForwardOne32(uint32 *o_index, uintPtr i_value)
+void BitScanForwardOne32(uint32 *o_index, uintPtr i_value)
 {
 	uint32 i16 = ((i_value | 0xffff0000) == 0xffff0000) << 4;
 	i_value >>= i16;
 
-	uint32 i8 = ((i_value | 0xff00) == 0xff00) << 3;
+	uint32 i8 = ((i_value | 0xffffff00) == 0xffffff00) << 3;
 	i_value >>= i8;
 
-	uint32 i4 = ((i_value | 0xf0) == 0xf0) << 2;
+	uint32 i4 = ((i_value | 0xfffffff0) == 0xfffffff0) << 2;
 	i_value >>= i4;
 
-	uint32 i2 = ((i_value | 0xc) == 0xc) << 1;
+	uint32 i2 = ((i_value | 0xfffffffc) == 0xfffffffc) << 1;
 	i_value >>= i2;
 
-	uint32 i1 = ((i_value | 0x2) == 0x2);
+	uint32 i1 = ((i_value | 0xfffffffe) == 0xfffffffe);
 
-	if (((i_value >> i1) | 0) == 0) return false;
+	//if (((i_value >> i1) | 0) == 0) return false;
 	*o_index = i16 + i8 + i4 + i2 + i1 + 1;
-	return true;
 }
 
 #endif // _WIN64
@@ -146,9 +142,9 @@ bool BitArray::GetFirstClearBit(size_t & o_bitNumber) const
 	}
 	uint32 index;
 #ifdef _WIN64
-	BitScanForwardZero64(&index, m_arrayBase[arrayIndex]);
+	BitScanForwardOne64(&index, arrayBase_[arrayIndex]);
 #else
-	BitScanForwardZero32(&index, arrayBase_[arrayIndex]);
+	BitScanForwardOne32(&index, arrayBase_[arrayIndex]);
 #endif // _WIN64
 	if (arrayIndex * arrayBits_ + index > numBits_)
 		return false;
@@ -169,7 +165,7 @@ bool BitArray::GetFirstSetBit(size_t & o_bitNumber) const
 	}
 	uint32 index;
 #ifdef _WIN64
-	BitScanForwardZero64(&index, m_arrayBase[arrayIndex]);
+	BitScanForwardZero64(&index, arrayBase_[arrayIndex]);
 #else
 	BitScanForwardZero32(&index, arrayBase_[arrayIndex]);
 #endif // _WIN64

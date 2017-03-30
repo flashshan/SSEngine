@@ -14,11 +14,12 @@ FixedSizeAllocator::FixedSizeAllocator(void *i_pTotalMemory, const size_t i_size
 {
 	size_t bitArrayTotalSize = sizeof(BitArray) + ((i_numBlocks - 1) / (sizeof(uintPtr) * 8) + 1) * sizeof(uintPtr);
 
-	bitArray_ = BitArray::Create(i_numBlocks - 1, i_pTotalMemory, bitArrayTotalSize, true);
+	bitArray_ = BitArray::Create(i_numBlocks, i_pTotalMemory, bitArrayTotalSize, true);
 
 	blocksMemoryBase_ = reinterpret_cast<void *>(reinterpret_cast<uintPtr>(i_pTotalMemory) + bitArrayTotalSize);
 	
 	// keep alignment
-	blocksMemoryBase_ = reinterpret_cast<void *>(((reinterpret_cast<uintPtr>(blocksMemoryBase_) - 1) / i_blockSize + 1) * i_blockSize);
+	blocksMemoryBase_ = reinterpret_cast<void *>(((reinterpret_cast<uintPtr>(i_pTotalMemory) + bitArrayTotalSize - 1) / i_blockSize + 1) * i_blockSize);
+	
 	memorySize_ = i_numBlocks * i_blockSize;
 }

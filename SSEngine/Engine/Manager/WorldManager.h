@@ -67,6 +67,7 @@ FORCEINLINE void WorldManager::DestroyInstance()
 {
 	ASSERT(WorldManager::globalInstance_ != nullptr);
 	delete WorldManager::globalInstance_;
+	WorldManager::globalInstance_ = nullptr;
 }
 
 

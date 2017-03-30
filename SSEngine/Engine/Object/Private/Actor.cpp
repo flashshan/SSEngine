@@ -2,7 +2,6 @@
 
 Actor::~Actor()
 {
-	delete name_;
 }
 
 void Actor::Update()

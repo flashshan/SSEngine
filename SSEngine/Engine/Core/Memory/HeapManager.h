@@ -51,7 +51,8 @@ FORCEINLINE HeapManager *HeapManager::GetInstance()
 FORCEINLINE void HeapManager::DestroyInstance()
 {
 	ASSERT(HeapManager::globalInstance_ != nullptr);
-	delete HeapManager::globalInstance_;
+	// delete was overload and can not be used here
+	HeapManager::globalInstance_ = nullptr;
 }
 
 inline HeapManager::~HeapManager()

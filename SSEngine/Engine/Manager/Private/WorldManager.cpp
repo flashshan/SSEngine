@@ -1,5 +1,7 @@
 #include "Manager\WorldManager.h"
 
+#include "Core\Memory\New.h"
+
 WorldManager *WorldManager::globalInstance_ = nullptr;
 
 WorldManager::~WorldManager()

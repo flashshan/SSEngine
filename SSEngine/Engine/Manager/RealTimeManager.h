@@ -54,6 +54,7 @@ FORCEINLINE void RealTimeManager::DestroyInstance()
 {
 	ASSERT(RealTimeManager::globalInstance_ != nullptr);
 	delete RealTimeManager::globalInstance_;
+	RealTimeManager::globalInstance_ = nullptr;
 }
 
 

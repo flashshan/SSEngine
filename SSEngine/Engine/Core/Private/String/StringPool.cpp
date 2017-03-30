@@ -5,7 +5,7 @@
 
 StringPool *StringPool::globalInstance_ = nullptr;
 
-const char *StringPool::add(const char *i_string)
+char *StringPool::add(const char *i_string)
 {
 	ASSERT(i_string != nullptr);
 
@@ -27,7 +27,7 @@ const char *StringPool::add(const char *i_string)
 	return res;
 }
 
-const char *StringPool::find(const char *i_string)
+char *StringPool::find(const char *i_string)
 {
 	ASSERT(i_string != nullptr);
 

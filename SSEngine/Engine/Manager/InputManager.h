@@ -54,6 +54,7 @@ FORCEINLINE void InputManager::DestroyInstance()
 {
 	ASSERT(InputManager::globalInstance_ != nullptr);
 	delete InputManager::globalInstance_;
+	InputManager::globalInstance_ = nullptr;
 }
 
 

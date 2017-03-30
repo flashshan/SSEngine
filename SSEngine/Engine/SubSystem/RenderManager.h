@@ -58,6 +58,7 @@ FORCEINLINE void RenderManager::DestroyInstance()
 {
 	ASSERT(RenderManager::globalInstance_ != nullptr);
 	delete RenderManager::globalInstance_;
+	RenderManager::globalInstance_ = nullptr;
 }
 
 

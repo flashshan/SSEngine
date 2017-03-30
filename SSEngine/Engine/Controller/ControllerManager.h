@@ -66,6 +66,7 @@ FORCEINLINE void ControllerManager::DestroyInstance()
 {
 	ASSERT(ControllerManager::globalInstance_ != nullptr);
 	delete ControllerManager::globalInstance_;
+	ControllerManager::globalInstance_ = nullptr;
 }
 
 inline ControllerManager::~ControllerManager()
