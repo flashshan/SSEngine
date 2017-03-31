@@ -88,6 +88,6 @@ uint32 HashedString::Hash(const char * i_string)
 {
 	ASSERT(i_string);
 
-	return Hash(reinterpret_cast<void *>(const_cast<char *>(i_string)), strlen(i_string));
+	return Hash(reinterpret_cast<void *>(const_cast<char *>(i_string)), static_cast<uint32>(strlen(i_string)));
 }
 

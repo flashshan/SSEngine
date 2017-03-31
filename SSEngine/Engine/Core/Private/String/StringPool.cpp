@@ -15,7 +15,7 @@ char *StringPool::add(const char *i_string)
 		return res;
 	}
 
-	uint32 length = strlen(i_string);
+	uint32 length = static_cast<uint32>(strlen(i_string));
 	uint8 * newPosition = reinterpret_cast<uint8 *>((reinterpret_cast<uintPtr>(endPosition_ + sizeof(PooledString) + length) / sizeof(uint32) + 1) * sizeof(uint32));
 	ASSERT(newPosition < poolBuffer_ + poolSize_);
 
@@ -31,7 +31,7 @@ char *StringPool::find(const char *i_string)
 {
 	ASSERT(i_string != nullptr);
 
-	uint32 length = strlen(i_string);
+	uint32 length = static_cast<uint32>(strlen(i_string));
 
 	char *resPosition = nullptr;
 

@@ -28,7 +28,7 @@ private:
 
 
 inline PooledString::PooledString(const char *i_string)
-	: length_(strlen(i_string)), string_(reinterpret_cast<char *>(this) + sizeof(PooledString))
+	: length_(static_cast<uint32>(strlen(i_string))), string_(reinterpret_cast<char *>(this) + sizeof(PooledString))
 {
 	memcpy(string_, i_string, length_ + 1);
 }
