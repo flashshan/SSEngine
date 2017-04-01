@@ -4,9 +4,7 @@
 
 StackAllocator::~StackAllocator()
 {
-	destroy();
 }
-
 
 StackAllocator *StackAllocator::CreateStackAllocator(void *i_pMemory, const size_t i_sizeMemory)
 {
@@ -14,10 +12,6 @@ StackAllocator *StackAllocator::CreateStackAllocator(void *i_pMemory, const size
 }
 
 StackAllocator::StackAllocator(void *i_pMemory, const size_t i_sizeMemory)
-{
-}
-
-void StackAllocator::destroy()
 {
 }
 

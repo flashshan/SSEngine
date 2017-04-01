@@ -21,6 +21,7 @@ private:
 private:
 	// No copy allowed
 	FORCEINLINE RandomMoveController(const RandomMoveController & i_other) {}
+	FORCEINLINE RandomMoveController& operator=(const RandomMoveController &i_other) {}
 
 	WeakPtr<Pawn> pawn_;
 };

@@ -210,7 +210,6 @@
     <ClCompile Include="Core\Private\Math\Quaternion.cpp" />
     <ClCompile Include="Core\Private\Math\Rotator.cpp" />
     <ClCompile Include="Core\Private\Math\Triangle.cpp" />
-    <ClCompile Include="Core\Private\Math\Vector4.cpp" />
     <ClCompile Include="Core\Private\Memory\BitArray.cpp" />
     <ClCompile Include="Core\Private\Memory\FixedSizeAllocator.cpp" />
     <ClCompile Include="Core\Private\Memory\HeapManager.cpp" />
@@ -220,8 +219,6 @@
     <ClCompile Include="Core\Private\String\HashedString.cpp" />
     <ClCompile Include="Core\Private\String\PooledString.cpp" />
     <ClCompile Include="Core\Private\String\StringPool.cpp" />
-    <ClCompile Include="Core\Private\Template\List.cpp" />
-    <ClCompile Include="Core\Private\Template\Pointers.cpp" />
     <ClCompile Include="Engine\Private\Engine.cpp" />
     <ClCompile Include="Manager\Private\GameTimeManager.cpp" />
     <ClCompile Include="Manager\Private\InputManager.cpp" />

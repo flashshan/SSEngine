@@ -1,4 +1,5 @@
 // main.cpp : Defines the entry point for the application.
+
 #include <Windows.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -8,16 +9,12 @@
 #include <time.h>
 #include <vector>
 
+
 #include "Engine\Manager\InputManager.h"
 #include "Engine\Manager\RealTimeManager.h"
-
 #include "Manager\WorldManager.h"
 
 #include "Engine\Engine.h"
-//#if defined _DEBUG
-//#define _CRTDBG_MAP_ALLOC
-//#include <crtdbg.h>
-//#endif // _DEBUG
 #include "Glib\GLib.h"
 
 void TestKeyCallback(unsigned int i_VKeyID, bool bWentDown)
@@ -48,7 +45,7 @@ int WINAPI wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_l
 	// first we need to initialize GLib
 	bool bSuccess = GLib::Initialize(i_hInstance, i_nCmdShow, "MonsterChase", -1, 800, 600);
 
-	const float ScreenSize = 100;
+	const float ScreenSize = 200;
 
 	if (bSuccess)
 	{
@@ -97,6 +94,7 @@ int WINAPI wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_l
 			{
 				engine.Run();
 			}
+
 			bQuit = bSuccess = InputManager::GetInstance()->GetState(static_cast<uint32>(Key::ESC));
 		} while (bQuit == false);
 		

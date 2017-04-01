@@ -20,6 +20,7 @@ public:
 private:
 	// No copy constructor
 	FORCEINLINE RenderObject(const RenderObject &i_other) {}
+	FORCEINLINE RenderObject& operator=(const RenderObject &i_other) {}
 
 private:
 	WeakPtr<GameObject> gameObject_;

@@ -12,7 +12,6 @@
 #define FIT_LENGTH 24   
 #endif
 
-#define DEFAULT_ALIGNMENT 4
 #define GUARD_BANDING_LENGTH 4				      // default Guard banding's length
 #define GUARD_BANDING_VALUE 0xdead	  // default Guard banding's value
 
@@ -31,9 +30,7 @@ class HeapAllocator
 public:
 	static HeapAllocator *Create(void *i_pMemory, const size_t i_sizeMemory, const uint32 i_numDescriptors);
 	
-	inline ~HeapAllocator();
-
-	FORCEINLINE void destroy();
+	~HeapAllocator();
 
 	// allocate - with and without alignment requirement
 	void *alloc(const size_t i_size);
@@ -48,7 +45,7 @@ public:
 	// query whether a given pounsigned_inter is within this Heaps memory range
 	FORCEINLINE bool Contains(const void * i_ptr) const;
 	// query whether a given pounsigned_inter is an outstanding allocation
-	FORCEINLINE bool IsAllocated(const void * i_ptr) const;
+	inline bool IsAllocated(const void * i_ptr) const;
 
 	size_t getLargestFreeBlock() const;
 	size_t getTotalFreeMemory() const;
@@ -59,8 +56,8 @@ public:
 	uint32 getFreeCount() const;
 	uint32 getUsedCount() const;
 
-	FORCEINLINE void ShowFreeBlocks() const;
-	FORCEINLINE void ShowUsedBlocks() const;
+	inline void ShowFreeBlocks() const;
+	inline void ShowUsedBlocks() const;
 
 private:
 	// create a new HeapManager
@@ -68,12 +65,10 @@ private:
 	
 	// hide copy constructor
 	FORCEINLINE HeapAllocator(const HeapAllocator &i_other) {}
+	FORCEINLINE HeapAllocator& operator=(const HeapAllocator &i_other) {}
 
 	// return previous alignment position 
-	inline uintPtr alignment(const uintPtr i_pos, const uint32 i_align) const
-	{
-		return i_pos - i_pos % i_align;
-	}
+	FORCEINLINE uintPtr alignment(const uintPtr i_pos, const uint32 i_align) const;
 
 	// double list quick sort
 	BlockDescriptor *qsort(BlockDescriptor *i_head);
@@ -87,8 +82,8 @@ private:
 private:
 	void *heapMemoryBase_;
 	size_t memorySize_;
-	unsigned int blockLength_;
-	unsigned int blockMaxLength_;
+	uint32 blockLength_;
+	uint32 blockMaxLength_;
 
 	BlockDescriptor* freeList_;
 	BlockDescriptor *usedList_;
@@ -102,18 +97,6 @@ private:
 
 // implement forceinline
 
-inline HeapAllocator::~HeapAllocator()
-{
-	destroy();
-}
-
-FORCEINLINE void HeapAllocator::destroy()
-{
-	heapMemoryBase_ = nullptr;
-	freeList_ = nullptr;
-	usedList_ = nullptr;
-}
-
 FORCEINLINE bool HeapAllocator::Contains(const void * i_ptr) const
 {
 	if (heapMemoryBase_ <= i_ptr && reinterpret_cast<uintPtr>(heapMemoryBase_) + memorySize_ - blockMaxLength_ * BLOCK_SIZE > reinterpret_cast<uintPtr>(i_ptr))
@@ -122,7 +105,7 @@ FORCEINLINE bool HeapAllocator::Contains(const void * i_ptr) const
 		return false;
 }
 
-FORCEINLINE bool HeapAllocator::IsAllocated(const void * i_ptr) const
+inline bool HeapAllocator::IsAllocated(const void * i_ptr) const
 {
 #ifdef _DEBUG
 	unsigned int forward = BLOCK_POINTER + GUARD_BANDING_LENGTH;
@@ -138,7 +121,7 @@ FORCEINLINE bool HeapAllocator::IsAllocated(const void * i_ptr) const
 	return true;
 }
 
-FORCEINLINE void HeapAllocator::ShowFreeBlocks() const
+inline void HeapAllocator::ShowFreeBlocks() const
 {
 	printf_s("Total Free block number is %d \n", getFreeCount());
 	printf_s("Total Free block size is %zu \n", getTotalFreeMemory());
@@ -146,10 +129,16 @@ FORCEINLINE void HeapAllocator::ShowFreeBlocks() const
 	printf_s("\n");
 }
 
-FORCEINLINE void HeapAllocator::ShowUsedBlocks() const
+inline void HeapAllocator::ShowUsedBlocks() const
 {
 	printf_s("Total Used block number is %d \n", getUsedCount());
 	printf_s("Total Used block size is %zu \n", getTotalUsedMemory());
 	printf_s("The largest block size is %zu \n", getLargestUsedBlock());
 	printf_s("\n");
+}
+
+
+FORCEINLINE uintPtr HeapAllocator::alignment(const uintPtr i_pos, const uint32 i_align) const
+{
+	return i_pos - i_pos % i_align;
 }

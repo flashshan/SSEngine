@@ -1,5 +1,6 @@
 #include "SubSystem\RenderManager.h"
 
+#include "Core\String\HashedString.h"
 
 GLib::Sprites::Sprite * CreateSprite(const char * i_pFilename)
 {
@@ -70,7 +71,7 @@ void * LoadFile(const char * i_pFilename, size_t & o_sizeFile)
 	FileIOError = fseek(pFile, 0, SEEK_SET);
 	SLOW_ASSERT(FileIOError == 0, ErrorType::ENonZeroValue);
 
-	uint8 * pBuffer = new uint8[FileSize];
+	uint8 * pBuffer = new TRACK_NEW uint8[FileSize];
 	SLOW_ASSERT(pBuffer, ErrorType::ENullPointer);
 
 	size_t FileRead = fread(pBuffer, 1, FileSize, pFile);
@@ -131,7 +132,7 @@ StrongPtr<RenderObject>& RenderManager::AddRenderObject(const StrongPtr<GameObje
 	{
 		tempSprite = it->second;
 	}
-	StrongPtr<RenderObject> newRenderObject = new RenderObject(i_gameObject, tempSprite);
+	StrongPtr<RenderObject> newRenderObject = new TRACK_NEW RenderObject(i_gameObject, tempSprite);
 	renderObjectList_.PushHead(newRenderObject);
 	return renderObjectList_.Head()->Data;
 }

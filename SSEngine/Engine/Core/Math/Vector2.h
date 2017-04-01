@@ -10,11 +10,9 @@ struct Vector2 {
 public:
 	FORCEINLINE Vector2() {}
 	FORCEINLINE Vector2(const float i_x, const float i_y);
-	FORCEINLINE Vector2(const Vector2 & i_other);
 	FORCEINLINE explicit Vector2(const Vector3 & i_vector);
 	FORCEINLINE explicit Vector2(const Vector4 & i_vector);
 
-	FORCEINLINE Vector2& operator =(const Vector2 &i_vector);
 
 	static FORCEINLINE Vector2 Zero();
 	static FORCEINLINE Vector2 Unit();
@@ -31,7 +29,7 @@ public:
 	static FORCEINLINE float Distance(const Vector2 &i_vector1, const Vector2 &i_vector2);
 	FORCEINLINE float Distance(const Vector2 &i_vector) const;
 
-	FORCEINLINE Vector2& Normalize(float tolerance = 0.0000001);
+	FORCEINLINE Vector2& Normalize(const float tolerance = SMALL_NUMBER);
 	FORCEINLINE float Length() const;
 	FORCEINLINE float LengthSquare() const;
 
@@ -67,19 +65,10 @@ public:
 FORCEINLINE Vector2::Vector2(const float i_x, const float i_y)
 	: X(i_x), Y(i_y)
 {
+	ASSERT(!Float::IsNAN(i_x));
+	ASSERT(!Float::IsNAN(i_y));
 }
 
-FORCEINLINE Vector2::Vector2(const Vector2 & i_other)
-	: X(i_other.X), Y(i_other.Y)
-{
-}
-
-FORCEINLINE Vector2& Vector2::operator =(const Vector2 &i_vector)
-{
-	X = i_vector.X;
-	Y = i_vector.Y;
-	return *this;
-}
 
 FORCEINLINE Vector2 Vector2::Zero()
 {
@@ -148,7 +137,7 @@ FORCEINLINE Vector2& Vector2::Normalize(float tolerance)
 
 FORCEINLINE float Vector2::Length() const
 {
-	return static_cast<float>(X * X + Y * Y);
+	return static_cast<float>(sqrt(X * X + Y * Y));
 }
 
 FORCEINLINE float Vector2::LengthSquare() const

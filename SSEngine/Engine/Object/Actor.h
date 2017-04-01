@@ -77,13 +77,13 @@ private:
 
 FORCEINLINE Actor::Actor()
 	: name_(StringPool::GetInstance()->add("defaultName")), type_(HashedString("defaultType")), 
-	gameObject_(new GameObject()), renderObject_(nullptr), physicsObject_(nullptr)
+	gameObject_(new TRACK_NEW GameObject()), renderObject_(nullptr), physicsObject_(nullptr)
 {
 }
 
 FORCEINLINE Actor::Actor(const Transform &i_transform, const char *i_name, const char *i_type)
 	: name_(StringPool::GetInstance()->add(i_name)), type_(HashedString(i_type)), 
-	gameObject_(new GameObject(i_transform)), renderObject_(nullptr), physicsObject_(nullptr)
+	gameObject_(new TRACK_NEW GameObject(i_transform)), renderObject_(nullptr), physicsObject_(nullptr)
 {
 }
 

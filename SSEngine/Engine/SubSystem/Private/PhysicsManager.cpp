@@ -17,7 +17,7 @@ void PhysicsManager::PhysicsUpdate() const
 
 StrongPtr<PhysicsObject>& PhysicsManager::AddPhysicsObject(const StrongPtr<GameObject> &i_gameObject, const float i_mass)
 {
-	StrongPtr<PhysicsObject> newPhysicsObject = new PhysicsObject(i_gameObject, i_mass);
+	StrongPtr<PhysicsObject> newPhysicsObject = new TRACK_NEW PhysicsObject(i_gameObject, i_mass);
 	physicsObjectList_.PushHead(newPhysicsObject);
 	return physicsObjectList_.Head()->Data;
 }

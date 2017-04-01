@@ -2,11 +2,12 @@
 
 #include <vector>
 
-#include "Controller\FocusMoveController.h"
-#include "Controller\RandomMoveController.h"
-#include "Controller\ControllerManager.h"
+#include "Core\Template\Pointers.h"
+#include "Core\String\HashedString.h"
+
 #include "Object\Pawn.h"
 
+// singleton class
 class WorldManager
 {
 public:
@@ -35,6 +36,7 @@ public:
 private:
 	FORCEINLINE WorldManager();
 	FORCEINLINE WorldManager(const WorldManager &i_other) {}
+	FORCEINLINE WorldManager& operator=(const WorldManager &i_other) {}
 
 	static WorldManager *globalInstance_;
 
@@ -53,7 +55,7 @@ private:
 FORCEINLINE WorldManager *WorldManager::CreateInstance()
 {
 	ASSERT(WorldManager::globalInstance_ == nullptr);
-	WorldManager::globalInstance_ = new WorldManager();
+	WorldManager::globalInstance_ = new TRACK_NEW WorldManager();
 	return WorldManager::globalInstance_;
 }
 

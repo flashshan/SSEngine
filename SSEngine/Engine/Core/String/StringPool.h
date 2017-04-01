@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Core\Basic\BasicTypes.h"
-#include "Core\Basic\Assert.h"
+#include "Core\CoreMinimal.h"
+
 
 class StringPool {
 public:
@@ -17,6 +17,7 @@ public:
 private:
 	FORCEINLINE StringPool(void *i_poolBuffer, size_t i_poolSize);
 	FORCEINLINE StringPool(const StringPool &i_other) {}
+	FORCEINLINE StringPool& operator=(const StringPool &i_other) {}
 
 	static StringPool *globalInstance_;
 private:

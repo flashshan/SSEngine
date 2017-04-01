@@ -10,8 +10,6 @@ public:
 	
 	~StackAllocator();
 
-	void destroy();
-
 	void freeToMarker();
 	void alloc(const size_t i_size);
 	
@@ -21,10 +19,12 @@ public:
 private:
 	StackAllocator(void *i_pMemory, const size_t i_sizeMemory);
 	FORCEINLINE StackAllocator(const StackAllocator &i_other) {}
+	FORCEINLINE StackAllocator& operator=(const StackAllocator &i_other) {}
+
 
 private:
-	void * stackMemoryBase_;
-	void * memorySize_;
-	void * lastMark_;
-	void * currentLocation_;
+	void *stackMemoryBase_;
+	void *memorySize_;
+	void *lastMark_;
+	void *currentLocation_;
 };

@@ -23,7 +23,8 @@ private:
 
 private:
 	// Controller can not be copy or assign
-	FORCEINLINE PlayerController(const PlayerController &i_PlayerController) {}
+	FORCEINLINE PlayerController(const PlayerController &i_other) {}
+	FORCEINLINE PlayerController& operator=(const PlayerController &i_other) {}
 
 	WeakPtr<Pawn> pawn_;
 };

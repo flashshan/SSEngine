@@ -8,10 +8,7 @@ class Transform
 public:
 	FORCEINLINE Transform();
 	FORCEINLINE Transform(const Vector3 &i_location, const Vector3 &i_rotation = Vector3(0.0f, 0.0f, 0.0f), const Vector3 &i_scale = Vector3(1.0f, 1.0f, 1.0f));
-	FORCEINLINE Transform(const Transform &i_other);
 	FORCEINLINE ~Transform();
-
-	FORCEINLINE Transform &operator =(const Transform &i_other);
 
 	FORCEINLINE Vector3 GetLocation() const { return location_; }
 	FORCEINLINE Vector3 GetRotation() const { return rotation_; }
@@ -46,21 +43,8 @@ FORCEINLINE Transform::Transform(const Vector3 &i_location, const Vector3 &i_rot
 {
 }
 
-FORCEINLINE Transform::Transform(const Transform &i_other)
-	: location_(i_other.GetLocation()), rotation_(i_other.GetRotation()), scale_(i_other.GetScale())
-{
-}
-
 FORCEINLINE Transform::~Transform()
 {
-}
-
-FORCEINLINE Transform &Transform::operator =(const Transform &i_other)
-{
-	location_ = i_other.GetLocation();
-	rotation_ = i_other.GetRotation();
-	scale_ = i_other.GetScale();
-	return *this;
 }
 
 FORCEINLINE void Transform::Translate(const Vector3 &i_vector)

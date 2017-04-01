@@ -2,10 +2,9 @@
 
 #include "Core\Template\List.h"
 #include "Core\Memory\New.h"
-
 #include "PhysicsObject.h"
 
-
+// singleton class
 class PhysicsManager
 {
 public:
@@ -21,6 +20,8 @@ public:
 private:
 	FORCEINLINE PhysicsManager();
 	FORCEINLINE PhysicsManager(PhysicsManager &i_other) {}
+	FORCEINLINE PhysicsManager& operator=(PhysicsManager &i_othre) {}
+
 
 	static PhysicsManager* globalInstance_;
 
@@ -39,7 +40,7 @@ private:
 FORCEINLINE PhysicsManager *PhysicsManager::CreateInstance()
 {
 	ASSERT(PhysicsManager::globalInstance_ == nullptr);
-	PhysicsManager::globalInstance_ = new PhysicsManager();
+	PhysicsManager::globalInstance_ = new TRACK_NEW PhysicsManager();
 	return PhysicsManager::globalInstance_;
 }
 

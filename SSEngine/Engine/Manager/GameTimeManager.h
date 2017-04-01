@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Core\CoreMinimal.h"
 #include "Core\Memory\New.h"
 
 // TO DO Functions
 
+// singleton class
 class GameTimeManager
 {
 public:
@@ -15,6 +15,7 @@ public:
 private:
 	FORCEINLINE GameTimeManager();
 	FORCEINLINE GameTimeManager(const GameTimeManager &i_other) {}
+	FORCEINLINE GameTimeManager& operator=(const GameTimeManager &i_other) {}
 
 	static GameTimeManager* globalInstance_;
 };
@@ -26,7 +27,7 @@ private:
 FORCEINLINE GameTimeManager *GameTimeManager::CreateInstance()
 {
 	ASSERT(GameTimeManager::globalInstance_ == nullptr);
-	GameTimeManager::globalInstance_ = new GameTimeManager();
+	GameTimeManager::globalInstance_ = new TRACK_NEW GameTimeManager();
 	return GameTimeManager::globalInstance_;
 }
 

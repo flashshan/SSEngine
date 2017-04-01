@@ -1,10 +1,9 @@
 #pragma once
 
 #include "Core\Template\Pointers.h"
-
 class Pawn;
-struct Vector3;
 
+// Interface class
 class IController
 {
 public:

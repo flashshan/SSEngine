@@ -6,9 +6,7 @@ class BitArray {
 public:
 	static BitArray * Create(size_t i_numBits, void * i_pAllocator, size_t i_memorySize, bool i_startClear = true);
 	
-	inline ~BitArray();
-
-	FORCEINLINE void destroy();
+	~BitArray();
 
 	FORCEINLINE void ClearAll();
 	FORCEINLINE void SetAll();
@@ -35,6 +33,7 @@ private:
 	
 	//hide Copy constructor
 	FORCEINLINE BitArray(const BitArray &i_other) {};
+	FORCEINLINE BitArray& operator=(const BitArray &i_other) {}
 
 private:
 	size_t numBits_;
@@ -48,18 +47,6 @@ private:
 
 
 // implement forceinline
-inline BitArray::~BitArray()
-{
-	destroy();
-}
-
-
-FORCEINLINE void BitArray::destroy()
-{
-	if (arrayBase_ != nullptr)
-		delete arrayBase_;
-	arrayBase_ = nullptr;
-}
 
 FORCEINLINE void BitArray::ClearAll()
 {

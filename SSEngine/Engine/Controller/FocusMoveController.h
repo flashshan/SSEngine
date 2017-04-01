@@ -21,7 +21,8 @@ private:
 
 private:
 	// Controller can not be copy or assign
-	FORCEINLINE FocusMoveController(const FocusMoveController &i_PlayerController) {}
+	FORCEINLINE FocusMoveController(const FocusMoveController &i_other) {}
+	FORCEINLINE FocusMoveController& operator=(const FocusMoveController &i_other) {}
 
 	WeakPtr<Pawn> pawn_;
 	WeakPtr<Pawn> focusPawn_;

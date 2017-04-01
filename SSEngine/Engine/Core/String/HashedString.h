@@ -22,7 +22,7 @@ public:
 	FORCEINLINE bool operator ==(const HashedString &i_other) const;
 
 private:
-	static FORCEINLINE uint32 Hash(const char * i_string);
+	static inline uint32 Hash(const char * i_string);
 	static uint32 Hash(const void * i_bytes, uint32 i_bytecount);
 
 private:
@@ -79,12 +79,12 @@ FORCEINLINE HashedString & HashedString::operator =(const HashedString &i_other)
 	return *this;
 }
 
-bool HashedString::operator ==(const HashedString &i_other) const
+FORCEINLINE bool HashedString::operator ==(const HashedString &i_other) const
 {
 	return hash_ == i_other.hash_;
 }
 
-uint32 HashedString::Hash(const char * i_string)
+inline uint32 HashedString::Hash(const char * i_string)
 {
 	ASSERT(i_string);
 

@@ -136,7 +136,7 @@ template<typename T> FORCEINLINE StrongPtr<T>::StrongPtr(T *i_ptr, Counter *i_co
 	{
 		if (i_counter == nullptr)
 		{
-			counter_ = new Counter(1);
+			counter_ = new TRACK_NEW Counter(1);
 		}
 		else
 		{

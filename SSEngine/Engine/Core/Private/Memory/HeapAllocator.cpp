@@ -1,26 +1,5 @@
 #include "Core\Memory\HeapAllocator.h"
 
-
-	// create a new HeapManager
-HeapAllocator::HeapAllocator(void *i_pMemory, const size_t i_sizeMemory, const uint32 i_numDescriptors)
-	:heapMemoryBase_(i_pMemory), memorySize_(i_sizeMemory), blockMaxLength_(i_numDescriptors)
-{
-	ASSERT(i_pMemory);
-	ASSERT(i_sizeMemory);
-	ASSERT(i_numDescriptors * sizeof(BlockDescriptor) < i_sizeMemory);
-
-	// initialize free list and used list
-	freeList_ = reinterpret_cast<BlockDescriptor *>(reinterpret_cast<uintPtr>(heapMemoryBase_) + memorySize_ - blockMaxLength_ * BLOCK_SIZE);
-	freeList_->BlockBase = heapMemoryBase_;
-	freeList_->SizeBlock = memorySize_ - blockMaxLength_ * BLOCK_SIZE;
-	freeList_->MemoryBase =  heapMemoryBase_;
-	freeList_->Previous = nullptr;
-	freeList_->Next = nullptr;
-
-	usedList_ = nullptr;
-
-	blockLength_ = 1;
-}
 	
 HeapAllocator* HeapAllocator::Create(void *i_pMemory, const size_t i_sizeMemory, const uint32 i_numDescriptors)
 {
@@ -33,6 +12,35 @@ HeapAllocator* HeapAllocator::Create(void *i_pMemory, const size_t i_sizeMemory,
 
 	return pHeapManager;
 }
+
+// create a new HeapManager
+HeapAllocator::HeapAllocator(void *i_pMemory, const size_t i_sizeMemory, const uint32 i_numDescriptors)
+	:heapMemoryBase_(i_pMemory), memorySize_(i_sizeMemory), blockMaxLength_(i_numDescriptors)
+{
+	ASSERT(i_pMemory);
+	ASSERT(i_sizeMemory);
+	ASSERT(i_numDescriptors * sizeof(BlockDescriptor) < i_sizeMemory);
+
+	// initialize free list and used list
+	freeList_ = reinterpret_cast<BlockDescriptor *>(reinterpret_cast<uintPtr>(heapMemoryBase_) + memorySize_ - blockMaxLength_ * BLOCK_SIZE);
+	freeList_->BlockBase = heapMemoryBase_;
+	freeList_->SizeBlock = memorySize_ - blockMaxLength_ * BLOCK_SIZE;
+	freeList_->MemoryBase = heapMemoryBase_;
+	freeList_->Previous = nullptr;
+	freeList_->Next = nullptr;
+
+	usedList_ = nullptr;
+
+	blockLength_ = 1;
+}
+
+HeapAllocator::~HeapAllocator()
+{
+	heapMemoryBase_ = nullptr;
+	freeList_ = nullptr;
+	usedList_ = nullptr;
+}
+
 
 void* HeapAllocator::alloc(size_t i_size)
 {
@@ -268,6 +276,9 @@ void	HeapAllocator::collect()
 	// combine fragment in free list
 	freeList_ = combineList(freeList_);
 
+	/*
+	Magic code below, hard to understand but it works to reorder all used list and free list
+	*/
 	// reset free list and used list's BlockDescriptor's memory position
 	// handle the situation that freelist or usedlist only has one node
 	bool singleFree = false, singleUsed = false;
@@ -454,10 +465,9 @@ BlockDescriptor* HeapAllocator::qsort(BlockDescriptor *i_head)
 	BlockDescriptor *temp1 = h1, *temp2 = h2, *temp = i_head->Next;
 	i_head->Previous = nullptr;
 	i_head->Next = nullptr;
-	//BlockDescriptor *innerTemp;
+	
 	while (temp != nullptr)
 	{
-		//innerTemp = temp->m_next;
 		if (temp->MemoryBase < i_head->MemoryBase)
 		{
 			if (temp1 == nullptr)
@@ -517,8 +527,6 @@ BlockDescriptor* HeapAllocator::combineList(BlockDescriptor *i_list)
 	BlockDescriptor *temp = i_list;
 	while (temp->Next != nullptr)
 	{
-		uintPtr distance = reinterpret_cast<uintPtr>(temp->Next->MemoryBase) - reinterpret_cast<uintPtr>(temp->MemoryBase);
-
 		if (reinterpret_cast<uintPtr>(temp->MemoryBase) + temp->SizeBlock == reinterpret_cast<uintPtr>(temp->Next->MemoryBase))
 		{
 			temp->SizeBlock += temp->Next->SizeBlock;
@@ -538,7 +546,9 @@ BlockDescriptor* HeapAllocator::combineList(BlockDescriptor *i_list)
 			blockLength_--;
 		}
 		else
+		{
 			temp = temp->Next;
+		}
 	}
 	return i_list;
 }

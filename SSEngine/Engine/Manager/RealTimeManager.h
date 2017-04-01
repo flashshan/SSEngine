@@ -1,12 +1,13 @@
 #pragma once
 
 #include <Windows.h>
-#include "Core\CoreMinimal.h"
+#include "Core\Memory\New.h"
 
 #define DESIRED_FPS		60.0f
 #define DESIRED_FRAMETIME_MS	(1000.0f / DESIRED_FPS)
 #define MAX_FRAMETIME_MS	(2 * DESIRED_FRAMETIME_MS)
 
+// singleton class
 class RealTimeManager
 {
 public:
@@ -22,6 +23,7 @@ public:
 private:
 	FORCEINLINE RealTimeManager();
 	FORCEINLINE RealTimeManager(const RealTimeManager &i_other) {}
+	FORCEINLINE RealTimeManager& operator=(const RealTimeManager &i_other) {}
 
 	static RealTimeManager *globalInstance_;
 
@@ -40,7 +42,7 @@ private:
 FORCEINLINE RealTimeManager *RealTimeManager::CreateInstance()
 {
 	ASSERT(RealTimeManager::globalInstance_ == nullptr);
-	RealTimeManager::globalInstance_ = new RealTimeManager();
+	RealTimeManager::globalInstance_ = new TRACK_NEW RealTimeManager();
 	return RealTimeManager::globalInstance_;
 }
 

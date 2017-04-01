@@ -1,12 +1,6 @@
 #include "Core\Math\Matrix.h"
 
-#include "Core\Math\Vector3.h"
-#include "Core\Math\Vector4.h"
-#include "Core\Basic\BasicFunctions.h"
-
 #include <xmmintrin.h>
-#include <math.h>
-
 
 
 // SIMD optimization
@@ -21,16 +15,6 @@ static Matrix FastMatrix(1.0f, 0.0f, 0.0f, 0.0f,
 						 0.0f, 1.0f, 0.0f, 0.0f,
 						 0.0f, 0.0f, 1.0f, 0.0f,
 						 0.0f, 0.0f, 0.0f, 1.0f);
-
-
-Matrix& Matrix::operator =(const Matrix &i_other)
-{
-	for (int i = 0; i < 16; ++i)
-	{
-		M[i / 4][i % 4] = i_other.M[i / 4][i % 4];
-	}
-	return *this;
-}
 
 Matrix& Matrix::Transpose()
 {

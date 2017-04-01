@@ -1,8 +1,6 @@
 #pragma once
 
-// TO DO
-#include "Core\Template\Pointers.h"
-
+// interface
 
 class IComponent
 {

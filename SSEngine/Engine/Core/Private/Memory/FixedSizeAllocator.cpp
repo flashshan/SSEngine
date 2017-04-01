@@ -23,3 +23,9 @@ FixedSizeAllocator::FixedSizeAllocator(void *i_pTotalMemory, const size_t i_size
 	
 	memorySize_ = i_numBlocks * i_blockSize;
 }
+
+
+FixedSizeAllocator::~FixedSizeAllocator()
+{
+	bitArray_ = nullptr;
+}

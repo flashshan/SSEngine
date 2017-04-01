@@ -128,6 +128,11 @@ BitArray::BitArray(size_t i_numBits, void * i_memoryBase, bool i_startClear)
 	}
 }
 
+BitArray::~BitArray()
+{
+	arrayBase_ = nullptr;
+}
+
 
 
 bool BitArray::GetFirstClearBit(size_t & o_bitNumber) const

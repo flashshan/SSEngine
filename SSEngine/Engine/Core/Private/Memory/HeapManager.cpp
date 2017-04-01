@@ -1,7 +1,21 @@
 #include "Core\Memory\HeapManager.h"
 
+#include "Core\Memory\HeapAllocator.h"
+#include "Core\Memory\FixedSizeAllocator.h"
 
 HeapManager* HeapManager::globalInstance_ = nullptr;
+
+HeapManager::~HeapManager()
+{
+	fixedSizeAllocator8_->~FixedSizeAllocator();
+	fixedSizeAllocator16_->~FixedSizeAllocator();
+	fixedSizeAllocator32_->~FixedSizeAllocator();
+	fixedSizeAllocator64_->~FixedSizeAllocator();
+	fixedSizeAllocator128_->~FixedSizeAllocator();
+
+	heapAllocator_->~HeapAllocator();
+}
+
 
 HeapManager::HeapManager(void *i_heapBase, size_t i_heapSize)
 {

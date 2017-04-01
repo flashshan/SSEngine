@@ -17,6 +17,8 @@ enum class ErrorType : int32 {
 	ENonZeroValue = 2002,
 };
 
+
+// singleton class
 class ErrorMessage {
 public:
 	static FORCEINLINE ErrorMessage *CreateInstance();
@@ -29,6 +31,8 @@ public:
 private:
 	FORCEINLINE ErrorMessage();
 	FORCEINLINE ErrorMessage(const ErrorMessage &i_other) {}
+	FORCEINLINE ErrorMessage& operator=(const ErrorMessage &i_other) {}
+
 	static ErrorMessage *globalInstance_;
 
 	void initialMessage();

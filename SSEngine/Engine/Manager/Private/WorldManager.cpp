@@ -1,5 +1,9 @@
 #include "Manager\WorldManager.h"
 
+#include "Controller\FocusMoveController.h"
+#include "Controller\RandomMoveController.h"
+#include "Controller\ControllerManager.h"
+
 #include "Core\Memory\New.h"
 
 WorldManager *WorldManager::globalInstance_ = nullptr;

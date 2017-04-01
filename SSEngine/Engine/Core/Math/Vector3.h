@@ -8,17 +8,14 @@ struct Vector3 {
 public:
 	FORCEINLINE Vector3() {}
 	FORCEINLINE Vector3(const float i_x, const float i_y, const float i_z);
-	FORCEINLINE Vector3(const Vector3 & i_other);
 	FORCEINLINE explicit Vector3(const Vector2 & i_vector, const float i_z = 0.0f);
 	FORCEINLINE explicit Vector3(const Vector4 & i_vector);
-
-	FORCEINLINE Vector3& operator =(const Vector3 &i_vector);
 
 	FORCEINLINE static Vector3 Zero();
 	FORCEINLINE static Vector3 Unit();
 	FORCEINLINE static Vector3 RandomNormal();
 
-	FORCEINLINE Vector3& Normalize(float i_tolerance = 0.0000001);
+	FORCEINLINE Vector3& Normalize(const float i_tolerance = SMALL_NUMBER);
 
 	FORCEINLINE static float Dot(const Vector3 &i_vector1, const Vector3 &i_vector2);
 	FORCEINLINE float Dot(const Vector3 &i_vector) const;
@@ -70,26 +67,17 @@ public:
 FORCEINLINE Vector3::Vector3(const float i_x, const float i_y, const float i_z) 
 	: X(i_x), Y(i_y), Z(i_z) 
 {
+	ASSERT(!Float::IsNAN(i_x));
+	ASSERT(!Float::IsNAN(i_y));
+	ASSERT(!Float::IsNAN(i_z));
 }
 
-
-FORCEINLINE Vector3::Vector3(const Vector3 & i_other)
-	: X(i_other.X), Y(i_other.Y), Z(i_other.Z)
-{
-}
 
 FORCEINLINE Vector3::Vector3(const Vector2 & i_vector, const float i_z)
 	: X(i_vector.X), Y(i_vector.Y), Z(i_z)
 {
 }
 
-FORCEINLINE Vector3& Vector3::operator =(const Vector3 &i_vector)
-{
-	X = i_vector.X;
-	Y = i_vector.Y;
-	Z = i_vector.Z;
-	return *this;
-}
 
 FORCEINLINE Vector3 Vector3::Zero()
 {

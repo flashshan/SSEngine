@@ -2,16 +2,17 @@
 
 #include "Core\CoreMinimal.h"
 
-#include "Core\Memory\HeapAllocator.h"
-#include "Core\Memory\FixedSizeAllocator.h"
+class HeapAllocator;
+class FixedSizeAllocator;
 
+// singleton class
 class HeapManager {
 public:
 	static inline HeapManager *CreateInstance(void *i_heapManagerBase, size_t i_heapSize);
 	static FORCEINLINE HeapManager *GetInstance();
 	static FORCEINLINE void DestroyInstance();
 
-	inline ~HeapManager();
+	~HeapManager();
 
 	void *Alloc(size_t i_size, uint32 i_alignment = DEFAULT_ALIGNMENT);
 	bool Free(void *i_ptr);
@@ -21,6 +22,8 @@ public:
 private:
 	HeapManager(void *i_heapBase, size_t i_heapSize);
 	FORCEINLINE HeapManager(const HeapManager &i_other) {}
+	FORCEINLINE HeapManager& operator=(const HeapManager &i_other) {}
+
 
 private:
 	static HeapManager *globalInstance_;
@@ -52,11 +55,9 @@ FORCEINLINE void HeapManager::DestroyInstance()
 {
 	ASSERT(HeapManager::globalInstance_ != nullptr);
 	// delete was overload and can not be used here
+	HeapManager::globalInstance_->~HeapManager();
 	HeapManager::globalInstance_ = nullptr;
 }
 
-inline HeapManager::~HeapManager()
-{
-	heapAllocator_->destroy();
-}
+
 

@@ -11,9 +11,6 @@ public:
 		float i_41, float i_42, float i_43, float i_44);
 	explicit FORCEINLINE Matrix(const float *i_floatArray);
 	FORCEINLINE Matrix(const Vector4 &i_v1, const Vector4 &i_v2, const Vector4 &i_v3, const Vector4 &i_v4);
-	FORCEINLINE Matrix(const Matrix &i_other);
-
-	Matrix& operator =(const Matrix &i_other);
 
 	FORCEINLINE static Matrix CreateZero();
 	FORCEINLINE static Matrix CreateIdentity();
@@ -79,13 +76,6 @@ FORCEINLINE Matrix::Matrix(const Vector4 &i_v1, const Vector4 &i_v2, const Vecto
 {
 }
 
-FORCEINLINE Matrix::Matrix(const Matrix &i_other)
-	: M{ i_other.M[0][0], i_other.M[0][1], i_other.M[0][2], i_other.M[0][3],
-		 i_other.M[1][0], i_other.M[1][1], i_other.M[1][2], i_other.M[1][3],
-		 i_other.M[2][0], i_other.M[2][1], i_other.M[2][2], i_other.M[2][3],
-		 i_other.M[3][0], i_other.M[3][1], i_other.M[3][2], i_other.M[3][3] }
-{
-}
 
 FORCEINLINE Matrix Matrix::CreateZero()
 {

@@ -1,6 +1,5 @@
 #pragma once 
 
-#include "Core\CoreMinimal.h"
 #include "BitArray.h"
 
 #if defined(_WIN64)
@@ -18,10 +17,8 @@ class FixedSizeAllocator
 {
 public:
 	static FixedSizeAllocator *Create(void *i_pMemory, const size_t i_sizeMemory, const size_t i_numBlocks, const size_t i_blockSize);
-	// destroy the HeapManager
-	inline ~FixedSizeAllocator();
-
-	FORCEINLINE void destroy();
+	
+	~FixedSizeAllocator();
 
 	// allocate - with and without alignment requirement
 	inline void *alloc();
@@ -32,7 +29,7 @@ public:
 	// query whether a given pounsigned_inter is within this Heaps memory range
 	FORCEINLINE bool Contains(const void * i_ptr) const;
 
-	// query whether a given pounsigned_inter is an outstanding allocation
+	// query whether a given pounsigned_inter is an outstanding allocation 
 	FORCEINLINE bool IsAllocated(const void * i_ptr) const;
 
 	FORCEINLINE size_t getFreeCount() const;
@@ -44,6 +41,8 @@ private:
 	
 	// hide copy constructor
 	FORCEINLINE FixedSizeAllocator(const FixedSizeAllocator &i_other) {}
+	FORCEINLINE FixedSizeAllocator& operator=(const FixedSizeAllocator &i_other) {}
+
 
 private:
 	void *blocksMemoryBase_;
@@ -62,19 +61,6 @@ private:
 
 
 // implement inline
-
-inline FixedSizeAllocator::~FixedSizeAllocator()
-{
-	destroy();
-}
-
-FORCEINLINE void FixedSizeAllocator::destroy()
-{
-	if (bitArray_ != nullptr)
-	{
-		delete bitArray_;
-	}
-}
 
 // allocate - with and without alignment requirement
 inline void *FixedSizeAllocator::alloc()

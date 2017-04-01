@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Core\Basic\BasicTypes.h"
-#include "Core\Basic\Assert.h"
+#include "Core\CoreMinimal.h"
 
 class PooledString {
 public:
@@ -17,6 +16,7 @@ public:
 private:
 	// Hide copy constructor
 	FORCEINLINE PooledString(const PooledString &i_other) {}
+	FORCEINLINE PooledString& operator=(const PooledString &i_other) {}
 
 private:
 	uint32 length_;

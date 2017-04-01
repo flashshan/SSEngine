@@ -1,12 +1,10 @@
 #pragma once
 
-#include "Core\Basic\Assert.h"
-#include "Core\Basic\BasicTypes.h"
 #include "Core\Memory\New.h"
+
 // list is used for optimize insert and delete with order required vector
 // list is slow because it has to dynamic new and delete
 // just a practice
-
 
 template<typename T> struct LinkedListNode {
 	T Data;
@@ -38,6 +36,11 @@ public:
 	FORCEINLINE void Clear();
 
 private:
+	// don't support copy
+	FORCEINLINE LinkedList(LinkedList<T> &i_other) {}
+	FORCEINLINE LinkedList<T>& operator=(LinkedList<T> &i_other) {}
+
+private:
 	LinkedListNode<T> *head_;
 };
 
@@ -58,6 +61,12 @@ public:
 	FORCEINLINE void Clear();
 
 private:
+	// don't support copy
+	FORCEINLINE List(List<T> &i_other) {}
+	FORCEINLINE List<T>& operator=(List<T> &i_other) {}
+
+
+private:
 	ListNode<T> *head_;
 	ListNode<T> *tail_;
 };
@@ -75,7 +84,7 @@ template<typename T> FORCEINLINE LinkedList<T>::LinkedList()
 
 template<typename T> FORCEINLINE void LinkedList<T>::PushHead(const T &i_val)
 {
-	LinkedListNode<T> *node = new LinkedListNode<T>(i_val, head_);
+	LinkedListNode<T> *node = new TRACK_NEW LinkedListNode<T>(i_val, head_);
 	head_ = node;
 }
 
@@ -91,7 +100,7 @@ template<typename T> FORCEINLINE void LinkedList<T>::PopHead()
 template<typename T> FORCEINLINE void LinkedList<T>::InsertNext(LinkedListNode<T> *i_pos, const T &i_val)
 {
 	ASSERT(i_pos != nullptr);
-	LinkedListNode<T> *node = new LinkedListNode<T>(i_val, i_pos->Next);
+	LinkedListNode<T> *node = new TRACK_NEW LinkedListNode<T>(i_val, i_pos->Next);
 	i_pos->Next = node;
 }
 
@@ -129,7 +138,7 @@ template<typename T> FORCEINLINE List<T>::List()
 
 template<typename T> FORCEINLINE void List<T>::PushHead(const T &i_val)
 {
-	ListNode<T> *node = new ListNode<T>(i_val, nullptr, head_);
+	ListNode<T> *node = new TRACK_NEW ListNode<T>(i_val, nullptr, head_);
 	if (head_ != nullptr)
 	{
 		head_->Previous = node;
@@ -160,7 +169,7 @@ template<typename T> FORCEINLINE void List<T>::PopHead()
 
 template<typename T> FORCEINLINE void List<T>::PushTail(const T &i_val)
 {
-	ListNode<T> *node = new ListNode<T>(i_val, tail_, nullptr);
+	ListNode<T> *node = new TRACK_NEW ListNode<T>(i_val, tail_, nullptr);
 	if (tail_ != nullptr)
 	{
 		tail_->Next = node;
@@ -192,7 +201,7 @@ template<typename T> FORCEINLINE void List<T>::InsertNext(ListNode<T> *i_pos, co
 {
 	ASSERT(i_pos != nullptr);
 	ListNode<T> *temp = i_pos->Next;
-	ListNode<T> *node = new ListNode<T>(i_val, i_pos, temp);
+	ListNode<T> *node = new TRACK_NEW ListNode<T>(i_val, i_pos, temp);
 	i_pos->Next = node;
 	if (temp != nullptr)
 	{

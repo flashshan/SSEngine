@@ -1,14 +1,10 @@
 #pragma once
 
-#include "Core\CoreMinimal.h"
-
-#include "Vector4.h"
 #include "Matrix.h"
 
 class Triangle {
 public:
 	FORCEINLINE Triangle(const Vector3 &i_a, const Vector3 &i_b, const Vector3 &i_c);
-	FORCEINLINE Triangle(const Triangle & i_other);
 
 	// get
 	FORCEINLINE Vector3 A() const { return V_[0]; }
@@ -41,9 +37,6 @@ FORCEINLINE Triangle::Triangle(const Vector3 &i_a, const Vector3 &i_b, const Vec
 	: V_{i_a, i_b, i_c },  originV_{i_a, i_b, i_c } 
 {
 }
-
-FORCEINLINE Triangle::Triangle(const Triangle & i_other)
-	: V_{ i_other.A(), i_other.B(), i_other.C() }, originV_{ i_other.OriginA(), i_other.OriginB(), i_other.OriginC() } {}
 
 FORCEINLINE Triangle Triangle::Identity()
 {

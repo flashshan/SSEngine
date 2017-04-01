@@ -21,6 +21,7 @@ public:
 private:
 	// No copy constructor
 	FORCEINLINE PhysicsObject(const PhysicsObject &i_other) {}
+	FORCEINLINE PhysicsObject& operator=(const PhysicsObject &i_other) {}
 
 private:
 	WeakPtr<GameObject> gameObject_;

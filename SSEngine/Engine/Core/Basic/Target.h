@@ -14,6 +14,8 @@
 
 #ifdef TARGET_WINDOWS
 
+#define DEFAULT_ALIGNMENT 4
+
 #define ALIGN(n) __declspec(align(n))
 
 #define FORCEINLINE __forceinline

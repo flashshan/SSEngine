@@ -7,14 +7,14 @@ namespace Basic {
 	template<typename T> FORCEINLINE void Swap(T &i_Left, T &i_Right);
 
 	// reverse between small end and big end machine
-	FORCEINLINE int16 SwapInt16(int16 i_value);
-	FORCEINLINE uint16 SwapUint16(uint16 i_value);
+	FORCEINLINE int16 SwapInt16(const int16 i_value);
+	FORCEINLINE uint16 SwapUint16(const uint16 i_value);
 
-	FORCEINLINE int32 SwapInt32(int32 i_value);
-	FORCEINLINE uint32 SwapUint32(uint32 i_value);
+	FORCEINLINE int32 SwapInt32(const int32 i_value);
+	FORCEINLINE uint32 SwapUint32(const uint32 i_value);
 
-	FORCEINLINE int64 SwapInt64(int64 i_value);
-	FORCEINLINE uint64 SwapUint64(uint64 i_value);
+	FORCEINLINE int64 SwapInt64(const int64 i_value);
+	FORCEINLINE uint64 SwapUint64(const uint64 i_value);
 
 	FORCEINLINE float SwapFloat32(float i_value);
 	FORCEINLINE double swapFloat64(double i_value);
@@ -36,9 +36,9 @@ namespace Float {
 	FORCEINLINE uint32 RandInRange(uint32 i_lowerBound, uint32 i_upperBound);
 
 	// fastest
-	FORCEINLINE bool EqualFast(float i_lhs, float i_rhs, float i_maxDiff = SMALL_NUMBER);
+	FORCEINLINE bool EqualFast(const float i_lhs, const float i_rhs, const float i_maxDiff = SMALL_NUMBER);
 	// balanced
-	FORCEINLINE bool EqualRelated(float i_lhs, float i_rhs, float i_maxDiff = SMALL_NUMBER);
+	FORCEINLINE bool EqualRelated(const float i_lhs, const float i_rhs, const float i_maxDiff = SMALL_NUMBER);
 	// slow but sure
 	FORCEINLINE bool EqualAccurate(float i_lhs, float i_rhs, float i_maxDiff, uint32 i_maxULPS = 12);
 
@@ -62,25 +62,25 @@ namespace Basic {
 		i_Right = temp;
 	}
 
-	FORCEINLINE int16 SwapInt16(int16 i_value)
+	FORCEINLINE int16 SwapInt16(const int16 i_value)
 	{
 		return ((i_value & 0x00ff) << 8)
 			| ((i_value & 0xff00) >> 8);
 	}
-	FORCEINLINE uint16 SwapUint16(uint16 i_value)
+	FORCEINLINE uint16 SwapUint16(const uint16 i_value)
 	{
 		return ((i_value & 0x00ff) << 8)
 			| ((i_value & 0xff00) >> 8);
 	}
 
-	FORCEINLINE int32 SwapInt32(int32 i_value)
+	FORCEINLINE int32 SwapInt32(const int32 i_value)
 	{
 		return ((i_value & 0x000000ff) << 24)
 			| ((i_value & 0x0000ff00) << 8)
 			| ((i_value & 0x00ff0000) >> 8)
 			| ((i_value & 0xff000000) >> 24);
 	}
-	FORCEINLINE uint32 SwapUint32(uint32 i_value)
+	FORCEINLINE uint32 SwapUint32(const uint32 i_value)
 	{
 		return ((i_value & 0x000000ff) << 24)
 			| ((i_value & 0x0000ff00) << 8)
@@ -88,7 +88,7 @@ namespace Basic {
 			| ((i_value & 0xff000000) >> 24);
 	}
 
-	FORCEINLINE int64 SwapInt64(int64 i_value)
+	FORCEINLINE int64 SwapInt64(const int64 i_value)
 	{
 		return ((i_value & 0x00000000000000ff) << 56)
 			| ((i_value & 0x000000000000ff00) << 40)
@@ -99,7 +99,7 @@ namespace Basic {
 			| ((i_value & 0x00ff000000000000) >> 40)
 			| ((i_value & 0xff00000000000000) >> 56);
 	}
-	FORCEINLINE uint64 SwapUint64(uint64 i_value)
+	FORCEINLINE uint64 SwapUint64(const uint64 i_value)
 	{
 		return ((i_value & 0x00000000000000ff) << 56)
 			| ((i_value & 0x000000000000ff00) << 40)
@@ -144,8 +144,13 @@ namespace Float {
 
 	FORCEINLINE bool IsNAN(const float i_val)
 	{
-		return ((*(uint32*)&i_val) & 0x7FFFFFFF) > 0x7F800000;
+		volatile float val = i_val;
+		return val != val;
+
+		// another way to judge
+		//return ((*(uint32*)&i_val) & 0x7FFFFFFF) > 0x7F800000;
 	}
+
 	FORCEINLINE bool IsZero(const float i_val)
 	{
 		return EqualFast(i_val, static_cast<float>(SMALL_NUMBER));
@@ -166,12 +171,12 @@ namespace Float {
 	}
 
 
-	FORCEINLINE bool EqualFast(float i_lhs, float i_rhs, float i_maxDiff)
+	FORCEINLINE bool EqualFast(const float i_lhs, const float i_rhs, const float i_maxDiff)
 	{
 		return fabs(i_lhs - i_rhs) < i_maxDiff;
 	}
 
-	FORCEINLINE bool EqualRelated(float i_lhs, float i_rhs, float i_maxDiff)
+	FORCEINLINE bool EqualRelated(const float i_lhs, const float i_rhs, const float i_maxDiff)
 	{
 		if (i_lhs == i_rhs)
 			return true;
@@ -185,6 +190,7 @@ namespace Float {
 
 		return relDiff <= i_maxDiff;
 	}
+
 	// slow but sure
 	FORCEINLINE bool EqualAccurate(float i_lhs, float i_rhs, float i_maxDiff, uint32 i_maxULPS)
 	{
@@ -197,7 +203,7 @@ namespace Float {
 		if (diff <= i_maxDiff)
 			return true;
 
-		unsigned int intDiff = abs(*reinterpret_cast<int *>(&i_lhs) - *reinterpret_cast<int *>(&i_rhs));
+		uint32 intDiff = abs(*reinterpret_cast<int *>(&i_lhs) - *reinterpret_cast<int *>(&i_rhs));
 		return intDiff <= i_maxULPS;
 	}
 }

@@ -2,6 +2,9 @@
 
 #include <inttypes.h>	// for print specifiers
 
+#include "Core\Memory\HeapManager.h"
+#include "Core\Memory\HeapAllocator.h"
+
 // standard new & delete
 void * operator new(size_t i_size)
 {
@@ -49,6 +52,7 @@ void * operator new(size_t i_size, NewAlignment i_align)
 	{
 	case NewAlignment::EAlign16:
 	case NewAlignment::EAlign32:
+	case NewAlignment::EAlign64:
 		return HeapManager::GetInstance()->Alloc(i_size, static_cast<uint32>(i_align));
 	case NewAlignment::EAlignDefault:
 	default:
@@ -89,6 +93,7 @@ void operator delete(void * i_ptr, const char * i_pFile, uint32 i_Line)
 	}
 }
 
+// alocate from heap
 void * operator new(size_t i_size, HeapAllocator * i_heap)
 {
 	DEBUG_PRINT("Calling new( size_t, HeapManager * ) with ( %Iu, %" PRIxPTR ").\n", i_size, i_heap);
@@ -100,37 +105,6 @@ void * operator new(size_t i_size, HeapAllocator * i_heap)
 	ASSERT(i_heap);
 
 	return i_heap->alloc(i_size, DEFAULT_ALIGNMENT);
-}
-
-void operator delete(void * i_ptr, HeapAllocator * i_heap, uint32 i_align)
-{
-	DEBUG_PRINT("Calling delete( void *, HeapManager *, unsigned int  ) with ( %" PRIxPTR ", %" PRIxPTR ", %d ).\n", i_ptr, i_heap, i_align);
-	DEBUG_PRINT("BTW... this should never happen.\n");
-
-	if (i_ptr)
-	{
-		if (i_heap == nullptr)
-		{
-			i_heap = HeapManager::GetInstance()->GetDefaultHeap();
-		}
-		ASSERT(i_heap);
-
-		i_heap->free(i_ptr);
-	}
-}
-
-void * operator new(size_t i_size, HeapAllocator * i_heap, uint32 i_align)
-{
-	DEBUG_PRINT("Calling new( size_t, HeapManager *, unsigned int ) with ( %Iu, %" PRIxPTR ", %d).\n", i_size, i_heap, i_align);
-
-	if (i_heap == nullptr)
-	{
-		i_heap = HeapManager::GetInstance()->GetDefaultHeap();
-	}
-
-	ASSERT(i_heap);
-
-	return i_heap->alloc(i_size, i_align);
 }
 
 void operator delete(void * i_ptr, HeapAllocator * i_heap)
@@ -149,3 +123,55 @@ void operator delete(void * i_ptr, HeapAllocator * i_heap)
 		i_heap->free(i_ptr);
 	}
 }
+
+// alocator from heap with alignment
+void * operator new(size_t i_size, HeapAllocator * i_heap, NewAlignment i_align)
+{
+	DEBUG_PRINT("Calling new( size_t, HeapManager *, unsigned int ) with ( %Iu, %" PRIxPTR ", %d).\n", i_size, i_heap, i_align);
+
+	if (i_heap == nullptr)
+	{
+		i_heap = HeapManager::GetInstance()->GetDefaultHeap();
+	}
+
+	ASSERT(i_heap);
+
+	switch(i_align)
+	{
+	case NewAlignment::EAlign16:
+	case NewAlignment::EAlign32:
+	case NewAlignment::EAlign64:
+		return i_heap->alloc(i_size, static_cast<uint32>(i_align));
+	case NewAlignment::EAlignDefault:
+	default:
+		return i_heap->alloc(i_size, DEFAULT_ALIGNMENT);
+	}
+}
+
+
+void operator delete(void * i_ptr, HeapAllocator * i_heap, NewAlignment i_align)
+{
+	DEBUG_PRINT("Calling delete( void *, HeapManager *, unsigned int  ) with ( %" PRIxPTR ", %" PRIxPTR ", %d ).\n", i_ptr, i_heap, i_align);
+	DEBUG_PRINT("BTW... this should never happen.\n");
+
+	if (i_ptr)
+	{
+		if (i_heap == nullptr)
+		{
+			i_heap = HeapManager::GetInstance()->GetDefaultHeap();
+		}
+		ASSERT(i_heap);
+
+		i_heap->free(i_ptr);
+	}
+}
+
+
+
+
+
+//void * operator new(size_t i_size, void * i_ptr)
+//{
+//	DEBUG_PRINT("Calling new( size_t, void * ) with ( %zx, %" PRIxPTR " ).\n", i_size, i_ptr);
+//	return i_ptr;
+//}

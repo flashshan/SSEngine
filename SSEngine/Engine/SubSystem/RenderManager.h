@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core\Template\List.h"
-#include "Core\String\HashedString.h"
 #include "Core\Memory\New.h"
 
 #include "RenderObject.h"
@@ -10,6 +9,7 @@ void * LoadFile(const char * i_pFilename, size_t & o_sizeFile);
 
 GLib::Sprites::Sprite * CreateSprite(const char * i_pFilename);
 
+//singleton class
 class RenderManager
 {
 public:
@@ -25,6 +25,7 @@ public:
 private:
 	FORCEINLINE RenderManager();
 	FORCEINLINE RenderManager(RenderManager &i_other) {}
+	FORCEINLINE RenderManager& operator=(RenderManager &i_other) {}
 
 	static RenderManager *globalInstance_;
 
@@ -44,7 +45,7 @@ private:
 FORCEINLINE RenderManager *RenderManager::CreateInstance()
 {
 	ASSERT(RenderManager::globalInstance_ == nullptr);
-	RenderManager::globalInstance_ = new RenderManager();
+	RenderManager::globalInstance_ = new TRACK_NEW RenderManager();
 	return RenderManager::globalInstance_;
 }
 

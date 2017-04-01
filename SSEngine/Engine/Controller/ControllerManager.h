@@ -5,9 +5,9 @@
 #include "Core\Template\Pointers.h"
 #include "Core\Memory\New.h"
 #include "PlayerController.h"
-#include "Core\String\HashedString.h"
 #include "Object\Pawn.h"
 
+// singleton class
 class ControllerManager
 {
 public:
@@ -23,19 +23,20 @@ public:
 	void RemoveMonsterController(IController &i_monsterController);
 	FORCEINLINE void RemoveMonsterControllerByIndex(const int32 i_index);
 
-	FORCEINLINE StrongPtr<IController> GetPlayerController(const uint32 i_index);
+	FORCEINLINE StrongPtr<PlayerController> GetPlayerController(const uint32 i_index);
 
 	void UpdatePlayerController();
 	void UpdateMonsterController();
 
 private:
 	FORCEINLINE ControllerManager();
-	ControllerManager(const ControllerManager &i_other) {}
+	FORCEINLINE ControllerManager(const ControllerManager &i_other) {}
+	FORCEINLINE ControllerManager& operator=(const ControllerManager &i_other) {}
 
 	static ControllerManager *globalInstance_;
 
 private:
-	std::vector<StrongPtr<IController>> playerControllers_;
+	std::vector<StrongPtr<PlayerController>> playerControllers_;
 	std::vector<StrongPtr<IController>> monsterControllers_;
 };
 
@@ -52,7 +53,7 @@ FORCEINLINE ControllerManager::ControllerManager()
 FORCEINLINE ControllerManager *ControllerManager::CreateInstance()
 {
 	ASSERT(ControllerManager::globalInstance_ == nullptr);
-	ControllerManager::globalInstance_ = new ControllerManager();
+	ControllerManager::globalInstance_ = new TRACK_NEW ControllerManager();
 	return ControllerManager::globalInstance_;
 }
 
@@ -77,8 +78,8 @@ inline ControllerManager::~ControllerManager()
 
 FORCEINLINE void ControllerManager::AddPlayerController(const StrongPtr<Pawn> &i_player)
 {
-	StrongPtr<IController> newPlayerController = new PlayerController(i_player);
-	(*i_player).SetController(newPlayerController);
+	StrongPtr<PlayerController> newPlayerController = new TRACK_NEW PlayerController(i_player);
+	(*i_player).SetController(CastStrongPtr<PlayerController, IController>(newPlayerController));
 	playerControllers_.push_back(newPlayerController);
 }
 
@@ -93,7 +94,7 @@ FORCEINLINE void ControllerManager::RemoveMonsterControllerByIndex(const int32 i
 	monsterControllers_.pop_back();
 }
 
-FORCEINLINE StrongPtr<IController> ControllerManager::GetPlayerController(const uint32 i_index)
+FORCEINLINE StrongPtr<PlayerController> ControllerManager::GetPlayerController(const uint32 i_index)
 {
 	ASSERT(i_index < playerControllers_.size());
 	return playerControllers_[i_index];
