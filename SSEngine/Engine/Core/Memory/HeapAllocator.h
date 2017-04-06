@@ -1,5 +1,7 @@
 #pragma once
 
+#include <windows.h>
+
 #include "Core\CoreMinimal.h"
 
 #if defined(_WIN64)
@@ -87,6 +89,8 @@ private:
 
 	BlockDescriptor* freeList_;
 	BlockDescriptor *usedList_;
+
+	CRITICAL_SECTION criticalSection_;
 };
 
 

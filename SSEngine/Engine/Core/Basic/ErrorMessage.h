@@ -1,6 +1,6 @@
 #pragma once
 
-#include <unordered_map>
+#include <map>
 
 #include "BasicTypes.h"
 
@@ -38,7 +38,7 @@ private:
 	void initialMessage();
 
 private:
-	std::unordered_map<int32, char *> messages_;
+	std::map<int32, char *> messages_;
 };
 
 

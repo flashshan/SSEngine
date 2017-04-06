@@ -186,7 +186,14 @@
     <ClInclude Include="Core\Template\CircleQueue.h" />
     <ClInclude Include="Core\Template\List.h" />
     <ClInclude Include="Core\Template\Pointers.h" />
+    <ClInclude Include="Core\Thread\Events.h" />
+    <ClInclude Include="Core\Thread\Mutex.h" />
+    <ClInclude Include="Core\Thread\Semaphore.h" />
+    <ClInclude Include="Core\Thread\SingleWriterMultipleReader.h" />
     <ClInclude Include="Engine\Engine.h" />
+    <ClInclude Include="Jobs\IJob.h" />
+    <ClInclude Include="Jobs\JobLoadActor.h" />
+    <ClInclude Include="Jobs\JobLoadPawn.h" />
     <ClInclude Include="Manager\GameTimeManager.h" />
     <ClInclude Include="Manager\InputManager.h" />
     <ClInclude Include="Manager\RealTimeManager.h" />
@@ -194,10 +201,13 @@
     <ClInclude Include="Object\Actor.h" />
     <ClInclude Include="Object\GameObject.h" />
     <ClInclude Include="Object\Pawn.h" />
-    <ClInclude Include="SubSystem\PhysicsManager.h" />
-    <ClInclude Include="SubSystem\PhysicsObject.h" />
-    <ClInclude Include="SubSystem\RenderManager.h" />
-    <ClInclude Include="SubSystem\RenderObject.h" />
+    <ClInclude Include="SubSystem\Job\JobRunner.h" />
+    <ClInclude Include="SubSystem\Job\JobSystem.h" />
+    <ClInclude Include="SubSystem\Job\SharedJobQueue.h" />
+    <ClInclude Include="SubSystem\Physics\PhysicsManager.h" />
+    <ClInclude Include="SubSystem\Physics\PhysicsObject.h" />
+    <ClInclude Include="SubSystem\Render\RenderManager.h" />
+    <ClInclude Include="SubSystem\Render\RenderObject.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Component\Private\Transform.cpp" />
@@ -225,6 +235,10 @@
     <ClCompile Include="Core\Private\String\PooledString.cpp" />
     <ClCompile Include="Core\Private\String\StringPool.cpp" />
     <ClCompile Include="Engine\Private\Engine.cpp" />
+    <ClCompile Include="Jobs\main.cpp" />
+    <ClCompile Include="Jobs\Private\IJob.cpp" />
+    <ClCompile Include="Jobs\Private\JobLoadActor.cpp" />
+    <ClCompile Include="Jobs\Private\JobLoadPawn.cpp" />
     <ClCompile Include="Manager\Private\GameTimeManager.cpp" />
     <ClCompile Include="Manager\Private\InputManager.cpp" />
     <ClCompile Include="Manager\Private\RealTimeManager.cpp" />
@@ -232,10 +246,13 @@
     <ClCompile Include="Object\Private\Actor.cpp" />
     <ClCompile Include="Object\Private\GameObject.cpp" />
     <ClCompile Include="Object\Private\Pawn.cpp" />
-    <ClCompile Include="SubSystem\Private\PhysicsManager.cpp" />
-    <ClCompile Include="SubSystem\Private\PhysicsObject.cpp" />
-    <ClCompile Include="SubSystem\Private\RenderManager.cpp" />
-    <ClCompile Include="SubSystem\Private\RenderObject.cpp" />
+    <ClCompile Include="SubSystem\Private\Job\JobRunner.cpp" />
+    <ClCompile Include="SubSystem\Private\Job\JobSystem.cpp" />
+    <ClCompile Include="SubSystem\Private\Job\SharedJobQueue.cpp" />
+    <ClCompile Include="SubSystem\Private\Physics\PhysicsManager.cpp" />
+    <ClCompile Include="SubSystem\Private\Physics\PhysicsObject.cpp" />
+    <ClCompile Include="SubSystem\Private\Render\RenderManager.cpp" />
+    <ClCompile Include="SubSystem\Private\Render\RenderObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\readme please.txt" />

@@ -15,7 +15,7 @@ Pawn =
 	},
 	
 	renderObject = {
-		path = "Assets\\Texture\\player.dds",
+		path = "Assets\\Texture\\Player.dds",
 		priority = 3000
 	},
 	

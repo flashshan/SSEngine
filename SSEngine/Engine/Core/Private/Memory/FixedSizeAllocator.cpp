@@ -22,6 +22,8 @@ FixedSizeAllocator::FixedSizeAllocator(void *i_pTotalMemory, const size_t i_size
 	blocksMemoryBase_ = reinterpret_cast<void *>(((reinterpret_cast<uintPtr>(i_pTotalMemory) + bitArrayTotalSize - 1) / i_blockSize + 1) * i_blockSize);
 	
 	memorySize_ = i_numBlocks * i_blockSize;
+
+	InitializeCriticalSection(&criticalSection_);
 }
 
 

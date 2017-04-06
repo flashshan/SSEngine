@@ -1032,7 +1032,7 @@ int WINAPI wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_l
 	bool res = true;
 
 	Engine engine;
-	engine.EngineInit();
+	engine.EngineStartup();
 
 	bool bSuccess = GLib::Initialize(i_hInstance, i_nCmdShow, "UnitTest", -1, 800, 600);
 
@@ -1072,7 +1072,7 @@ int WINAPI wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_l
 	bool quit = true;
 	GLib::Service(quit);
 
-	engine.EngineQuit();
+	engine.EngineShutdown();
 #if defined(_DEBUG)
 	_CrtDumpMemoryLeaks();
 #endif // _DEBUG

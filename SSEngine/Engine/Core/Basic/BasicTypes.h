@@ -6,6 +6,7 @@
 #define M_PI 3.1415926
 #define RAND_MAX 0x7fff
 #define SMALL_NUMBER 0.000000003
+#define MAX_NAME_LENGTH 50
 
 #ifdef TARGET_WINDOWS
 

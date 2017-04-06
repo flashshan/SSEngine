@@ -32,6 +32,8 @@ HeapAllocator::HeapAllocator(void *i_pMemory, const size_t i_sizeMemory, const u
 	usedList_ = nullptr;
 
 	blockLength_ = 1;
+
+	InitializeCriticalSection(&criticalSection_);
 }
 
 HeapAllocator::~HeapAllocator()
@@ -44,9 +46,14 @@ HeapAllocator::~HeapAllocator()
 
 void* HeapAllocator::alloc(size_t i_size)
 {
+	EnterCriticalSection(&criticalSection_);
 	BlockDescriptor * temp = freeList_;
 
-	if (temp == nullptr) return nullptr;
+	if (temp == nullptr)
+	{
+		LeaveCriticalSection(&criticalSection_);
+		return nullptr;
+	}
 
 	// store addtional length in head and tail according to _DEBUG
 #if defined(_DEBUG)
@@ -125,20 +132,27 @@ void* HeapAllocator::alloc(size_t i_size)
 				temp->SizeBlock -= i_size + headLength + tailLength;
 				blockLength_++;
 			}
+			LeaveCriticalSection(&criticalSection_);
 			return res;
 		}
 		else
 			temp = temp->Next;
 	}
+	LeaveCriticalSection(&criticalSection_);
 	return nullptr;
 }
 
 
-void *	HeapAllocator::alloc(size_t i_size, uint32 i_alignment)
+void* HeapAllocator::alloc(size_t i_size, uint32 i_alignment)
 {
+	EnterCriticalSection(&criticalSection_);
 	BlockDescriptor * temp = freeList_;
 
-	if (temp == nullptr) return nullptr;
+	if (temp == nullptr)
+	{
+		LeaveCriticalSection(&criticalSection_);
+		return nullptr;
+	}
 
 	// store addtional length in head and tail according to _DEBUG
 #if defined(_DEBUG)
@@ -223,15 +237,17 @@ void *	HeapAllocator::alloc(size_t i_size, uint32 i_alignment)
 				temp->SizeBlock = reinterpret_cast<uintPtr>(usedList_->MemoryBase) - reinterpret_cast<uintPtr>(temp->MemoryBase);
 				blockLength_++;
 			}
+			LeaveCriticalSection(&criticalSection_);
 			return res;
 		}
 		else
 			temp = temp->Next;
 	}
+	LeaveCriticalSection(&criticalSection_);
 	return nullptr;
 }
 
-bool	HeapAllocator::free(const void * i_ptr)
+bool HeapAllocator::free(const void * i_ptr)
 {
 #ifdef _DEBUG
 	uint32 forward = BLOCK_POINTER + GUARD_BANDING_LENGTH;
@@ -239,6 +255,7 @@ bool	HeapAllocator::free(const void * i_ptr)
 	uint32 forward = BLOCK_POINTER;
 #endif // _DEBUG
 
+	EnterCriticalSection(&criticalSection_);
 	BlockDescriptor * temp = reinterpret_cast<BlockDescriptor *>(*reinterpret_cast<uintPtr *>(reinterpret_cast<uintPtr>(i_ptr) - forward));
 	ASSERT(temp != nullptr);
 
@@ -265,11 +282,14 @@ bool	HeapAllocator::free(const void * i_ptr)
 	temp->Next = freeList_;
 	temp->Previous = nullptr;
 	freeList_ = temp;
+
+	LeaveCriticalSection(&criticalSection_);
 	return true;
 }
 
-void	HeapAllocator::collect()
+void HeapAllocator::collect()
 {
+	EnterCriticalSection(&criticalSection_);
 	// quick sort free list
 	freeList_ = qsort(freeList_);
 
@@ -381,6 +401,7 @@ void	HeapAllocator::collect()
 			}
 		}
 	}
+	LeaveCriticalSection(&criticalSection_);
 }
 
 size_t	HeapAllocator::getLargestFreeBlock() const
@@ -461,6 +482,7 @@ uint32 HeapAllocator::getUsedCount() const
 BlockDescriptor* HeapAllocator::qsort(BlockDescriptor *i_head)
 {
 	if (i_head == nullptr || i_head->Next == nullptr) return i_head;
+
 	BlockDescriptor *h1 = nullptr, *h2 = nullptr;
 	BlockDescriptor *temp1 = h1, *temp2 = h2, *temp = i_head->Next;
 	i_head->Previous = nullptr;

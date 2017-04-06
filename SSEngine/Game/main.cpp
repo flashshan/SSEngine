@@ -9,12 +9,15 @@
 #include <time.h>
 #include <vector>
 
-
 #include "Engine\Manager\InputManager.h"
 #include "Engine\Manager\RealTimeManager.h"
 #include "Manager\WorldManager.h"
-
 #include "Engine\Engine.h"
+
+#include "SubSystem\Job\JobSystem.h"
+#include "Jobs\JobLoadActor.h"
+#include "Jobs\JobLoadPawn.h"
+
 #include "Glib\GLib.h"
 
 #include <assert.h>
@@ -30,8 +33,8 @@
 
 #define PlAYER_NUMBER 1
 
-#define FOCUS_MONSTER_NUMBER 30
-#define RANDOM_MONSTER_NUMBER 30
+#define FOCUS_MONSTER_NUMBER 1
+#define RANDOM_MONSTER_NUMBER 1
 
 
 void TestKeyCallback(unsigned int i_VKeyID, bool bWentDown)
@@ -51,7 +54,7 @@ void TestKeyCallback(unsigned int i_VKeyID, bool bWentDown)
 int WINAPI wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_lpCmdLine, int i_nCmdShow)
 {
 	Engine engine;
-	engine.EngineInit();
+	engine.EngineStartup();
 
 	// first we need to initialize GLib
 	bool bSuccess = GLib::Initialize(i_hInstance, i_nCmdShow, "Game", -1, 800, 600);
@@ -71,36 +74,39 @@ int WINAPI wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_l
 
 		const int32 playerNumber = PlAYER_NUMBER;
 
+		// spawn walls
+
+		WorldManager::GetInstance()->SpawnActorFromLua<Actor>("Assets\\Data\\LeftWall.lua");
+		WorldManager::GetInstance()->SpawnActorFromLua<Actor>("Assets\\Data\\RightWall.lua");
+
 		// assign player
 		for (int32 i = 0; i < playerNumber; ++i)
 		{
-			WorldManager::GetInstance()->SpawnPawnFromLua<Pawn>("Assets\\Data\\Player1.lua");
-			/*WeakPtr<Pawn> player = WorldManager::GetInstance()->SpawnPawn<Pawn>(Transform(Vector3(Vector2::RandomNormal() * playerInitDistance)), "player1", "Player");
-			ASSERT(player);
-			player->AddRenderObject("Assets\\Texture\\player.dds");
-			player->AddPhysicsObject(100, 0.1f);*/
+			JobLoadPawn *jobLoadPlayer= new JobLoadPawn("Assets\\Data\\Player1.lua");
+			ASSERT(jobLoadPlayer);
+			JobSystem::GetInstance()->RunJob(*jobLoadPlayer, "Default");
 		}
 
 		// assign monsters
 		const int32 focusMonsterNumber = FOCUS_MONSTER_NUMBER;
 
-		WeakPtr<Pawn> tempMonster;
-		for (int32 i = 0; i < focusMonsterNumber; ++i)
-		{
-			tempMonster = WorldManager::GetInstance()->SpawnPawn<Pawn>(Transform(Vector3(Vector2::RandomNormal() * monsterInitDistance)), "FMonster", "FocusMoveMonster");
-			SLOW_ASSERT(tempMonster, ErrorType::ENullPointer);
-			tempMonster->AddRenderObject("Assets\\Texture\\focusMonster.dds");
-		}
-
 		const int32 randomMonsterNumber = RANDOM_MONSTER_NUMBER;
 
 		for (int32 i = 0; i < randomMonsterNumber; ++i)
 		{
-			tempMonster = WorldManager::GetInstance()->SpawnPawn<Pawn>(Transform(Vector3(Vector2::RandomNormal() * monsterInitDistance)), "RMonster", "RandomMoveMonster");
-			SLOW_ASSERT(tempMonster, ErrorType::ENullPointer);
-			tempMonster->AddRenderObject("Assets\\Texture\\randomMonster.dds");
+			JobLoadPawn *jobLoadRMonster = new JobLoadPawn("Assets\\Data\\Monster2.lua");
+			ASSERT(jobLoadRMonster);
+			JobSystem::GetInstance()->RunJob(*jobLoadRMonster, "Default");
 		}
 
+		for (int32 i = 0; i < focusMonsterNumber; ++i)
+		{
+			JobLoadPawn *jobLoadFMonster = new JobLoadPawn("Assets\\Data\\Monster1.lua");
+			ASSERT(jobLoadFMonster);
+			JobSystem::GetInstance()->RunJob(*jobLoadFMonster, "Default");
+		}
+
+	
 		bool bQuit = false;
 		do
 		{
@@ -119,7 +125,7 @@ int WINAPI wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_l
 		//GLib::Shutdown();
 	}
 
-	engine.EngineQuit();
+	engine.EngineShutdown();
 
 #if defined _DEBUG
 	_CrtDumpMemoryLeaks();

@@ -1,5 +1,7 @@
 #pragma once 
 
+#include <Windows.h>
+
 #include "BitArray.h"
 
 #if defined(_WIN64)
@@ -50,6 +52,8 @@ private:
 	size_t numBlocks_;
 	size_t blockSize_;
 	BitArray *bitArray_;
+
+	CRITICAL_SECTION criticalSection_;
 };
 
 
@@ -67,16 +71,19 @@ inline void *FixedSizeAllocator::alloc()
 {
 	size_t i_firstAvailable;
 
+	EnterCriticalSection(&criticalSection_);
 	if (bitArray_->GetFirstClearBit(i_firstAvailable))
 	{
 		// mark it in use because we're going to allocate it to user
 		bitArray_->SetBit(i_firstAvailable);
 
+		LeaveCriticalSection(&criticalSection_);
 		// calculate it’s address and return it to user
 		return reinterpret_cast<void *>(reinterpret_cast<uintPtr>(blocksMemoryBase_) + ((i_firstAvailable - 1) * blockSize_));
 	}
 	else
 	{
+		LeaveCriticalSection(&criticalSection_);
 		return nullptr;
 	}
 }
@@ -85,7 +92,9 @@ inline void *FixedSizeAllocator::alloc()
 FORCEINLINE bool FixedSizeAllocator::free(const void *i_ptr)
 {
 	ASSERT(i_ptr);
+	EnterCriticalSection(&criticalSection_);
 	bitArray_->ClearBit((reinterpret_cast<uintPtr>(i_ptr) - reinterpret_cast<uintPtr>(blocksMemoryBase_)) / blockSize_ + 1);
+	LeaveCriticalSection(&criticalSection_);
 	return true;
 }
 
@@ -119,3 +128,48 @@ FORCEINLINE size_t FixedSizeAllocator::getUsedCount() const
 
 
 
+//bool SharedJobQueue::Add(IJob & i_Job)
+//{
+//	bool bAdded = false;
+//
+//	EnterCriticalSection(&m_QueueAccess);
+//	if (m_ShutdownRequested == false)
+//	{
+//		m_Jobs.push(&i_Job);
+//		bAdded = true;
+//	}
+//	LeaveCriticalSection(&m_QueueAccess);
+//
+//	if (bAdded)
+//		WakeConditionVariable(&m_WakeAndCheck);
+//
+//	return bAdded;
+//}
+//
+//IJob * SharedJobQueue::GetWhenAvailable()
+//{
+//	EnterCriticalSection(&m_QueueAccess);
+//
+//	if (m_Jobs.empty() && (m_ShutdownRequested == false))
+//	{
+//		BOOL result = SleepConditionVariableCS(&m_WakeAndCheck, &m_QueueAccess, INFINITE);
+//		ASSERT(result != 0);
+//
+//		if (m_ShutdownRequested == true)
+//		{
+//			LeaveCriticalSection(&m_QueueAccess);
+//			return nullptr;
+//		}
+//	}
+//
+//	IJob * pJob = nullptr;
+//
+//	if (!m_Jobs.empty())
+//	{
+//		pJob = m_Jobs.front();
+//		m_Jobs.pop();
+//	}
+//
+//	LeaveCriticalSection(&m_QueueAccess);
+//	return pJob;
+//}

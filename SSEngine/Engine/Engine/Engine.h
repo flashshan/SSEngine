@@ -6,11 +6,11 @@ public:
 	Engine();
 	~Engine();
 
-	void EngineInit();
+	void EngineStartup();
 
 	void Run();
 
-	void EngineQuit();
+	void EngineShutdown();
 
 private:
 	void engineMemoryInit();

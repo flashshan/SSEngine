@@ -72,6 +72,33 @@
     <Filter Include="Component\Private">
       <UniqueIdentifier>{8ee0da96-10a6-4f6f-a434-5de4b5d610d5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Thread">
+      <UniqueIdentifier>{c57ffdf4-0560-4d63-8b67-ec9080a0f1c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SubSystem\Render">
+      <UniqueIdentifier>{1fa76255-c8c2-4522-8e98-6e7bca9e1318}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SubSystem\Physics">
+      <UniqueIdentifier>{ae4c7864-296e-4ff8-8b01-af654e6004f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SubSystem\Job">
+      <UniqueIdentifier>{c637b77f-ed72-4c8f-ab66-3eb3de17d925}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SubSystem\Private\Render">
+      <UniqueIdentifier>{6d3a1487-ee72-419e-a1bf-40a971b6597a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SubSystem\Private\Physics">
+      <UniqueIdentifier>{5d8ded33-2a38-411d-960b-404d293e5755}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SubSystem\Private\Job">
+      <UniqueIdentifier>{09d29530-540d-408d-8b30-e6c516ac43ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Jobs">
+      <UniqueIdentifier>{61e38168-b0b5-43f5-ade1-47f927797708}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Jobs\Private">
+      <UniqueIdentifier>{c77c96f0-e43f-4c9b-b6fe-0e0a67a87033}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Object\GameObject.h">
@@ -85,18 +112,6 @@
     </ClInclude>
     <ClInclude Include="Manager\GameTimeManager.h">
       <Filter>Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="SubSystem\PhysicsManager.h">
-      <Filter>SubSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="SubSystem\PhysicsObject.h">
-      <Filter>SubSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="SubSystem\RenderManager.h">
-      <Filter>SubSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="SubSystem\RenderObject.h">
-      <Filter>SubSystem</Filter>
     </ClInclude>
     <ClInclude Include="Object\Actor.h">
       <Filter>Object</Filter>
@@ -218,6 +233,48 @@
     <ClInclude Include="Core\Basic\LuaData.h">
       <Filter>Core\Basic</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Thread\Events.h">
+      <Filter>Core\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Thread\Mutex.h">
+      <Filter>Core\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Thread\Semaphore.h">
+      <Filter>Core\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Thread\SingleWriterMultipleReader.h">
+      <Filter>Core\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="SubSystem\Physics\PhysicsManager.h">
+      <Filter>SubSystem\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="SubSystem\Physics\PhysicsObject.h">
+      <Filter>SubSystem\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="SubSystem\Render\RenderManager.h">
+      <Filter>SubSystem\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="SubSystem\Render\RenderObject.h">
+      <Filter>SubSystem\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="SubSystem\Job\JobRunner.h">
+      <Filter>SubSystem\Job</Filter>
+    </ClInclude>
+    <ClInclude Include="SubSystem\Job\JobSystem.h">
+      <Filter>SubSystem\Job</Filter>
+    </ClInclude>
+    <ClInclude Include="SubSystem\Job\SharedJobQueue.h">
+      <Filter>SubSystem\Job</Filter>
+    </ClInclude>
+    <ClInclude Include="Jobs\IJob.h">
+      <Filter>Jobs</Filter>
+    </ClInclude>
+    <ClInclude Include="Jobs\JobLoadActor.h">
+      <Filter>Jobs</Filter>
+    </ClInclude>
+    <ClInclude Include="Jobs\JobLoadPawn.h">
+      <Filter>Jobs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Object\Private\GameObject.cpp">
@@ -231,18 +288,6 @@
     </ClCompile>
     <ClCompile Include="Manager\Private\GameTimeManager.cpp">
       <Filter>Manager\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="SubSystem\Private\PhysicsManager.cpp">
-      <Filter>SubSystem\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="SubSystem\Private\PhysicsObject.cpp">
-      <Filter>SubSystem\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="SubSystem\Private\RenderManager.cpp">
-      <Filter>SubSystem\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="SubSystem\Private\RenderObject.cpp">
-      <Filter>SubSystem\Private</Filter>
     </ClCompile>
     <ClCompile Include="Object\Private\Actor.cpp">
       <Filter>Object\Private</Filter>
@@ -327,6 +372,39 @@
     </ClCompile>
     <ClCompile Include="Core\Private\Math\Vector3.cpp">
       <Filter>Core\Private\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="SubSystem\Private\Job\JobRunner.cpp">
+      <Filter>SubSystem\Private\Job</Filter>
+    </ClCompile>
+    <ClCompile Include="SubSystem\Private\Job\JobSystem.cpp">
+      <Filter>SubSystem\Private\Job</Filter>
+    </ClCompile>
+    <ClCompile Include="SubSystem\Private\Job\SharedJobQueue.cpp">
+      <Filter>SubSystem\Private\Job</Filter>
+    </ClCompile>
+    <ClCompile Include="SubSystem\Private\Physics\PhysicsManager.cpp">
+      <Filter>SubSystem\Private\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="SubSystem\Private\Physics\PhysicsObject.cpp">
+      <Filter>SubSystem\Private\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="SubSystem\Private\Render\RenderManager.cpp">
+      <Filter>SubSystem\Private\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="SubSystem\Private\Render\RenderObject.cpp">
+      <Filter>SubSystem\Private\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Jobs\Private\IJob.cpp">
+      <Filter>Jobs\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Jobs\main.cpp">
+      <Filter>Jobs</Filter>
+    </ClCompile>
+    <ClCompile Include="Jobs\Private\JobLoadActor.cpp">
+      <Filter>Jobs\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Jobs\Private\JobLoadPawn.cpp">
+      <Filter>Jobs\Private</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

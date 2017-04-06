@@ -74,6 +74,7 @@ template<> WeakPtr<Pawn> WorldManager::SpawnPawn<Pawn>(const Transform &i_transf
 	return addPawnToWorld<Pawn>(pawn);
 }
 
+// work on jobs
 template<> WeakPtr<Actor> WorldManager::SpawnActorFromLua<Actor>(const char *i_luaFileName)
 {
 	lua_State * luaState = luaL_newstate();
@@ -213,10 +214,10 @@ template<> WeakPtr<Actor> WorldManager::SpawnActorFromLua<Actor>(const char *i_l
 			float drag = static_cast<float>(lua_tonumber(luaState, -1));
 			actor->AddPhysicsObject(mass, drag);
 
-			lua_pop(luaState, 3);
+			lua_pop(luaState, 2);
 		}
 
-		lua_pop(luaState, 1);
+		lua_pop(luaState, 2);
 
 		int stackHeight = lua_gettop(luaState);
 		ASSERT(stackHeight == 0);
@@ -228,6 +229,7 @@ template<> WeakPtr<Actor> WorldManager::SpawnActorFromLua<Actor>(const char *i_l
 	return addActorToWorld<Actor>(actor);
 }
 
+// work on jobs
 template<> WeakPtr<Pawn> WorldManager::SpawnPawnFromLua<Pawn>(const char *i_luaFileName)
 {
 	lua_State * luaState = luaL_newstate();
@@ -367,10 +369,10 @@ template<> WeakPtr<Pawn> WorldManager::SpawnPawnFromLua<Pawn>(const char *i_luaF
 			float drag = static_cast<float>(lua_tonumber(luaState, -1));
 			pawn->AddPhysicsObject(mass, drag);
 
-			lua_pop(luaState, 3);
+			lua_pop(luaState, 2);
 		}
 
-		lua_pop(luaState, 1);
+		lua_pop(luaState, 2);
 
 		int stackHeight = lua_gettop(luaState);
 		ASSERT(stackHeight == 0);

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "SubSystem\RenderManager.h"
-#include "SubSystem\PhysicsManager.h"
+#include "SubSystem\Render\RenderManager.h"
+#include "SubSystem\Physics\PhysicsManager.h"
 #include "Core\String\HashedString.h"
 #include "Component\IComponent.h"
 #include "Core\String\StringPool.h"
@@ -20,7 +20,7 @@ public:
 	FORCEINLINE Actor& operator =(const Actor &i_other);
 	FORCEINLINE Actor& operator =(Actor &&i_other);
 
-	FORCEINLINE char *GetName() const { return name_; }
+	FORCEINLINE const char *GetName() const { return name_; }
 	FORCEINLINE HashedString GetType() const { return type_; }
 	FORCEINLINE WeakPtr<GameObject> GetGameObject() const;
 
@@ -57,7 +57,7 @@ public:
 	FORCEINLINE void RemovePhysicsObject();
 
 private:
-	char *name_;
+	const char *name_;
 	HashedString type_;
 	//uint32 guid_;
 

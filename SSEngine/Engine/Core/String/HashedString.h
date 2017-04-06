@@ -15,11 +15,12 @@ public:
 	FORCEINLINE HashedString(const HashedString &i_other);
 	inline ~HashedString();
 
-	FORCEINLINE HashedString& operator =(const HashedString &i_other);
+	FORCEINLINE HashedString& operator=(const HashedString &i_other);
 
 	FORCEINLINE uint32 GetHash() const { return hash_; }
 
-	FORCEINLINE bool operator ==(const HashedString &i_other) const;
+	FORCEINLINE bool operator==(const HashedString &i_other) const;
+	FORCEINLINE bool operator<(const HashedString & i_other) const;
 
 private:
 	static inline uint32 Hash(const char * i_string);
@@ -70,7 +71,7 @@ inline HashedString::~HashedString()
 {
 }
 
-FORCEINLINE HashedString & HashedString::operator =(const HashedString &i_other)
+FORCEINLINE HashedString & HashedString::operator=(const HashedString &i_other)
 {
 	hash_ = i_other.hash_;
 #ifdef KEEP_STRING
@@ -79,9 +80,14 @@ FORCEINLINE HashedString & HashedString::operator =(const HashedString &i_other)
 	return *this;
 }
 
-FORCEINLINE bool HashedString::operator ==(const HashedString &i_other) const
+FORCEINLINE bool HashedString::operator==(const HashedString &i_other) const
 {
 	return hash_ == i_other.hash_;
+}
+
+FORCEINLINE bool HashedString::operator<(const HashedString & i_other) const
+{
+	return hash_ < i_other.hash_;
 }
 
 inline uint32 HashedString::Hash(const char * i_string)

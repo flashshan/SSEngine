@@ -7,6 +7,7 @@
 #include "Core\Memory\HeapManager.h"
 #include "Manager\InputManager.h"
 #include "Manager\WorldManager.h"
+#include "SubSystem\Job\JobSystem.h"
 #include "Manager\RealTimeManager.h"
 #include "Manager\GameTimeManager.h"
 
@@ -21,7 +22,7 @@ Engine::~Engine()
 {
 }
 
-void Engine::EngineInit()
+void Engine::EngineStartup()
 {
 	engineMemoryInit();
 	engineSubsystemInit();
@@ -44,7 +45,7 @@ void Engine::Run()
 	WorldManager::GetInstance()->LateUpdate();
 }
 
-void Engine::EngineQuit()
+void Engine::EngineShutdown()
 {
 	engineManagerDestroy();
 	engineSubsystemDestroy();
@@ -66,6 +67,9 @@ void Engine::engineMemoryInit()
 
 void Engine::engineSubsystemInit()
 {
+	JobSystem::CreateInstance();
+	JobSystem::GetInstance()->CreateQueue("Default", 2);
+	
 	RenderManager::CreateInstance();
 	PhysicsManager::CreateInstance();
 }
@@ -92,6 +96,9 @@ void Engine::engineSubsystemDestroy()
 {
 	PhysicsManager::DestroyInstance();
 	RenderManager::DestroyInstance();
+
+	JobSystem::GetInstance()->Shutdown();
+	JobSystem::DestroyInstance();
 }
 
 void Engine::engineMemoryFree()

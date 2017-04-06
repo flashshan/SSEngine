@@ -70,3 +70,8 @@ add Assets folder in Game and add lua script																 // Game\Assets\Data
 add lua load in worldManager to load actor and pawn from lua, used in Game\main.cpp        					 // Engine\Manager\WorldManager.h
 modify EngineTest project into a window application, add UnitTest for lua and circleQueue					 // EngineTest\main.cpp
 
+V1.07
+big changes, provide multi-thread features
+add job system into the Engine (testing), initial in Engine and ShutDown when engine shut down				 // Engine\SubSystem\Job
+add some simple jobs (Load Actor and Pawn from lua) and use these jobs in Game\main.cpp						 // Engine\Jobs\
+change heapAllocator and fixedSizeAllocator's operations to thread-safe operations 
