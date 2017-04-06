@@ -4,12 +4,13 @@
 #include "Core\Math\Box2D.h"
 #include "Component\Transform.h"
 
+
 class GameObject
 {
 public:
 	FORCEINLINE GameObject();
-	explicit FORCEINLINE GameObject(const Vector3 &i_location);
 	explicit FORCEINLINE GameObject(const Transform &i_transform);
+	FORCEINLINE GameObject(const Transform &i_transform, const Box2D &i_boundingBox);
 	FORCEINLINE GameObject(const GameObject &i_other);
 	FORCEINLINE GameObject(GameObject &&i_other);
 	inline ~GameObject();
@@ -53,20 +54,20 @@ private:
 // implement forceinline
 
 FORCEINLINE GameObject::GameObject()
-	: transform_(Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f)), velocity_(0.0f, 0.0f, 0.0f), boundingBox_()
+	: transform_(Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f)), velocity_(0.0f, 0.0f, 0.0f), boundingBox_()
 {
 }
-
-FORCEINLINE GameObject::GameObject(const Vector3 &i_location)
-	: transform_(i_location, Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f)), velocity_(0.0f, 0.0f, 0.0f), boundingBox_()
-{
-}
-
 
 FORCEINLINE GameObject::GameObject(const Transform &i_transform)
 	: transform_(i_transform), velocity_(0.0, 0.0f, 0.0f), boundingBox_()
 {
 }
+
+FORCEINLINE GameObject::GameObject(const Transform &i_transform, const Box2D &i_boundingBox)
+	: transform_(i_transform), velocity_(0.0f, 0.0f, 0.0f), boundingBox_(i_boundingBox)
+{
+}
+
 
 FORCEINLINE GameObject::GameObject(const GameObject &i_other)
 	: transform_(i_other.transform_), velocity_(i_other.velocity_), boundingBox_(i_other.boundingBox_)

@@ -49,6 +49,6 @@ namespace Console {
 						BREAK_IN_DEBUGGER(); \
 					 }
 #else
-#define ASSERT() void(0);
+#define ASSERT(cond) void(0);
 #define SLOW_ASSERT(cond, code) void(0);
 #endif

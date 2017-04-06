@@ -161,6 +161,8 @@
     <ClInclude Include="Core\Basic\BasicFunctions.h" />
     <ClInclude Include="Core\Basic\BasicTypes.h" />
     <ClInclude Include="Core\Basic\ErrorMessage.h" />
+    <ClInclude Include="Core\Basic\FileIO.h" />
+    <ClInclude Include="Core\Basic\LuaData.h" />
     <ClInclude Include="Core\Basic\Target.h" />
     <ClInclude Include="Core\CoreMinimal.h" />
     <ClInclude Include="Core\Math\Box2D.h" />
@@ -181,6 +183,7 @@
     <ClInclude Include="Core\String\HashedString.h" />
     <ClInclude Include="Core\String\PooledString.h" />
     <ClInclude Include="Core\String\StringPool.h" />
+    <ClInclude Include="Core\Template\CircleQueue.h" />
     <ClInclude Include="Core\Template\List.h" />
     <ClInclude Include="Core\Template\Pointers.h" />
     <ClInclude Include="Engine\Engine.h" />
@@ -205,11 +208,13 @@
     <ClCompile Include="Core\Private\Basic\Assert.cpp" />
     <ClCompile Include="Core\Private\Basic\BasicFunctions.cpp" />
     <ClCompile Include="Core\Private\Basic\ErrorMessage.cpp" />
+    <ClCompile Include="Core\Private\Basic\LoadData.cpp" />
     <ClCompile Include="Core\Private\Math\Box2D.cpp" />
     <ClCompile Include="Core\Private\Math\Matrix.cpp" />
     <ClCompile Include="Core\Private\Math\Quaternion.cpp" />
     <ClCompile Include="Core\Private\Math\Rotator.cpp" />
     <ClCompile Include="Core\Private\Math\Triangle.cpp" />
+    <ClCompile Include="Core\Private\Math\Vector3.cpp" />
     <ClCompile Include="Core\Private\Memory\BitArray.cpp" />
     <ClCompile Include="Core\Private\Memory\FixedSizeAllocator.cpp" />
     <ClCompile Include="Core\Private\Memory\HeapManager.cpp" />

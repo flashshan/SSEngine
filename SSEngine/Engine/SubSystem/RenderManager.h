@@ -5,8 +5,6 @@
 
 #include "RenderObject.h"
 
-void * LoadFile(const char * i_pFilename, size_t & o_sizeFile);
-
 GLib::Sprites::Sprite * CreateSprite(const char * i_pFilename);
 
 //singleton class

@@ -209,6 +209,15 @@
     <ClInclude Include="Core\Memory\New.h">
       <Filter>Core\Memory</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Template\CircleQueue.h">
+      <Filter>Core\Template</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Basic\FileIO.h">
+      <Filter>Core\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Basic\LuaData.h">
+      <Filter>Core\Basic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Object\Private\GameObject.cpp">
@@ -312,6 +321,12 @@
     </ClCompile>
     <ClCompile Include="Core\Private\Memory\New.cpp">
       <Filter>Core\Private\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Private\Basic\LoadData.cpp">
+      <Filter>Core\Private\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Private\Math\Vector3.cpp">
+      <Filter>Core\Private\Math</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

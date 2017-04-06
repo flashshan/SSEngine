@@ -144,11 +144,11 @@ namespace Float {
 
 	FORCEINLINE bool IsNAN(const float i_val)
 	{
-		volatile float val = i_val;
-		return val != val;
+		/*volatile float val = i_val;
+		return val != val;*/
 
 		// another way to judge
-		//return ((*(uint32*)&i_val) & 0x7FFFFFFF) > 0x7F800000;
+		return ((*(uint32*)&i_val) & 0x7FFFFFFF) > 0x7F800000;
 	}
 
 	FORCEINLINE bool IsZero(const float i_val)

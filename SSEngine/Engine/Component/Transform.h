@@ -34,7 +34,7 @@ private:
 // implement forceinline
 
 FORCEINLINE Transform::Transform()
-	:location_(0.0f, 0.0f, 0.0f)
+	: location_(0.0f, 0.0f, 0.0f), rotation_(0.0f, 0.0f, 0.0f), scale_(1.0f, 1.0f, 1.0f)
 {
 }
 

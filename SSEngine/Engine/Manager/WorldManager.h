@@ -22,15 +22,17 @@ public:
 
 	~WorldManager();
 
-	template <typename T> T* SpawnActor(const Transform &i_transform, const char *i_name, const char *i_type);
+	template <typename T> WeakPtr<T> SpawnActor(const Transform &i_transform, const char *i_name, const char *i_type);
+	template <typename T> WeakPtr<T> SpawnActorFromLua(const char *i_luaFileName);
 	//typename std::enable_if<std::is_base_of<Pawn, T>::value>::type
 
-	template <typename T> T* SpawnPawn(const Transform &i_transform, const char *i_name, const char *i_type);
+	template <typename T> WeakPtr<T> SpawnPawn(const Transform &i_transform, const char *i_name, const char *i_type);
+	template <typename T> WeakPtr<T> SpawnPawnFromLua(const char *i_luaFileName);
 	
 	void EarlyUpdate();
 	void Update();
 	void LateUpdate();
-
+	
 	FORCEINLINE StrongPtr<Pawn> GetPlayer(const uint32 i_index);
 
 private:
@@ -40,6 +42,8 @@ private:
 
 	static WorldManager *globalInstance_;
 
+	template <typename T> WeakPtr<T> addActorToWorld(void *i_actor);
+	template <typename T> WeakPtr<T> addPawnToWorld(void *i_pawn);
 private:
 	std::vector<StrongPtr<Pawn>> players_;
 	std::vector<StrongPtr<Actor>> actors_;

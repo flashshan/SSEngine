@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Vector2.h"
+#include "Core\Basic\LuaData.h"
 
 struct Vector4;
 
@@ -252,4 +253,17 @@ FORCEINLINE Vector2::Vector2(const Vector3 & i_vector)
 }
 
 
+// for LoadData
+inline Vector3 GetVector3(lua_State * i_pState, int i_index)
+{
+	ASSERT(i_pState);
+	ASSERT(lua_gettop(i_pState) >= -i_index);
+	ASSERT(lua_type(i_pState, i_index) == LUA_TTABLE);
 
+	const size_t numFloats = 3;
+	float v[numFloats] = { 0 };
+
+	size_t readFloats = ReadFloatArray(i_pState, i_index, v, numFloats);
+
+	return Vector3(v[0], v[1], v[2]);
+}

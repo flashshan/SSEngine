@@ -77,7 +77,7 @@ void* HeapAllocator::alloc(size_t i_size)
 				res = reinterpret_cast<void *>(reinterpret_cast<uintPtr>(temp->BlockBase) + BLOCK_POINTER + GUARD_BANDING_LENGTH);
 				*reinterpret_cast<uint32 *>(reinterpret_cast<uintPtr>(temp->BlockBase) + BLOCK_POINTER + GUARD_BANDING_LENGTH + i_size) = GUARD_BANDING_VALUE;
 #else
-				res = reinterpret_cast<void *>(reinterpret_cast<uintPtr>(temp->m_pBlockBase) + BLOCK_POINTER);
+				res = reinterpret_cast<void *>(reinterpret_cast<uintPtr>(temp->BlockBase) + BLOCK_POINTER);
 #endif
 				// operate free list node and used list
 				if (temp->Next != nullptr)
@@ -114,7 +114,7 @@ void* HeapAllocator::alloc(size_t i_size)
 				res = reinterpret_cast<void *>(reinterpret_cast<uintPtr>(usedList_->BlockBase) + BLOCK_POINTER + GUARD_BANDING_LENGTH);
 				*reinterpret_cast<uint32 *>(reinterpret_cast<uintPtr>(usedList_->BlockBase) + BLOCK_POINTER + GUARD_BANDING_LENGTH + i_size) = GUARD_BANDING_VALUE;
 #else
-				res = reinterpret_cast<void *>(reinterpret_cast<uintPtr>(usedList_->m_pBlockBase) + BLOCK_POINTER);
+				res = reinterpret_cast<void *>(reinterpret_cast<uintPtr>(usedList_->BlockBase) + BLOCK_POINTER);
 #endif
 				// operate free list node and used list
 				usedList_->Previous = nullptr;
@@ -173,7 +173,7 @@ void *	HeapAllocator::alloc(size_t i_size, uint32 i_alignment)
 				res = reinterpret_cast<void *>(reinterpret_cast<uintPtr>(temp->BlockBase) + BLOCK_POINTER + GUARD_BANDING_LENGTH);
 				*reinterpret_cast<uint32 *>(reinterpret_cast<uintPtr>(temp->BlockBase) + BLOCK_POINTER + GUARD_BANDING_LENGTH + i_size) = GUARD_BANDING_VALUE;
 #else
-				res = reinterpret_cast<void *>(reinterpret_cast<uintPtr>(temp->m_pBlockBase) + BLOCK_POINTER);
+				res = reinterpret_cast<void *>(reinterpret_cast<uintPtr>(temp->BlockBase) + BLOCK_POINTER);
 #endif
 
 				// operate free list node and used list
@@ -211,7 +211,7 @@ void *	HeapAllocator::alloc(size_t i_size, uint32 i_alignment)
 				res = reinterpret_cast<void *>(reinterpret_cast<uintPtr>(usedList_->BlockBase) + BLOCK_POINTER + GUARD_BANDING_LENGTH);
 				*reinterpret_cast<uint32 *>(reinterpret_cast<uintPtr>(usedList_->BlockBase) + BLOCK_POINTER + GUARD_BANDING_LENGTH + i_size) = GUARD_BANDING_VALUE;
 #else
-				res = reinterpret_cast<void *>(reinterpret_cast<uintPtr>(usedList_->m_pBlockBase) + BLOCK_POINTER);
+				res = reinterpret_cast<void *>(reinterpret_cast<uintPtr>(usedList_->BlockBase) + BLOCK_POINTER);
 #endif
 
 				// operate free list node and used list

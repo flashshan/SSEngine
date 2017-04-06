@@ -14,7 +14,7 @@ public:
 	inline ~PhysicsManager();
 
 	void PhysicsUpdate() const;
-	StrongPtr<PhysicsObject>& AddPhysicsObject(const StrongPtr<GameObject> &i_gameObject, const float i_mass);
+	StrongPtr<PhysicsObject>& AddPhysicsObject(const StrongPtr<GameObject> &i_gameObject, const float i_mass, const float i_drag);
 	void RemoveFromList(PhysicsObject &i_physicsObject);
 
 private:
@@ -69,9 +69,3 @@ inline PhysicsManager::~PhysicsManager()
 
 
 
-// for PhysicsObject
-
-FORCEINLINE void PhysicsObject::RemovePhysicsObject()
-{
-	PhysicsManager::GetInstance()->RemoveFromList(*this);
-}

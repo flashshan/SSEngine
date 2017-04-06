@@ -24,5 +24,6 @@ private:
 private:
 	void *memoryBase_;
 	size_t memorySize_;
+	size_t stringPoolSize_;
 };
 

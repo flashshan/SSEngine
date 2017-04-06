@@ -1,6 +1,7 @@
 #include "SubSystem\RenderManager.h"
 
 #include "Core\String\HashedString.h"
+#include "Core\Basic\FileIO.h"
 
 GLib::Sprites::Sprite * CreateSprite(const char * i_pFilename)
 {
@@ -9,7 +10,7 @@ GLib::Sprites::Sprite * CreateSprite(const char * i_pFilename)
 	size_t sizeTextureFile = 0;
 
 	// Load the source file (texture data)
-	void * pTextureFile = LoadFile(i_pFilename, sizeTextureFile);
+	uint8 * pTextureFile = LoadFile(i_pFilename, sizeTextureFile);
 
 	// Ask GLib to create a texture out of the data (assuming it was loaded successfully)
 	GLib::Texture * pTexture = pTextureFile ? GLib::CreateTexture(pTextureFile, sizeTextureFile) : nullptr;
@@ -49,41 +50,6 @@ GLib::Sprites::Sprite * CreateSprite(const char * i_pFilename)
 
 	return pSprite;
 }
-
-void * LoadFile(const char * i_pFilename, size_t & o_sizeFile)
-{
-	SLOW_ASSERT(i_pFilename != NULL, ErrorType::ENullPointer);
-
-	FILE * pFile = NULL;
-
-	errno_t fopenError = fopen_s(&pFile, i_pFilename, "rb");
-	if (fopenError != 0)
-		return NULL;
-
-	SLOW_ASSERT(pFile != NULL, ErrorType::ENullPointer);
-
-	int32 FileIOError = fseek(pFile, 0, SEEK_END);
-	SLOW_ASSERT(FileIOError == 0, ErrorType::ENonZeroValue);
-
-	long FileSize = ftell(pFile);
-	SLOW_ASSERT(FileSize >= 0, ErrorType::ENonPostiveValue);
-
-	FileIOError = fseek(pFile, 0, SEEK_SET);
-	SLOW_ASSERT(FileIOError == 0, ErrorType::ENonZeroValue);
-
-	uint8 * pBuffer = new TRACK_NEW uint8[FileSize];
-	SLOW_ASSERT(pBuffer, ErrorType::ENullPointer);
-
-	size_t FileRead = fread(pBuffer, 1, FileSize, pFile);
-	ASSERT(FileRead == FileSize);
-
-	fclose(pFile);
-
-	o_sizeFile = FileSize;
-
-	return pBuffer;
-}
-
 
 
 RenderManager *RenderManager::globalInstance_ = nullptr;

@@ -17,6 +17,23 @@
 #include "Engine\Engine.h"
 #include "Glib\GLib.h"
 
+#include <assert.h>
+#include <stdint.h>
+#include <string.h>
+
+#include "GLib\GLib.h"
+#include "Lua/lua.hpp"
+
+
+//#define RANDOM_MOVE_MONSTER
+#define FOCUS_MOVE_MONSTER
+
+#define PlAYER_NUMBER 1
+
+#define FOCUS_MONSTER_NUMBER 30
+#define RANDOM_MONSTER_NUMBER 30
+
+
 void TestKeyCallback(unsigned int i_VKeyID, bool bWentDown)
 {
 #ifdef _DEBUG
@@ -31,21 +48,16 @@ void TestKeyCallback(unsigned int i_VKeyID, bool bWentDown)
 }
 
 
-//#define RANDOM_MOVE_MONSTER
-#define FOCUS_MOVE_MONSTER
-
-#define FOCUS_MONSTER_NUMBER 10
-#define RANDOM_MONSTER_NUMBER 10
-
 int WINAPI wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_lpCmdLine, int i_nCmdShow)
 {
 	Engine engine;
 	engine.EngineInit();
 
 	// first we need to initialize GLib
-	bool bSuccess = GLib::Initialize(i_hInstance, i_nCmdShow, "MonsterChase", -1, 800, 600);
+	bool bSuccess = GLib::Initialize(i_hInstance, i_nCmdShow, "Game", -1, 800, 600);
 
-	const float ScreenSize = 200;
+	const float playerInitDistance = 50;
+	const float monsterInitDistance = 200;
 
 	if (bSuccess)
 	{
@@ -57,30 +69,36 @@ int WINAPI wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_l
 
 		srand(static_cast<unsigned int>(time(0)));
 
+		const int32 playerNumber = PlAYER_NUMBER;
+
 		// assign player
-		Pawn* player = WorldManager::GetInstance()->SpawnPawn<Pawn>(Transform(Vector3(0.0f, 0.0f, 0.0f)), "Player1", "Player");
-		SLOW_ASSERT(player, ErrorType::ENullPointer);
-		player->AddRenderObject("data\\player.dds");
-		player->AddPhysicsObject(100.0f);
-
-		// assign monsters
-		int32 focusMonsterNumber = FOCUS_MONSTER_NUMBER;
-
-		Pawn* tempMonster;
-		for (int i = 0; i < focusMonsterNumber; i++)
+		for (int32 i = 0; i < playerNumber; ++i)
 		{
-			tempMonster = WorldManager::GetInstance()->SpawnPawn<Pawn>(Transform(Vector3(Vector2::RandomNormal() * ScreenSize)), "FMonster", "FocusMoveMonster");
-			SLOW_ASSERT(tempMonster, ErrorType::ENullPointer);
-			tempMonster->AddRenderObject("data\\focusMonster.dds");
+			WorldManager::GetInstance()->SpawnPawnFromLua<Pawn>("Assets\\Data\\Player1.lua");
+			/*WeakPtr<Pawn> player = WorldManager::GetInstance()->SpawnPawn<Pawn>(Transform(Vector3(Vector2::RandomNormal() * playerInitDistance)), "player1", "Player");
+			ASSERT(player);
+			player->AddRenderObject("Assets\\Texture\\player.dds");
+			player->AddPhysicsObject(100, 0.1f);*/
 		}
 
-		int32 randomMonsterNumber = RANDOM_MONSTER_NUMBER;
+		// assign monsters
+		const int32 focusMonsterNumber = FOCUS_MONSTER_NUMBER;
 
-		for (int i = 0; i < randomMonsterNumber; i++)
+		WeakPtr<Pawn> tempMonster;
+		for (int32 i = 0; i < focusMonsterNumber; ++i)
 		{
-			tempMonster = WorldManager::GetInstance()->SpawnPawn<Pawn>(Transform(Vector3(Vector2::RandomNormal() * ScreenSize)), "RMonster", "RandomMoveMonster");
+			tempMonster = WorldManager::GetInstance()->SpawnPawn<Pawn>(Transform(Vector3(Vector2::RandomNormal() * monsterInitDistance)), "FMonster", "FocusMoveMonster");
 			SLOW_ASSERT(tempMonster, ErrorType::ENullPointer);
-			tempMonster->AddRenderObject("data\\randomMonster.dds");
+			tempMonster->AddRenderObject("Assets\\Texture\\focusMonster.dds");
+		}
+
+		const int32 randomMonsterNumber = RANDOM_MONSTER_NUMBER;
+
+		for (int32 i = 0; i < randomMonsterNumber; ++i)
+		{
+			tempMonster = WorldManager::GetInstance()->SpawnPawn<Pawn>(Transform(Vector3(Vector2::RandomNormal() * monsterInitDistance)), "RMonster", "RandomMoveMonster");
+			SLOW_ASSERT(tempMonster, ErrorType::ENullPointer);
+			tempMonster->AddRenderObject("Assets\\Texture\\randomMonster.dds");
 		}
 
 		bool bQuit = false;

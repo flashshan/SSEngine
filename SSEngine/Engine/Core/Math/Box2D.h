@@ -7,6 +7,11 @@ public:
 	FORCEINLINE Box2D();
 	FORCEINLINE Box2D(const Vector2 &i_center, const Vector2 &i_extend);
 	
+	FORCEINLINE void SetCenter(const Vector2 &i_vector) { center_ = i_vector; }
+	FORCEINLINE void SetExtend(const Vector2 &i_vector) { extend_ = i_vector; }
+	FORCEINLINE Vector2 GetCenter() const { return center_; }
+	FORCEINLINE Vector2 GetExtend() const { return extend_; }
+
 	inline Box2D& Transform(const Matrix &i_matrix);
 	inline Box2D GetTransform(const Matrix &i_matrix);
 

@@ -13,6 +13,7 @@
 
 
 Engine::Engine()
+	: memoryBase_(nullptr), memorySize_(1024 * 1024 * 50), stringPoolSize_(1024 * 100)
 {
 }
 
@@ -54,15 +55,13 @@ void Engine::EngineQuit()
 
 void Engine::engineMemoryInit()
 {
-	memorySize_ = 1024 * 1024 * 10;
 	memoryBase_ = _aligned_malloc(memorySize_, static_cast<size_t>(DEFAULT_ALIGNMENT));
 	SLOW_ASSERT(memoryBase_, ErrorType::ENullPointer);
 
 	HeapManager::CreateInstance(memoryBase_, memorySize_);
 
-	const size_t stringPoolSize = 1024 * 100;
-	void *stringPoolBase = HeapManager::GetInstance()->Alloc(stringPoolSize);
-	StringPool::CreateInstance(stringPoolBase, stringPoolSize);
+	void *stringPoolBase = HeapManager::GetInstance()->Alloc(stringPoolSize_);
+	StringPool::CreateInstance(stringPoolBase, stringPoolSize_);
 }
 
 void Engine::engineSubsystemInit()
