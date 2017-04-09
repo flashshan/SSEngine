@@ -3,21 +3,21 @@
 #include "Core\String\HashedString.h"
 #include "Core\Memory\New.h"
 #include "JobRunner.h"
-#include <vector>
+#include "Core\Template\Array.h"
 
 class IJob;
 
 struct JobRunnerData
 {
-	HANDLE				m_ThreadHandle;
-	DWORD				m_ThreadID;
-	JobRunnerInput		m_Input;
+	HANDLE threadHandle_;
+	DWORD threadID_;
+	JobRunnerInput runnerInput_;
 };
 
 struct JobQueueData
 {
-	SharedJobQueue		m_SharedQueue;
-	std::vector<JobRunnerData *>	m_Runners;
+	SharedJobQueue sharedQueue_;
+	Array<JobRunnerData *> runners_;
 };
 
 

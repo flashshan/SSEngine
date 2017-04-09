@@ -1,8 +1,7 @@
 #pragma once
 
 #include <Windows.h>
-#include <queue>
-
+#include "Core\Template\Queue.h"
 #include "Jobs\IJob.h"
 
 
@@ -12,27 +11,24 @@ public:
 	SharedJobQueue();
 	~SharedJobQueue();
 
-	inline void				Shutdown();
-	inline bool				ShutdownRequested() const;
+	FORCEINLINE void Shutdown();
+	FORCEINLINE bool ShutdownRequested() const;
 
-	bool					Add( IJob & i_Job );
-	IJob *					GetWhenAvailable();
+	bool Add( IJob & i_Job );
+	IJob *GetWhenAvailable();
 
-#ifdef _DEBUG
+
 	FORCEINLINE const char* GetName() const { return name_; }
 	FORCEINLINE void SetName(const char *i_name) { name_ = _strdup(i_name); }
-#endif
 
 private:
-	std::queue<IJob *>		m_Jobs;
+	Queue<IJob *> Jobs_;
 
-	CONDITION_VARIABLE		m_WakeAndCheck;
-	CRITICAL_SECTION		m_QueueAccess;
+	CONDITION_VARIABLE conditionVariable_;
+	CRITICAL_SECTION criticalSection_;
+	bool shutdownRequested_;
 
-	bool					m_ShutdownRequested;
-#ifdef _DEBUG
 	const char *name_;
-#endif
 };
 
 
@@ -40,17 +36,18 @@ private:
 
 
 
-inline void SharedJobQueue::Shutdown()
-{
-	EnterCriticalSection(&m_QueueAccess);
-	m_ShutdownRequested = true;
-	LeaveCriticalSection(&m_QueueAccess);
 
-	WakeAllConditionVariable(&m_WakeAndCheck);
+FORCEINLINE void SharedJobQueue::Shutdown()
+{
+	EnterCriticalSection(&criticalSection_);
+	shutdownRequested_ = true;
+	LeaveCriticalSection(&criticalSection_);
+
+	WakeAllConditionVariable(&conditionVariable_);
 }
 
-inline bool SharedJobQueue::ShutdownRequested() const
+FORCEINLINE bool SharedJobQueue::ShutdownRequested() const
 {
-	return m_ShutdownRequested;
+	return shutdownRequested_;
 }
 

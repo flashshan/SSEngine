@@ -3,6 +3,8 @@
 #include <vector>
 
 #include "Core\Template\Pointers.h"
+#include "Core\Template\Array.h"
+#include "Core\Template\Queue.h"
 #include "Core\String\HashedString.h"
 
 #include "Object\Pawn.h"
@@ -28,12 +30,21 @@ public:
 
 	template <typename T> WeakPtr<T> SpawnPawn(const Transform &i_transform, const char *i_name, const char *i_type);
 	template <typename T> WeakPtr<T> SpawnPawnFromLua(const char *i_luaFileName);
+
+	void AddNewActorsIntoArray();
+	void ActorsPreCalculation();
+	void ActorsEarlyUpdate();
+	void ActorsUpdate();
+	void ActorsActualUpdate();
+	void ActorsLateUpdate();
 	
-	void EarlyUpdate();
-	void Update();
-	void LateUpdate();
-	
-	FORCEINLINE StrongPtr<Pawn> GetPlayer(const uint32 i_index);
+	FORCEINLINE size_t GetActorNumber() const { return actors_.Size(); }
+	FORCEINLINE size_t GetPlayerNumber() const { return players_.Size(); }
+	FORCEINLINE size_t GetPawnNumber() const { return pawns_.Size(); }
+
+	FORCEINLINE WeakPtr<Actor> GetActor(const size_t i_index);
+	FORCEINLINE WeakPtr<Pawn> GetPlayer(const size_t i_index);
+	FORCEINLINE WeakPtr<Pawn> GetPawn(const size_t i_index);
 
 private:
 	FORCEINLINE WorldManager();
@@ -45,9 +56,15 @@ private:
 	template <typename T> WeakPtr<T> addActorToWorld(void *i_actor);
 	template <typename T> WeakPtr<T> addPawnToWorld(void *i_pawn);
 private:
-	std::vector<StrongPtr<Pawn>> players_;
-	std::vector<StrongPtr<Actor>> actors_;
-	std::vector<StrongPtr<Pawn>> pawns_;
+	Array<StrongPtr<Actor>> actors_;
+	Array<StrongPtr<Pawn>> players_;
+	Array<StrongPtr<Pawn>> pawns_;
+
+	Queue<StrongPtr<Actor>> newActors_;
+	Queue<StrongPtr<Pawn>> newPlayers_;
+	Queue<StrongPtr<Pawn>> newPawns_;
+
+	CRITICAL_SECTION criticalSection_;
 };
 
 
@@ -79,12 +96,32 @@ FORCEINLINE void WorldManager::DestroyInstance()
 
 FORCEINLINE WorldManager::WorldManager()
 {
+	InitializeCriticalSection(&criticalSection_);
 }
 
-FORCEINLINE StrongPtr<Pawn> WorldManager::GetPlayer(const uint32 i_index)
+
+
+FORCEINLINE WeakPtr<Actor> WorldManager::GetActor(const size_t i_index)
 {
-	ASSERT(i_index < players_.size());
-	return players_[i_index];
+	ASSERT(i_index < actors_.Size());
+	return WeakPtr<Actor>(actors_[i_index]);
 }
 
+FORCEINLINE WeakPtr<Pawn> WorldManager::GetPlayer(const size_t i_index)
+{
+	ASSERT(i_index < players_.Size() || !newPlayers_.Empty());
+	if (i_index < players_.Size())
+	{
+		return WeakPtr<Pawn>(players_[i_index]);
+	}
+	else
+	{
+		return newPlayers_.Front();
+	}
+}
 
+FORCEINLINE WeakPtr<Pawn> WorldManager::GetPawn(const size_t i_index)
+{
+	ASSERT(i_index < pawns_.Size());
+	return WeakPtr<Pawn>(pawns_[i_index]);
+}

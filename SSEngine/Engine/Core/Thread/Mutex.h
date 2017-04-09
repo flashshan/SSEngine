@@ -9,10 +9,10 @@ public:
 	FORCEINLINE Mutex( bool i_bTakeOwnership = false, const char * i_name = nullptr );
 	inline ~Mutex();
 
-	FORCEINLINE bool TryLock();
-	FORCEINLINE void Lock();
-	FORCEINLINE bool Lock( DWORD i_WaitMilliseconds );
-	FORCEINLINE void Unlock();
+	FORCEINLINE bool TryAcquire();
+	FORCEINLINE void Acquire();
+	FORCEINLINE bool Acquire( DWORD i_WaitMilliseconds );
+	FORCEINLINE void Release();
 
 	FORCEINLINE HANDLE GetHandle() const { return handle_; }
 
@@ -24,6 +24,16 @@ private:
 	HANDLE handle_;
 };
 
+// automatically acquire / release
+// you don't need to care about when to release a lock
+class Lock
+{
+public:
+	FORCEINLINE Lock(Mutex *i_mutex);
+	FORCEINLINE ~Lock();
+private:
+	Mutex *mutex_;
+};
 
 
 
@@ -44,27 +54,42 @@ inline Mutex::~Mutex()
 	ASSERT(result == TRUE);
 }
 
-FORCEINLINE bool Mutex::TryLock()
+FORCEINLINE bool Mutex::TryAcquire()
 {
 	DWORD result = WaitForSingleObject(handle_, 0);
 	return result == WAIT_OBJECT_0;
 }
 
-FORCEINLINE void Mutex::Lock()
+FORCEINLINE void Mutex::Acquire()
 {
 	DWORD result = WaitForSingleObject(handle_, INFINITE);
 	ASSERT(result == WAIT_OBJECT_0);
 }
 
-FORCEINLINE bool Mutex::Lock(DWORD i_WaitMilliseconds)
+FORCEINLINE bool Mutex::Acquire(DWORD i_WaitMilliseconds)
 {
 	DWORD result = WaitForSingleObject(handle_, i_WaitMilliseconds);
 	ASSERT(((i_WaitMilliseconds == INFINITE) && (result == WAIT_OBJECT_0)) || (result == WAIT_TIMEOUT));
 	return result == WAIT_OBJECT_0;
 }
 
-void Mutex::Unlock(void)
+void Mutex::Release(void)
 {
 	BOOL result = ReleaseMutex(handle_);
 	ASSERT(result == TRUE);
+}
+
+
+
+
+FORCEINLINE Lock::Lock(Mutex *i_mutex)
+	: mutex_{ i_mutex }
+{
+	ASSERT(i_mutex != nullptr);
+	mutex_->Acquire();
+}
+
+FORCEINLINE Lock::~Lock()
+{
+	mutex_->Release();
 }

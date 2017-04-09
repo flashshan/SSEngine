@@ -7,11 +7,13 @@
 class FocusMoveController : public IController
 {
 public:
-	explicit FORCEINLINE FocusMoveController(const StrongPtr<Pawn>& i_pawn, const StrongPtr<Pawn> &i_focusPawn);
+	explicit FORCEINLINE FocusMoveController(const WeakPtr<Pawn> i_pawn, const WeakPtr<Pawn> i_focusPawn);
 
 	virtual ~FocusMoveController();
 
-	virtual void SetPawn(const StrongPtr<Pawn>& i_pawn) override { pawn_ = i_pawn; }
+	virtual void SetPawn(const WeakPtr<Pawn> i_pawn) override { pawn_ = i_pawn; }
+	virtual WeakPtr<Pawn> GetPawn() const { return pawn_; }
+
 	virtual bool IsValid() const override { return pawn_; }
 
 	virtual void UpdateController() override;
@@ -37,7 +39,7 @@ private:
 
 
 // implement forceinline
-FORCEINLINE FocusMoveController::FocusMoveController(const StrongPtr<Pawn>& i_pawn, const StrongPtr<Pawn> &i_focusPawn)
+FORCEINLINE FocusMoveController::FocusMoveController(const WeakPtr<Pawn> i_pawn, const WeakPtr<Pawn> i_focusPawn)
 	: pawn_(i_pawn), focusPawn_(i_focusPawn)
 {
 }

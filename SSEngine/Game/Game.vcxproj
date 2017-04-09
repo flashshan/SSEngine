@@ -160,12 +160,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Object\Private\Monster.cpp" />
-    <ClCompile Include="Object\Private\Player.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Object\Monster.h" />
-    <ClInclude Include="Object\Player.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

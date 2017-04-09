@@ -4,10 +4,10 @@
 
 
 SharedJobQueue::SharedJobQueue() :
-	m_ShutdownRequested( false )
+	shutdownRequested_( false )
 {
-	InitializeConditionVariable( &m_WakeAndCheck );
-	InitializeCriticalSection( &m_QueueAccess );
+	InitializeConditionVariable( &conditionVariable_ );
+	InitializeCriticalSection( &criticalSection_ );
 }
 
 SharedJobQueue::~SharedJobQueue()
@@ -22,44 +22,44 @@ bool SharedJobQueue::Add( IJob & i_Job )
 {
 	bool bAdded = false;
 
-	EnterCriticalSection( &m_QueueAccess );
-	if( m_ShutdownRequested == false )
+	EnterCriticalSection( &criticalSection_ );
+	if( shutdownRequested_ == false )
 	{
-		m_Jobs.push( &i_Job );
+		Jobs_.Push( &i_Job );
 		bAdded = true;
 	}
-	LeaveCriticalSection( &m_QueueAccess );
+	LeaveCriticalSection( &criticalSection_ );
 
 	if( bAdded )
-		WakeConditionVariable( &m_WakeAndCheck );
+		WakeConditionVariable( &conditionVariable_ );
 
 	return bAdded;
 }
 
 IJob * SharedJobQueue::GetWhenAvailable()
 {
-	EnterCriticalSection( &m_QueueAccess );
+	EnterCriticalSection( &criticalSection_ );
 
-	if( m_Jobs.empty() && ( m_ShutdownRequested == false ) )
+	if( Jobs_.Empty() && ( shutdownRequested_ == false ) )
 	{
-		BOOL result = SleepConditionVariableCS( &m_WakeAndCheck, &m_QueueAccess, INFINITE );
+		BOOL result = SleepConditionVariableCS( &conditionVariable_, &criticalSection_, INFINITE );
 		ASSERT( result != 0 );
 
-		if( m_ShutdownRequested == true )
+		if( shutdownRequested_ == true )
 		{
-			LeaveCriticalSection( &m_QueueAccess );
+			LeaveCriticalSection( &criticalSection_ );
 			return nullptr;
 		}
 	}
 
 	IJob * pJob = nullptr;
 
-	if( !m_Jobs.empty() )
+	if( !Jobs_.Empty() )
 	{
-		pJob = m_Jobs.front();
-		m_Jobs.pop();
+		pJob = Jobs_.Front();
+		Jobs_.Pop();
 	}
 
-	LeaveCriticalSection( &m_QueueAccess );
+	LeaveCriticalSection( &criticalSection_ );
 	return pJob;
 }

@@ -8,15 +8,18 @@
 class GameObject
 {
 public:
-	FORCEINLINE GameObject();
-	explicit FORCEINLINE GameObject(const Transform &i_transform);
-	FORCEINLINE GameObject(const Transform &i_transform, const Box2D &i_boundingBox);
-	FORCEINLINE GameObject(const GameObject &i_other);
-	FORCEINLINE GameObject(GameObject &&i_other);
+	inline GameObject();
+	explicit inline GameObject(const Transform &i_transform);
+	inline GameObject(const Transform &i_transform, const Box2D &i_boundingBox);
+	inline GameObject(const GameObject &i_other);
+	inline GameObject(GameObject &&i_other);
 	inline ~GameObject();
 
-	FORCEINLINE GameObject& operator =(const GameObject &i_other);
-	FORCEINLINE GameObject& operator =(GameObject &&i_other);
+	inline GameObject& operator =(const GameObject &i_other);
+	inline GameObject& operator =(GameObject &&i_other);
+
+	FORCEINLINE bool GetActive() const { return isActive_; }
+	FORCEINLINE void SetActive(const bool i_value) { isActive_ = i_value; }
 
 	FORCEINLINE Vector3 GetLocation() const { return transform_.GetLocation(); }
 	FORCEINLINE Vector3 GetRotation() const { return transform_.GetRotation(); }
@@ -31,17 +34,24 @@ public:
 	FORCEINLINE void Scale(const Vector3 &i_vector) { transform_.Scale(i_vector); }
 
 	FORCEINLINE Vector3 GetVelocity() const { return velocity_; }
-	FORCEINLINE Box2D GetBoundingBox() const { return boundingBox_; }
-
 	FORCEINLINE void SetVelocity(const Vector3 i_velocity) { velocity_ = i_velocity; }
+
+	FORCEINLINE Box2D GetBoundingBox() const { return boundingBox_; }
 	FORCEINLINE void SetBoundingBox(const Box2D i_boundingBox) { boundingBox_ = i_boundingBox; }
 
+	FORCEINLINE Matrix GetObjectToWorld() const { return objectToWorld_; }
+	FORCEINLINE void SetObjectToWorld(const Matrix& i_matrix) { objectToWorld_ = i_matrix; }
+	FORCEINLINE Matrix GetWorldToObject() const { return worldToObject_; }
+	FORCEINLINE void SetWorldToObject(const Matrix& i_matrix) { worldToObject_ = i_matrix; }
 	void Update();
 
 private:
+	Matrix objectToWorld_;
+	Matrix worldToObject_;
 	Transform transform_;
 	Vector3 velocity_;
 	Box2D boundingBox_;
+	bool isActive_;
 };
 
 
@@ -52,51 +62,62 @@ private:
 
 
 // implement forceinline
-
-FORCEINLINE GameObject::GameObject()
-	: transform_(Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f)), velocity_(0.0f, 0.0f, 0.0f), boundingBox_()
+// all gameObject are created with active = false
+inline GameObject::GameObject()
+	: transform_(Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f)), velocity_(0.0f, 0.0f, 0.0f), boundingBox_(), isActive_(false)
 {
 }
 
-FORCEINLINE GameObject::GameObject(const Transform &i_transform)
-	: transform_(i_transform), velocity_(0.0, 0.0f, 0.0f), boundingBox_()
+inline GameObject::GameObject(const Transform &i_transform)
+	: transform_(i_transform), velocity_(0.0, 0.0f, 0.0f), boundingBox_(), isActive_(false)
 {
 }
 
-FORCEINLINE GameObject::GameObject(const Transform &i_transform, const Box2D &i_boundingBox)
-	: transform_(i_transform), velocity_(0.0f, 0.0f, 0.0f), boundingBox_(i_boundingBox)
+inline GameObject::GameObject(const Transform &i_transform, const Box2D &i_boundingBox)
+	: transform_(i_transform), velocity_(0.0f, 0.0f, 0.0f), boundingBox_(i_boundingBox), isActive_(false)
 {
 }
 
 
-FORCEINLINE GameObject::GameObject(const GameObject &i_other)
-	: transform_(i_other.transform_), velocity_(i_other.velocity_), boundingBox_(i_other.boundingBox_)
+inline GameObject::GameObject(const GameObject &i_other)
+	: objectToWorld_(i_other.objectToWorld_), worldToObject_(i_other.worldToObject_), 
+	transform_(i_other.transform_), velocity_(i_other.velocity_), boundingBox_(i_other.boundingBox_), isActive_(false)
 {
 }
 
-FORCEINLINE GameObject::GameObject(GameObject &&i_other)
+// for value objects, copy is faster than swap
+inline GameObject::GameObject(GameObject &&i_other)
+	: isActive_(false)
 {
-	Basic::Swap(transform_, i_other.transform_);
-	Basic::Swap(velocity_, i_other.velocity_);
-	Basic::Swap(boundingBox_, i_other.boundingBox_);
+	objectToWorld_ = i_other.objectToWorld_;
+	worldToObject_ = i_other.worldToObject_;
+	transform_ = i_other.transform_;
+	velocity_ = i_other.velocity_;
+	boundingBox_ = i_other.boundingBox_;
 }
 
 inline GameObject::~GameObject()
 {
 }
 
-FORCEINLINE GameObject& GameObject::operator =(const GameObject &i_other)
+inline GameObject& GameObject::operator =(const GameObject &i_other)
 {
+	objectToWorld_ = i_other.objectToWorld_;
+	worldToObject_ = i_other.worldToObject_;
 	transform_ = i_other.transform_;
 	velocity_ = i_other.velocity_;
 	boundingBox_ = i_other.boundingBox_;
+	isActive_ = false;
 	return *this;
 }
 
-FORCEINLINE GameObject& GameObject::operator =(GameObject &&i_other)
+inline GameObject& GameObject::operator =(GameObject &&i_other)
 {
-	Basic::Swap(transform_, i_other.transform_);
-	Basic::Swap(velocity_, i_other.velocity_);
-	Basic::Swap(boundingBox_, i_other.boundingBox_);
+	objectToWorld_ = i_other.objectToWorld_;
+	worldToObject_ = i_other.worldToObject_;
+	transform_ = i_other.transform_;
+	velocity_ = i_other.velocity_;
+	boundingBox_ = i_other.boundingBox_;
+	isActive_ = false;
 }
 

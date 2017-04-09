@@ -31,18 +31,40 @@ void Engine::EngineStartup()
 
 void Engine::Run()
 {
-	WorldManager::GetInstance()->EarlyUpdate();
+	RealTimeManager::GetInstance()->SetLastTimeMark();
+
+	WorldManager::GetInstance()->AddNewActorsIntoArray();
+
+	WorldManager::GetInstance()->ActorsPreCalculation();
+	WorldManager::GetInstance()->ActorsEarlyUpdate();
 
 	ControllerManager::GetInstance()->UpdatePlayerController();
 	ControllerManager::GetInstance()->UpdateMonsterController();
 
 	PhysicsManager::GetInstance()->PhysicsUpdate();
 
-	WorldManager::GetInstance()->Update();
+	WorldManager::GetInstance()->ActorsUpdate();
 	
+	WorldManager::GetInstance()->ActorsActualUpdate();
+
 	RenderManager::GetInstance()->RenderUpdate();
 
-	WorldManager::GetInstance()->LateUpdate();
+	WorldManager::GetInstance()->ActorsLateUpdate();
+
+	// calculate frame time
+	RealTimeManager::GetInstance()->CalcLastFrameTime_ms();
+
+	float waitTime = DESIRED_FRAMETIME_MS - RealTimeManager::GetInstance()->GetLastMarkTimeMS();
+	//DEBUG_PRINT("Frame time: %f", waitTime);
+
+	if (waitTime > 0.0f)
+	{
+		DWORD time = static_cast<DWORD>(waitTime);
+		//DEBUG_PRINT("Wait time: %ld", time);
+		Sleep(time);
+	}
+
+	
 }
 
 void Engine::EngineShutdown()

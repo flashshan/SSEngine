@@ -99,6 +99,9 @@
     <Filter Include="Jobs\Private">
       <UniqueIdentifier>{c77c96f0-e43f-4c9b-b6fe-0e0a67a87033}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SubSystem\Collision">
+      <UniqueIdentifier>{3d97ed60-5980-4423-94bd-6d805a876063}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Object\GameObject.h">
@@ -124,9 +127,6 @@
     </ClInclude>
     <ClInclude Include="Core\Memory\FixedSizeAllocator.h">
       <Filter>Core\Memory</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Math\MathDefine.h">
-      <Filter>Core\Math</Filter>
     </ClInclude>
     <ClInclude Include="Core\Math\Matrix.h">
       <Filter>Core\Math</Filter>
@@ -274,6 +274,21 @@
     </ClInclude>
     <ClInclude Include="Jobs\JobLoadPawn.h">
       <Filter>Jobs</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Template\Array.h">
+      <Filter>Core\Template</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Template\Queue.h">
+      <Filter>Core\Template</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Template\Stack.h">
+      <Filter>Core\Template</Filter>
+    </ClInclude>
+    <ClInclude Include="SubSystem\Collision\CollisionManager.h">
+      <Filter>SubSystem\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="SubSystem\Collision\CollisionObject.h">
+      <Filter>SubSystem\Collision</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

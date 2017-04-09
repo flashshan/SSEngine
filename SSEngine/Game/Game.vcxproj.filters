@@ -4,30 +4,10 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{8c3013df-69d1-4163-9a50-dd3ce2c7961b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Object">
-      <UniqueIdentifier>{398425a9-64c0-4b38-af41-bf6abe5b901d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Object\Private">
-      <UniqueIdentifier>{f0fe66ba-e604-4ba5-b45c-e6854938c27f}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Object\Private\Monster.cpp">
-      <Filter>Object\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="Object\Private\Player.cpp">
-      <Filter>Object\Private</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Object\Monster.h">
-      <Filter>Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\Player.h">
-      <Filter>Object</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

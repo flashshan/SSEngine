@@ -75,7 +75,10 @@ private:
 
 
 
-// implement forceinline
+
+
+
+// implement inline
 
 template<typename T> FORCEINLINE LinkedList<T>::LinkedList()
 	: head_(nullptr) 

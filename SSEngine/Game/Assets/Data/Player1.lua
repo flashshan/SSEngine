@@ -9,6 +9,9 @@ Pawn =
 		 scale = {1.0, 1.0, 1.0}
 	},
 	
+	canCollide = true;
+	static = false;
+	
 	boundingBox = {
 		center = {0.0, 0.0, 0.0},
 		extend = {1.0, 1.0, 1.0}
@@ -20,7 +23,7 @@ Pawn =
 	},
 	
 	physicsObject = {
-		mass = 100.0,
-		drag = 0.1
+		mass = 0.1,
+		drag = 0.001
 	}
 }

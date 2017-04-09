@@ -118,6 +118,22 @@ Matrix& Matrix::operator*=(const float i_float)
 	return *this;
 }
 
+Matrix Matrix::operator/(const float i_float) const
+{
+	return Matrix(M[0][0] / i_float, M[0][1] / i_float, M[0][2] / i_float, M[0][3] / i_float,
+		M[1][0] / i_float, M[1][1] / i_float, M[1][2] / i_float, M[1][3] / i_float,
+		M[2][0] / i_float, M[2][1] / i_float, M[2][2] / i_float, M[2][3] / i_float,
+		M[3][0] / i_float, M[3][1] / i_float, M[3][2] / i_float, M[3][3] / i_float);
+}
+Matrix& Matrix::operator/=(const float i_float)
+{
+	for (int i = 0;i < 16;++i)
+	{
+		M[i / 4][i % 4] /= i_float;
+	}
+	return *this;
+}
+
 Matrix Matrix::operator*(const Matrix &i_other) const
 {
 	__m128 r11 = _mm_load_ps(&M[0][0]), r12 = _mm_load_ps(&M[1][0]), r13 = _mm_load_ps(&M[2][0]), r14 = _mm_load_ps(&M[3][0]);
@@ -191,7 +207,7 @@ Matrix& Matrix::operator*=(const Matrix &i_other)
 	return *this;
 }
 
-// normally used
+// normally used, Matrix is on the left
 Vector4 Matrix::MultiplyLeft(const Vector4 &i_vector) const
 {	
 	__m128 v = _mm_load_ps(&i_vector.X);
@@ -208,7 +224,7 @@ Vector4 Matrix::MultiplyLeft(const Vector4 &i_vector) const
 	return Vector4(resultVector[0], resultVector[1], resultVector[2], resultVector[3]);
 }
 
-// slower
+// slower, matrix is on the right
 Vector4 Matrix::MultiplyRight(const Vector4 &i_vector) const
 {
 	Matrix transpose = GetTranspose();

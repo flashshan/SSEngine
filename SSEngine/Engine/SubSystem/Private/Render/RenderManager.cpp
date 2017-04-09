@@ -56,7 +56,7 @@ RenderManager *RenderManager::globalInstance_ = nullptr;
 
 RenderManager::~RenderManager()
 {
-	//renderObjectList_.Clear();
+	renderObjects_.clear();
 	for (auto it = spriteResources_.begin();it != spriteResources_.end(); ++it)
 	{
 		GLib::Sprites::Release(it->second);
@@ -64,25 +64,28 @@ RenderManager::~RenderManager()
 	spriteResources_.clear();
 }
 
-void RenderManager::RenderUpdate() const
+void RenderManager::RenderUpdate()
 {
 	GLib::BeginRendering();
 	GLib::Sprites::BeginRendering();
-
-	LinkedListNode<StrongPtr<RenderObject>> *temp = renderObjectList_.Head();
-	LinkedListNode<StrongPtr<RenderObject>> *recordNext;
-	while (temp != nullptr)
+	
+	for(auto it = renderObjects_.begin(); it != renderObjects_.end(); ++it)
 	{
-		recordNext = temp->Next;				// temp may be delete in DoRender
-		temp->Data->DoRender();                 
-		temp = recordNext;
+		if ((*it)->IsValid())
+		{
+			(*it)->DoRender();
+		}
+		else
+		{
+			renderObjects_.erase(it);
+		}
 	}
 
 	GLib::Sprites::EndRendering();
 	GLib::EndRendering();
 }
 
-StrongPtr<RenderObject>& RenderManager::AddRenderObject(const StrongPtr<GameObject> &i_gameObject, const char *i_filePath)
+WeakPtr<RenderObject> RenderManager::AddRenderObject(const WeakPtr<GameObject> &i_gameObject, const char *i_filePath, const uint32 i_priority)
 {
 	GLib::Sprites::Sprite *tempSprite;
 
@@ -93,36 +96,32 @@ StrongPtr<RenderObject>& RenderManager::AddRenderObject(const StrongPtr<GameObje
 	if (it == spriteResources_.end())
 	{
 		tempSprite = CreateSprite(i_filePath);
+		ASSERT(tempSprite != nullptr);
 		spriteResources_.insert(std::pair<HashedString, GLib::Sprites::Sprite*>(filePathHash, tempSprite));
 	}
 	else
 	{
 		tempSprite = it->second;
 	}
-	StrongPtr<RenderObject> newRenderObject = new TRACK_NEW RenderObject(i_gameObject, tempSprite);
-	renderObjectList_.PushHead(newRenderObject);
-	return renderObjectList_.Head()->Data;
+	StrongPtr<RenderObject> newRenderObject = new TRACK_NEW RenderObject(i_gameObject, tempSprite, i_priority);
+	ASSERT(newRenderObject);
+	EnterCriticalSection(&criticalSection);
+	renderObjects_.insert(newRenderObject);
+	LeaveCriticalSection(&criticalSection);
+	return WeakPtr<RenderObject>(newRenderObject);
 }
 
-void RenderManager::RemoveFromList(RenderObject &i_renderObject)
+// go through the set, seldomly used
+void RenderManager::Remove(WeakPtr<RenderObject> i_renderObject)
 {
-	LinkedListNode<StrongPtr<RenderObject>> *temp = renderObjectList_.Head();
-	if (temp == nullptr) return;
-
-	if (temp->Data == &i_renderObject)
+	EnterCriticalSection(&criticalSection);
+	for (auto && item : renderObjects_)
 	{
-		renderObjectList_.PopHead();         // Pop include delete
-	}
-	else
-	{
-		while (temp->Next != nullptr)
+		if (&(*item) == &(*i_renderObject))
 		{
-			if (temp->Next->Data == &i_renderObject)
-			{
-				renderObjectList_.DeleteNext(temp);
-				break;
-			}
-			temp = temp->Next;
+			renderObjects_.erase(item);
+			break;
 		}
 	}
+	LeaveCriticalSection(&criticalSection);
 }

@@ -1,13 +1,16 @@
 Pawn = 
 {
 	name = "Monster2",
-	type = "RandomMonster",
+	type = "RandomMoveMonster",
 	
 	transform = {
 		 location = {100, 150, 0.0},
 		 rotation = {0.0, 0.0, 0.0},
 		 scale = {1.0, 1.0, 1.0}
 	},
+	
+	canCollide = true,
+	static = false,
 	
 	boundingBox = {
 		center = {0.0, 0.0, 0.0},

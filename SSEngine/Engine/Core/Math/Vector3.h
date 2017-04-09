@@ -100,11 +100,18 @@ FORCEINLINE Vector3 Vector3::RandomNormal()
 FORCEINLINE Vector3& Vector3::Normalize(float i_tolerance)
 {
 	const float magSq = Length();
-	ASSERT(magSq > i_tolerance);
-
-	X /= magSq;
-	Y /= magSq;
-	Z /= magSq;
+	if (magSq > i_tolerance)
+	{
+		X /= magSq;
+		Y /= magSq;
+		Z /= magSq;
+	}
+	else
+	{
+		X = 0.0f;
+		Y = 0.0f;
+		Z = 0.0f;
+	}
 	return *this;
 }
 

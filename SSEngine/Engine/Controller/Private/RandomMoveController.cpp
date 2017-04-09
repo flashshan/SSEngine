@@ -15,6 +15,6 @@ void RandomMoveController::UpdateController()
 
 void RandomMoveController::randomMovePawn()
 {
-	const float speed = 3.0f;
+	const float speed = 20.0f;
 	(*pawn_).SetActorVelocity(Vector3(Vector2::RandomNormal() * speed));
 }

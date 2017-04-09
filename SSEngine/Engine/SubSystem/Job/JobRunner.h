@@ -5,10 +5,10 @@
 
 struct JobRunnerInput
 {
-	SharedJobQueue *	i_pQueue;
+	SharedJobQueue *queue_;
 #ifdef _DEBUG
-	std::string			m_ThreadName;
+	std::string	threadName_;
 #endif
 };
 
-DWORD WINAPI JobRunner( void * i_pJobRunnerInput );
+DWORD WINAPI JobRunner( void * i_jobRunnerInput );

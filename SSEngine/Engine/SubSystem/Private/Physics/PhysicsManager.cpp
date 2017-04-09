@@ -3,52 +3,47 @@
 
 PhysicsManager *PhysicsManager::globalInstance_ = nullptr;
 
-void PhysicsManager::PhysicsUpdate() const
+void PhysicsManager::PhysicsUpdate()
 {
-	LinkedListNode<StrongPtr<PhysicsObject>> *temp = physicsObjectList_.Head();
-	LinkedListNode<StrongPtr<PhysicsObject>> *recordNext;
-	while (temp != nullptr)
+	size_t count = physicsObjects_.Size();
+	for(size_t i=0; i<count;++i)
 	{
-		recordNext = temp->Next;
-		temp->Data->UpdatePhysics();
-		temp = recordNext;
-	}
-}
-
-StrongPtr<PhysicsObject>& PhysicsManager::AddPhysicsObject(const StrongPtr<GameObject> &i_gameObject, const float i_mass, const float i_drag)
-{
-	StrongPtr<PhysicsObject> newPhysicsObject = new TRACK_NEW PhysicsObject(i_gameObject, i_mass, i_drag);
-	physicsObjectList_.PushHead(newPhysicsObject);
-	return physicsObjectList_.Head()->Data;
-}
-
-void PhysicsManager::RemoveFromList(PhysicsObject &i_physicsObject)
-{
-	LinkedListNode<StrongPtr<PhysicsObject>> *temp = physicsObjectList_.Head();
-	if (temp == nullptr) return;
-
-	if (temp->Data == &i_physicsObject)
-	{
-		physicsObjectList_.PopHead();          // Pop include delete
-	}
-	else
-	{
-		while (temp->Next != nullptr)
+		if (physicsObjects_[i]->IsValid())
 		{
-			if (temp->Next->Data == &i_physicsObject)
-			{
-				physicsObjectList_.DeleteNext(temp);
-				break;
-			}
-			temp = temp->Next;
+			physicsObjects_[i]->UpdatePhysics();
+		}
+		else
+		{
+			RemoveByIndex(i);
+			--i;
 		}
 	}
 }
 
-
-
-// for PhysicsObject
-void PhysicsObject::RemovePhysicsObject()
+WeakPtr<PhysicsObject> PhysicsManager::AddPhysicsObject(const WeakPtr<GameObject> i_gameObject, const float i_mass, const float i_drag)
 {
-	PhysicsManager::GetInstance()->RemoveFromList(*this);
+	StrongPtr<PhysicsObject> newPhysicsObject = new TRACK_NEW PhysicsObject(i_gameObject, i_mass, i_drag);
+	ASSERT(newPhysicsObject);
+	EnterCriticalSection(&criticalSection);
+	physicsObjects_.Add(newPhysicsObject);
+	LeaveCriticalSection(&criticalSection);
+	return WeakPtr<PhysicsObject>(physicsObjects_.Back());
 }
+
+void PhysicsManager::Remove(WeakPtr<PhysicsObject> i_physicsObject)
+{
+	if (!i_physicsObject) return;
+
+	EnterCriticalSection(&criticalSection);
+	size_t count = physicsObjects_.Size();
+	for (size_t i = 0; i < count; ++i)
+	{
+		if (&(*physicsObjects_[i]) == &(*i_physicsObject))
+		{
+			physicsObjects_.NoOrderRemove(i);
+			break;
+		}
+	}
+	LeaveCriticalSection(&criticalSection);
+}
+

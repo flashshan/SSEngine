@@ -1,8 +1,9 @@
 #pragma once
 
+#include <Windows.h>
 #include <vector>
 
-#include "Core\Template\List.h"
+#include "Core\Template\Array.h"
 #include "Core\Memory\New.h"
 #include "PhysicsObject.h"
 
@@ -15,21 +16,22 @@ public:
 	static FORCEINLINE void DestroyInstance();
 	inline ~PhysicsManager();
 
-	void PhysicsUpdate() const;
-	StrongPtr<PhysicsObject>& AddPhysicsObject(const StrongPtr<GameObject> &i_gameObject, const float i_mass, const float i_drag);
-	void RemoveFromList(PhysicsObject &i_physicsObject);
+	void PhysicsUpdate();
+	WeakPtr<PhysicsObject> AddPhysicsObject(const WeakPtr<GameObject> i_gameObject, const float i_mass, const float i_drag);
+	void Remove(WeakPtr<PhysicsObject> i_physicsObject);
+	FORCEINLINE void RemoveByIndex(const size_t i_index);
 
 private:
 	FORCEINLINE PhysicsManager();
-	FORCEINLINE PhysicsManager(PhysicsManager &i_other) {}
+	FORCEINLINE PhysicsManager(PhysicsManager& i_other) {}
 	FORCEINLINE PhysicsManager& operator=(PhysicsManager &i_othre) {}
-
 
 	static PhysicsManager* globalInstance_;
 
 private:
-	// for test, change to vector in future
-	LinkedList<StrongPtr<PhysicsObject>> physicsObjectList_;
+	Array<StrongPtr<PhysicsObject>> physicsObjects_;
+	
+	CRITICAL_SECTION criticalSection;
 };
 
 
@@ -61,13 +63,18 @@ FORCEINLINE void PhysicsManager::DestroyInstance()
 
 FORCEINLINE PhysicsManager::PhysicsManager()
 {
+	InitializeCriticalSection(&criticalSection);
 }
 
 inline PhysicsManager::~PhysicsManager()
 {
-	//physicsObjectList_.Clear();
+	physicsObjects_.Clear();
 }
 
-
-
+FORCEINLINE void PhysicsManager::RemoveByIndex(const size_t i_index)
+{
+	EnterCriticalSection(&criticalSection);
+	physicsObjects_.NoOrderRemove(i_index);
+	LeaveCriticalSection(&criticalSection);
+}
 

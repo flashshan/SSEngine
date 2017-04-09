@@ -21,7 +21,7 @@ void PlayerController::UpdateController()
 
 void PlayerController::handleBasicMoveFromUserInput()
 {
-	const float defaultVelocity = 0.01f;
+	const float defaultVelocity = 0.1f;
 	Vector3 velocity(0.0f, 0.0f, 0.0f);
 
 	if (InputManager::GetInstance()->GetState(static_cast<uint32>(Key::A)))
@@ -46,7 +46,7 @@ void PlayerController::handleBasicMoveFromUserInput()
 
 void PlayerController::handlePhysicsMoveFromUserInput()
 {
-	const float defaultForce = 30.0f;
+	const float defaultForce = 10.0f;
 	Vector3 force(0.0f, 0.0f, 0.0f);
 
 	if (InputManager::GetInstance()->GetState(static_cast<uint32>(Key::A)))

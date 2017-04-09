@@ -9,6 +9,9 @@ Actor =
 		 scale = {1.0, 1.0, 1.0}
 	},
 	
+	canCollide = true,
+	static = true,
+	
 	boundingBox = {
 		center = {0.0, 0.0, 0.0},
 		extend = {10, 50, 1.0}

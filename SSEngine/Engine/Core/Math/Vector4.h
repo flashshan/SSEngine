@@ -7,9 +7,9 @@ struct Matrix;
 ALIGN(16) struct Vector4 {
 public:
 	Vector4() {}
-	FORCEINLINE Vector4(const float i_x, const float i_y, const float i_z, const float i_w = 0.0f);
-	FORCEINLINE explicit Vector4(const Vector2 & i_vector, const float i_z = 0.0f, const float i_w = 0.0f);
-	FORCEINLINE explicit Vector4(const Vector3 & i_vector, const float i_w = 0.0f);
+	FORCEINLINE Vector4(const float i_x, const float i_y, const float i_z, const float i_w = 1.0f);
+	FORCEINLINE explicit Vector4(const Vector2 & i_vector, const float i_z = 0.0f, const float i_w = 1.0f);
+	FORCEINLINE explicit Vector4(const Vector3 & i_vector, const float i_w = 1.0f);
 
 
 	FORCEINLINE static Vector4 Zero();

@@ -7,7 +7,9 @@
 
 #include <conio.h>
 #include <time.h>
-#include <vector>
+#include <assert.h>
+#include <stdint.h>
+#include <string.h>
 
 #include "Engine\Manager\InputManager.h"
 #include "Engine\Manager\RealTimeManager.h"
@@ -20,9 +22,7 @@
 
 #include "Glib\GLib.h"
 
-#include <assert.h>
-#include <stdint.h>
-#include <string.h>
+
 
 #include "GLib\GLib.h"
 #include "Lua/lua.hpp"
@@ -40,13 +40,12 @@
 void TestKeyCallback(unsigned int i_VKeyID, bool bWentDown)
 {
 #ifdef _DEBUG
-	const size_t	lenBuffer = 65;
+	const size_t	lenBuffer = MAX_NAME_LENGTH;
 	char			Buffer[lenBuffer];
 
 	sprintf_s(Buffer, lenBuffer, "VKey 0x%04x went %s\n", i_VKeyID, bWentDown ? "down" : "up");
 	DEBUG_PRINT("%s", Buffer);
 #endif // __DEBUG
-
 	InputManager::GetInstance()->SetState(i_VKeyID, bWentDown);
 }
 
@@ -113,7 +112,7 @@ int WINAPI wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_l
 			// We need to let GLib do it's thing. 
 			GLib::Service(bQuit);
 
-			//DEBUG_PRINT("FPS: %f", (1.0f / RealTimeManager::GetInstance()->GetLastFrameTimeS()));
+			DEBUG_PRINT("FPS: %f", (1.0f / RealTimeManager::GetInstance()->GetLastFrameTimeS()));
 			if (!bQuit)
 			{
 				engine.Run();

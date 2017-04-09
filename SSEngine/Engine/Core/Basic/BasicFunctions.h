@@ -45,7 +45,10 @@ namespace Float {
 	static const uint32 allBitsSet = ~0;
 }
 
-
+namespace Math {
+	FORCEINLINE int Abs(const int i_value);
+	FORCEINLINE float Abs(const float i_float);
+}
 
 
 
@@ -205,5 +208,19 @@ namespace Float {
 
 		uint32 intDiff = abs(*reinterpret_cast<int *>(&i_lhs) - *reinterpret_cast<int *>(&i_rhs));
 		return intDiff <= i_maxULPS;
+	}
+}
+
+
+
+namespace Math {
+	FORCEINLINE int Abs(const int i_value)
+	{
+		return i_value > 0 ? i_value : -i_value;
+	}
+
+	FORCEINLINE float Abs(const float i_float)
+	{
+		return i_float > 0 ? i_float : -i_float;
 	}
 }

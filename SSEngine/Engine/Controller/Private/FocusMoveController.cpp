@@ -16,7 +16,7 @@ void FocusMoveController::UpdateController()
 
 void FocusMoveController::focusMovePawn()
 {
-	const float speed = 0.1f;
+	const float speed = 5.0f;
 	if (pawn_ && focusPawn_)
 	{
 		Vector3 velocity = ((*focusPawn_).GetActorLocation() - (*pawn_).GetActorLocation()).Normalize() * speed;

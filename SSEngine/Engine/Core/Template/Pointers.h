@@ -26,11 +26,13 @@ public:
 
 	FORCEINLINE T & operator*() const { return *object_; }
 	FORCEINLINE T * operator->() const { return object_; }   
+	FORCEINLINE bool operator<(const StrongPtr<T>& i_other) const { return *object_ < *i_other; }
 
 	FORCEINLINE operator bool() const { return object_ != nullptr; }
-	FORCEINLINE bool operator==(const StrongPtr<T> & i_other) const { return object_ == i_other.object_; }
+	FORCEINLINE bool operator==(const StrongPtr<T> & i_other) const { return object_ == i_other.object_ && counter_ == i_other.counter_; }
 	FORCEINLINE bool operator==(T * i_ptr) const { return object_ == i_ptr; }
 
+	FORCEINLINE void Prefetch();
 private:
 	T *object_;
 	Counter *counter_;
@@ -56,11 +58,13 @@ public:
 	
 	FORCEINLINE T & operator*() const { return *Acquire(); }
 	FORCEINLINE T * operator->() const { return Acquire().operator->(); }
+	FORCEINLINE bool operator<(const WeakPtr<T>& i_other) const { return *object_ < *i_other; }
 
 	FORCEINLINE operator bool() const { return (object_ != nullptr && counter_ != nullptr && counter_->StrongCounter > 0); }
-	FORCEINLINE bool operator==(const WeakPtr<T> &i_other) const { return object_ == i_other.object_; }
+	FORCEINLINE bool operator==(const WeakPtr<T> &i_other) const { return object_ == i_other.object_ && counter_ == i_other.counter_; }
 	FORCEINLINE bool operator==(T * i_ptr) const { return object_ == i_ptr; }
 
+	FORCEINLINE void Prefetch();
 private:
 	T *object_;
 	Counter *counter_;
@@ -82,9 +86,17 @@ public:
 	FORCEINLINE T * operator->() const { return object_; }   // TO TEST
 
 	FORCEINLINE operator bool() const { return object_ == nullptr; }
+
+	FORCEINLINE void Prefetch();
 private:
 	T * object_;
 };
+
+
+
+
+
+
 
 // type cast for Strong pointer
 template<typename From, typename To> 
@@ -115,7 +127,15 @@ FORCEINLINE WeakPtr<To> CastWeakPtr(WeakPtr<From> &i_from)
 }
 
 
-// implement forceinline
+
+
+
+
+
+
+
+
+// implement inline
 
 FORCEINLINE Counter::Counter(uint32 i_strongCount, uint32 i_weakCount)
 	: StrongCounter(i_strongCount), WeakCounter(i_weakCount) 
@@ -207,7 +227,10 @@ template<typename T> FORCEINLINE StrongPtr<T>& StrongPtr<T>::operator=(StrongPtr
 	return *this;
 }
 
-
+template<typename T> FORCEINLINE void StrongPtr<T>::Prefetch()
+{
+	_mm_prefetch(object_, _MM_HINT_T0);
+}
 
 
 
@@ -321,7 +344,10 @@ template<typename T> FORCEINLINE StrongPtr<T> WeakPtr<T>::Acquire() const
 	}
 }
 
-
+template<typename T> FORCEINLINE void WeakPtr<T>::Prefetch()
+{
+	_mm_prefetch(object_, _MM_HINT_T0);
+}
 
 
 
@@ -351,4 +377,9 @@ template<typename T> FORCEINLINE void UniquePtr<T>::operator =(UniquePtr<T> &i_o
 {
 	object_ = i_other.object_;
 	i_other.object_ = nullptr;
+}
+
+template<typename T> FORCEINLINE void UniquePtr<T>::Prefetch()
+{
+	_mm_prefetch(object_, _MM_HINT_T0);
 }

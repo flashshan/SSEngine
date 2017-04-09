@@ -16,7 +16,7 @@ void JobSystem::Shutdown()
 
 	IJob::Shutdown();
 
-	std::vector<HANDLE>	AllThreads;
+	Array<HANDLE>	AllThreads;
 
 	std::map<HashedString, JobQueueData *>::iterator iter = queues_.begin();
 	while( iter != queues_.end() )
@@ -24,22 +24,22 @@ void JobSystem::Shutdown()
 
 		if( iter->second )
 		{
-			size_t count = iter->second->m_Runners.size();
+			size_t count = iter->second->runners_.Size();
 			for( size_t i = 0; i < count; i++ )
 			{
-				JobRunnerData * pRunner = iter->second->m_Runners[i];
-				if( pRunner  && pRunner->m_ThreadHandle != NULL )
-						AllThreads.push_back( pRunner->m_ThreadHandle );
+				JobRunnerData * pRunner = iter->second->runners_[i];
+				if( pRunner  && pRunner->threadHandle_ != NULL )
+						AllThreads.Add( pRunner->threadHandle_ );
 			}
 
-			iter->second->m_SharedQueue.Shutdown();
+			iter->second->sharedQueue_.Shutdown();
 		}
 		++iter;
 	}
 
 	DEBUG_PRINT( "Job System: Waiting for Queue runner threads to shut down.\n" );
 
-	DWORD result = WaitForMultipleObjects( static_cast<DWORD>( AllThreads.size() ), &AllThreads[0], TRUE, INFINITE );
+	DWORD result = WaitForMultipleObjects( static_cast<DWORD>( AllThreads.Size() ), &AllThreads[0], TRUE, INFINITE );
 	ASSERT( result == WAIT_OBJECT_0 );
 
 	iter = queues_.begin();
@@ -47,10 +47,10 @@ void JobSystem::Shutdown()
 	{
 		if( iter->second )
 		{
-			size_t count = iter->second->m_Runners.size();
+			size_t count = iter->second->runners_.Size();
 			for( size_t i = 0; i < count; i++ )
 			{
-				JobRunnerData * pRunner = iter->second->m_Runners[i];
+				JobRunnerData * pRunner = iter->second->runners_[i];
 				if( pRunner )
 					delete pRunner;
 			}
@@ -67,22 +67,22 @@ void JobSystem::Shutdown()
 
 void JobSystem::AddRunner( JobQueueData & i_QueueData )
 {
-	size_t runners = i_QueueData.m_Runners.size();
+	size_t runners = i_QueueData.runners_.Size();
 
 	JobRunnerData * pNewRunner = new JobRunnerData;
 	
-	pNewRunner->m_Input.i_pQueue = &i_QueueData.m_SharedQueue;
+	pNewRunner->runnerInput_.queue_ = &i_QueueData.sharedQueue_;
 #ifdef _DEBUG
 	char ThreadName[MAX_NAME_LENGTH];
-	sprintf_s( ThreadName, MAX_NAME_LENGTH, "%s %d", i_QueueData.m_SharedQueue.GetName(), int( runners + 1 ) );
-	pNewRunner->m_Input.m_ThreadName = ThreadName;
+	sprintf_s( ThreadName, MAX_NAME_LENGTH, "%s %d", i_QueueData.sharedQueue_.GetName(), int( runners + 1 ) );
+	pNewRunner->runnerInput_.threadName_ = ThreadName;
 #endif
 
-	pNewRunner->m_ThreadHandle = CreateThread( NULL, 0, JobRunner, &pNewRunner->m_Input, CREATE_SUSPENDED, &pNewRunner->m_ThreadID );
-	ASSERT( pNewRunner->m_ThreadHandle != NULL );
+	pNewRunner->threadHandle_ = CreateThread( NULL, 0, JobRunner, &pNewRunner->runnerInput_, CREATE_SUSPENDED, &pNewRunner->threadID_ );
+	ASSERT( pNewRunner->threadHandle_ != NULL );
 
-	i_QueueData.m_Runners.push_back( pNewRunner );
-	ResumeThread( pNewRunner->m_ThreadHandle );
+	i_QueueData.runners_.Add( pNewRunner );
+	ResumeThread( pNewRunner->threadHandle_ );
 }
 
 void JobSystem::AddRunner( const HashedString & i_QueueName )
@@ -103,7 +103,7 @@ void JobSystem::CreateQueue( const char * i_pName, unsigned int i_numRunners )
 	ASSERT( queues_.find( HashedName ) == queues_.end() );
 
 	JobQueueData * pNewJobQueueData = new JobQueueData;
-	pNewJobQueueData->m_SharedQueue.SetName( i_pName );
+	pNewJobQueueData->sharedQueue_.SetName( i_pName );
 
 	queues_[HashedName] = pNewJobQueueData;
 
@@ -117,6 +117,6 @@ void JobSystem::RunJob( IJob & i_Job, const char * i_queueName )
 	ASSERT( existing != queues_.end() );
 	ASSERT( existing->second );
 
-	DEBUG_PRINT( "Job System: Adding Job to Queue \"%s\".\n", existing->second->m_SharedQueue.GetName() );
-	existing->second->m_SharedQueue.Add( i_Job );
+	DEBUG_PRINT( "Job System: Adding Job to Queue \"%s\".\n", existing->second->sharedQueue_.GetName() );
+	existing->second->sharedQueue_.Add( i_Job );
 }

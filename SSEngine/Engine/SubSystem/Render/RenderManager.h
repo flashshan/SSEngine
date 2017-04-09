@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core\Template\List.h"
+#include <set>
 #include "Core\Memory\New.h"
 
 #include "Core\String\HashedString.h"
@@ -17,9 +17,9 @@ public:
 	static FORCEINLINE void DestroyInstance();
 	~RenderManager();
 
-	void RenderUpdate() const;
-	StrongPtr<RenderObject>& AddRenderObject(const StrongPtr<GameObject> &i_gameObject, const char *i_filePath);
-	void RemoveFromList(RenderObject &i_renderObject);
+	void RenderUpdate();
+	WeakPtr<RenderObject> AddRenderObject(const WeakPtr<GameObject> &i_gameObject, const char *i_filePath, const uint32 i_priority);
+	void Remove(WeakPtr<RenderObject> i_renderObject);
 
 private:
 	FORCEINLINE RenderManager();
@@ -30,8 +30,11 @@ private:
 
 private:
 	// for test, change to vector in future
-	LinkedList<StrongPtr<RenderObject>> renderObjectList_;
+	std::multiset<StrongPtr<RenderObject>> renderObjects_;
+	//LinkedList<StrongPtr<RenderObject>> renderObjectList_;
 	std::map<HashedString, GLib::Sprites::Sprite*> spriteResources_;
+
+	CRITICAL_SECTION criticalSection;
 };
 
 
@@ -64,12 +67,5 @@ FORCEINLINE void RenderManager::DestroyInstance()
 
 FORCEINLINE RenderManager::RenderManager()
 {
-}
-
-
-
-// for renderObject
-FORCEINLINE void RenderObject::RemoveRenderObject()
-{
-	RenderManager::GetInstance()->RemoveFromList(*this);
+	InitializeCriticalSection(&criticalSection);
 }

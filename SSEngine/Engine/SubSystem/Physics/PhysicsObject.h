@@ -5,7 +5,7 @@
 
 class PhysicsObject {
 public:
-	explicit FORCEINLINE PhysicsObject(const StrongPtr<GameObject> &i_gameOject, const float i_mass = 1.0f, const float i_drag = 0.1f);
+	explicit FORCEINLINE PhysicsObject(const WeakPtr<GameObject> &i_gameOject, const float i_mass = 1.0f, const float i_drag = 0.1f);
 	FORCEINLINE ~PhysicsObject();
 
 	void UpdatePhysics();
@@ -16,8 +16,6 @@ public:
 	FORCEINLINE void SetMass(float i_mass) { mass_ = i_mass; }
 	FORCEINLINE void SetForce(const Vector3 &i_force) { force_ = i_force; }
 	FORCEINLINE bool IsValid() const;
-
-	void RemovePhysicsObject();
 private:
 	// No copy constructor
 	FORCEINLINE PhysicsObject(const PhysicsObject &i_other) {}
@@ -33,7 +31,7 @@ private:
 
 
 
-FORCEINLINE PhysicsObject::PhysicsObject(const StrongPtr<GameObject> &i_gameOject, const float i_mass, float i_drag)
+FORCEINLINE PhysicsObject::PhysicsObject(const WeakPtr<GameObject> &i_gameOject, const float i_mass, float i_drag)
 	: gameObject_(i_gameOject), mass_(i_mass), drag_(i_drag), force_(Vector3(0.0f, 0.0f, 0.0f))
 {
 }

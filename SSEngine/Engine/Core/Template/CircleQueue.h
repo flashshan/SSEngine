@@ -8,7 +8,7 @@
 
 template<typename T> class CircleQueue {
 public:
-	FORCEINLINE CircleQueue<T>(int32 i_size);
+	FORCEINLINE CircleQueue(int32 i_size);
 	FORCEINLINE void Push(const T& i_val);
 	FORCEINLINE void Pop();
 
@@ -33,6 +33,12 @@ private:
 
 
 
+
+
+
+
+
+// implement inline
 
 template<typename T> FORCEINLINE CircleQueue<T>::CircleQueue(int32 i_size)
 	: head_(i_size - 1), tail_(0), size_(0)

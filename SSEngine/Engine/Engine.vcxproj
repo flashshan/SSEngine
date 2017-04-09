@@ -166,7 +166,6 @@
     <ClInclude Include="Core\Basic\Target.h" />
     <ClInclude Include="Core\CoreMinimal.h" />
     <ClInclude Include="Core\Math\Box2D.h" />
-    <ClInclude Include="Core\Math\MathDefine.h" />
     <ClInclude Include="Core\Math\Matrix.h" />
     <ClInclude Include="Core\Math\Quaternion.h" />
     <ClInclude Include="Core\Math\Rotator.h" />
@@ -183,9 +182,12 @@
     <ClInclude Include="Core\String\HashedString.h" />
     <ClInclude Include="Core\String\PooledString.h" />
     <ClInclude Include="Core\String\StringPool.h" />
+    <ClInclude Include="Core\Template\Array.h" />
     <ClInclude Include="Core\Template\CircleQueue.h" />
     <ClInclude Include="Core\Template\List.h" />
     <ClInclude Include="Core\Template\Pointers.h" />
+    <ClInclude Include="Core\Template\Queue.h" />
+    <ClInclude Include="Core\Template\Stack.h" />
     <ClInclude Include="Core\Thread\Events.h" />
     <ClInclude Include="Core\Thread\Mutex.h" />
     <ClInclude Include="Core\Thread\Semaphore.h" />
@@ -201,6 +203,8 @@
     <ClInclude Include="Object\Actor.h" />
     <ClInclude Include="Object\GameObject.h" />
     <ClInclude Include="Object\Pawn.h" />
+    <ClInclude Include="SubSystem\Collision\CollisionManager.h" />
+    <ClInclude Include="SubSystem\Collision\CollisionObject.h" />
     <ClInclude Include="SubSystem\Job\JobRunner.h" />
     <ClInclude Include="SubSystem\Job\JobSystem.h" />
     <ClInclude Include="SubSystem\Job\SharedJobQueue.h" />

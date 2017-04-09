@@ -22,6 +22,8 @@
 #include "Core\Basic\LuaData.h"
 #include "Core\Basic\FileIO.h"
 #include "Core\Template\CircleQueue.h"
+#include "Core\Template\List.h"
+#include "Core\Template\Array.h"
 #include "Engine\Engine.h"
 
 
@@ -34,10 +36,10 @@
 //#define TestVector
 //#define TestFixedAllocator
 //#define TestBitArray
-//#define TestContainer
+#define TestContainer
 //#define TestSmartPointer
 //#define TestMatrix
-#define TestLua
+//#define TestLua
 
 
 #ifdef TestHeapManager
@@ -762,6 +764,21 @@ bool Container_UnitTest()
 	test = circleQueue.Tail();
 	circleQueue.Clear();
 
+	Array<Vector3> testArray;
+	empty = testArray.Empty();
+	size_t size = testArray.Size();
+	testArray.Add(Vector3(1, 1, 1));
+	testArray.Add(Vector3(2, 2, 2), 0);
+	size = testArray.Size();
+	testArray.Add(Vector3(3, 3, 3));
+	testArray.Add(Vector3(4, 4, 4), 0);
+
+	testArray.NoOrderRemove(0);
+	testArray.Remove(1);
+	testArray.Remove();
+	Array<Vector3> testArray2 = testArray;
+	testArray2.Clear();
+
 	return true;
 }
 #endif // TestContainer
@@ -1073,6 +1090,8 @@ int WINAPI wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_l
 	GLib::Service(quit);
 
 	engine.EngineShutdown();
+
+
 #if defined(_DEBUG)
 	_CrtDumpMemoryLeaks();
 #endif // _DEBUG
