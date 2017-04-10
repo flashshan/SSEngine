@@ -9,12 +9,12 @@ Pawn =
 		 scale = {1.0, 1.0, 1.0}
 	},
 	
-	canCollide = true;
-	static = false;
+	canCollide = true,
+	static = false,
 	
 	boundingBox = {
 		center = {0.0, 0.0, 0.0},
-		extend = {1.0, 1.0, 1.0}
+		extend = {2.0, 2.0, 0.0}
 	},
 	
 	renderObject = {

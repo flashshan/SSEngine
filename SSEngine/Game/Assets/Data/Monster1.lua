@@ -14,7 +14,7 @@ Pawn =
 	
 	boundingBox = {
 		center = {0.0, 0.0, 0.0},
-		extend = {1.0, 1.0, 1.0}
+		extend = {1.0, 1.0, 0.0}
 	},
 	
 	renderObject = {

@@ -73,7 +73,7 @@ bool Actor::handleCollisionWith(Actor& i_other)
 		return false;
 	}
 	
-	// Magic code for calculation collision betwwen this and i_other, lecture 8
+	// Magic code for calculation collision betwwen this and i_other, content from lecture 8
 	Matrix thisToOther = i_other.gameObject_->GetWorldToObject() * gameObject_->GetObjectToWorld();
 	Vector4 XExtendInOther = thisToOther.MultiplyLeft(Vector4(GetBoundingBox().GetExtend().X, 0.0f, 0.0f, 0.0f));
 	Vector4 YExtendInOther = thisToOther.MultiplyLeft(Vector4(0.0f, GetBoundingBox().GetExtend().Y, 0.0f, 0.0f));
@@ -95,13 +95,11 @@ bool Actor::handleCollisionWith(Actor& i_other)
 	float timeOpenY = (i_other.GetBoundingBox().GetCenter().Y + YExtend - centerOnOther.Y) / relativeVelocity.Y;
 	if (timeOpenY < timeCloseY) Basic::Swap(timeCloseY, timeOpenY);
 
-	if (timeCloseX > 0.0f && timeOpenX < tickTime && timeCloseY > 0.0f && timeCloseY < tickTime)
+	if ((timeCloseX > 0.0f && timeCloseX < tickTime && timeCloseX < timeOpenY && timeOpenX > timeCloseY) ||
+		(timeCloseY > 0.0f && timeCloseY < tickTime && timeCloseY < timeOpenX && timeOpenY > timeCloseX))
 	{
-		if (timeCloseX < timeOpenY || timeCloseY < timeOpenX)
-		{
-			DEBUG_PRINT("%s collide with %s", GetName(), i_other.GetName());
-			return true;
-		}
+		DEBUG_PRINT("%s collide with %s", GetName(), i_other.GetName());
+		return true;
 	}
 	return false;
 }
