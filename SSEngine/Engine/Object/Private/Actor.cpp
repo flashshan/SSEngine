@@ -63,14 +63,22 @@ void Actor::handleCollision()
 	}
 }
 
-bool Actor::handleCollisionWith(Actor& i_other)
+enum class CollideType {
+	EPass,
+	EEnter,
+	ELeave,
+	EStay,
+	ENone
+};
+
+void Actor::handleCollisionWith(Actor& i_other)
 {
 	// precalculation, most actors were kick out by precalculation
 	float tickTime = RealTimeManager::GetInstance()->GetLastFrameTimeS();
 	if ((GetActorLocation() + Vector3(GetBoundingBox().GetCenter())).Distance(i_other.GetActorLocation() + Vector3(i_other.GetBoundingBox().GetCenter())) - (GetActorVelocity().Length() + i_other.GetActorVelocity().Length()) * tickTime >
 		GetBoundingBox().GetExtend().Length() + i_other.GetBoundingBox().GetExtend().Length())
 	{
-		return false;
+		return;
 	}
 	
 	// Magic code for calculation collision betwwen this and i_other, content from lecture 8
@@ -95,11 +103,84 @@ bool Actor::handleCollisionWith(Actor& i_other)
 	float timeOpenY = (i_other.GetBoundingBox().GetCenter().Y + YExtend - centerOnOther.Y) / relativeVelocity.Y;
 	if (timeOpenY < timeCloseY) Basic::Swap(timeCloseY, timeOpenY);
 
-	if ((timeCloseX > 0.0f && timeCloseX < tickTime && timeCloseX < timeOpenY && timeOpenX > timeCloseY) ||
-		(timeCloseY > 0.0f && timeCloseY < tickTime && timeCloseY < timeOpenX && timeOpenY > timeCloseX))
+	CollideType XType, YType;
+	if (timeCloseX < 0.0f)
+	{
+		if (timeOpenX < 0.0f)
+		{
+			return;
+		}
+		else if(timeOpenX < tickTime)
+		{
+			XType = CollideType::ELeave;
+		}
+		else
+		{
+			XType = CollideType::EStay;
+		}
+	}
+	else if (timeCloseX < tickTime)
+	{
+		if (timeOpenX < tickTime)
+		{
+			XType = CollideType::EPass;
+		}
+		else
+		{
+			XType = CollideType::EEnter;
+		}
+	}
+	else
+	{
+		return;
+	}
+
+	if (timeCloseY < 0.0f)
+	{
+		if (timeOpenY < 0.0f)
+		{
+			return;
+		}
+		else if (timeOpenY < tickTime)
+		{
+			YType = CollideType::ELeave;
+		}
+		else
+		{
+			YType = CollideType::EStay;
+		}
+	}
+	else if (timeCloseY < tickTime)
+	{
+		if (timeOpenY < tickTime)
+		{
+			YType = CollideType::EPass;
+		}
+		else
+		{
+			YType = CollideType::EEnter;
+		}
+	}
+	else
+	{
+		return;
+	}
+
+	if ((XType == CollideType::EEnter && YType == CollideType::EEnter) || 
+		(XType == CollideType::EEnter && YType == CollideType::EStay) || (XType == CollideType::EStay && YType == CollideType::EEnter))
+	{
+		DEBUG_PRINT("%s enter into %s", GetName(), i_other.GetName());
+	}
+	else if((XType == CollideType::ELeave && YType == CollideType::ELeave) || 
+		(XType == CollideType::ELeave && YType == CollideType::EStay) || (XType == CollideType::EStay && YType == CollideType::ELeave))
+	{
+		DEBUG_PRINT("%s leave from %s", GetName(), i_other.GetName());
+	}
+	else if ((XType == CollideType::EEnter && (YType == CollideType::ELeave || YType == CollideType::EPass) && timeCloseX < timeOpenY) || ((XType == CollideType::ELeave || XType == CollideType::EPass) && YType == CollideType::EEnter && timeCloseY < timeOpenX) ||
+		(XType == CollideType::ELeave && YType == CollideType::EPass && timeOpenX > timeCloseY) || (XType == CollideType::EPass && YType == CollideType::ELeave && timeOpenY > timeCloseX) ||
+		(XType == CollideType::EStay && YType == CollideType::EPass) || (XType == CollideType::EPass && YType == CollideType::EStay) ||
+		(XType == CollideType::EPass && YType == CollideType::EPass && timeOpenX > timeCloseY && timeOpenY > timeCloseX))
 	{
 		DEBUG_PRINT("%s collide with %s", GetName(), i_other.GetName());
-		return true;
 	}
-	return false;
 }

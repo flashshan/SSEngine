@@ -70,7 +70,7 @@ public:
 
 private:
 	void handleCollision();
-	bool handleCollisionWith(Actor& i_other);
+	void handleCollisionWith(Actor& i_other);
 
 	const char *name_;
 	HashedString type_;

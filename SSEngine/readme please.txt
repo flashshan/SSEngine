@@ -141,3 +141,4 @@ in next frame, actors in the queue will be pushed into array which allow actors 
 change necessary functions in all singletons to be thread-safe to some extent, mainly controlled by critical section.
 Fixed bugs within RealTimeManager, add Sleep in main thread to lock frame rate to 60 fps.					 // Engine\Engine\Engine.h
 collision bugs fixed, DEBUG_PRINT when they collide
+separate collide condition into three parts(enter, leave and collide)                                        // Engine\Object\Private\Actor.cpp
