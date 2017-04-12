@@ -3,10 +3,19 @@
 #include "Target.h"
 
 // math define
-#define M_PI 3.1415926
+#define PI 3.1415926535897932f
+#define HALF_PI 1.57079632679f
+#define INV_PI 0.31830988618f
+
+#define EULER_NUMBER 2.71828182845904523536f
+
 #define RAND_MAX 0x7fff
-#define SMALL_NUMBER 0.000000003
+#define SMALL_NUMBER 1.e-8f
+#define BIG_NUMBER 3.4e+38f
+
 #define MAX_NAME_LENGTH 50
+
+#define SIGN_BIT ((1 << 31))
 
 #ifdef TARGET_WINDOWS
 

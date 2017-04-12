@@ -3,7 +3,7 @@
 
 ControllerManager *ControllerManager::globalInstance_ = nullptr;
 
-void ControllerManager::RemoveMonsterController(WeakPtr<IController> i_monsterController)
+void ControllerManager::RemoveMonsterController(const WeakPtr<IController> &i_monsterController)
 {
 	EnterCriticalSection(&criticalSection_);
 	uint32 size = static_cast<uint32>(monsterControllers_.Size());

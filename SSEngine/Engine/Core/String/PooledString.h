@@ -5,7 +5,7 @@
 class PooledString {
 public:
 	inline PooledString(const char *i_string);
-	inline PooledString(const uint32 i_length, const char *i_string);
+	inline PooledString(uint32 i_length, const char *i_string);
 
 	FORCEINLINE uint32 GetLength() const { return length_; }
 	FORCEINLINE const char* GetString() const { return string_; }
@@ -33,7 +33,7 @@ inline PooledString::PooledString(const char *i_string)
 	memcpy(string_, i_string, length_ + 1);
 }
 
-inline PooledString::PooledString(const uint32 i_length, const char *i_string)
+inline PooledString::PooledString(uint32 i_length, const char *i_string)
 	: length_(i_length), string_(reinterpret_cast<char *>(this) + sizeof(PooledString))
 {
 	memcpy(string_, i_string, i_length + 1);

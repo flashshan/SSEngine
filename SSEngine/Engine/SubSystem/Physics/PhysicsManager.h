@@ -17,13 +17,13 @@ public:
 	inline ~PhysicsManager();
 
 	void PhysicsUpdate();
-	WeakPtr<PhysicsObject> AddPhysicsObject(const WeakPtr<GameObject> i_gameObject, const float i_mass, const float i_drag);
-	void Remove(WeakPtr<PhysicsObject> i_physicsObject);
-	FORCEINLINE void RemoveByIndex(const size_t i_index);
+	WeakPtr<PhysicsObject> AddPhysicsObject(const WeakPtr<GameObject> &i_gameObject, float i_mass, float i_drag);
+	void Remove(const WeakPtr<PhysicsObject> &i_physicsObject);
+	FORCEINLINE void RemoveByIndex(size_t i_index);
 
 private:
 	FORCEINLINE PhysicsManager();
-	FORCEINLINE PhysicsManager(PhysicsManager& i_other) {}
+	FORCEINLINE PhysicsManager(PhysicsManager &i_other) {}
 	FORCEINLINE PhysicsManager& operator=(PhysicsManager &i_othre) {}
 
 	static PhysicsManager* globalInstance_;
@@ -71,7 +71,7 @@ inline PhysicsManager::~PhysicsManager()
 	physicsObjects_.Clear();
 }
 
-FORCEINLINE void PhysicsManager::RemoveByIndex(const size_t i_index)
+FORCEINLINE void PhysicsManager::RemoveByIndex(size_t i_index)
 {
 	EnterCriticalSection(&criticalSection);
 	physicsObjects_.NoOrderRemove(i_index);

@@ -20,7 +20,7 @@ void PhysicsManager::PhysicsUpdate()
 	}
 }
 
-WeakPtr<PhysicsObject> PhysicsManager::AddPhysicsObject(const WeakPtr<GameObject> i_gameObject, const float i_mass, const float i_drag)
+WeakPtr<PhysicsObject> PhysicsManager::AddPhysicsObject(const WeakPtr<GameObject> &i_gameObject, float i_mass, float i_drag)
 {
 	StrongPtr<PhysicsObject> newPhysicsObject = new TRACK_NEW PhysicsObject(i_gameObject, i_mass, i_drag);
 	ASSERT(newPhysicsObject);
@@ -30,7 +30,7 @@ WeakPtr<PhysicsObject> PhysicsManager::AddPhysicsObject(const WeakPtr<GameObject
 	return WeakPtr<PhysicsObject>(physicsObjects_.Back());
 }
 
-void PhysicsManager::Remove(WeakPtr<PhysicsObject> i_physicsObject)
+void PhysicsManager::Remove(const WeakPtr<PhysicsObject> &i_physicsObject)
 {
 	if (!i_physicsObject) return;
 

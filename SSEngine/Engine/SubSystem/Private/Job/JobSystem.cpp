@@ -94,7 +94,7 @@ void JobSystem::AddRunner( const HashedString & i_QueueName )
 	AddRunner( *existing->second );
 }
 
-void JobSystem::CreateQueue( const char * i_pName, unsigned int i_numRunners )
+void JobSystem::CreateQueue( const char * i_pName, uint32 i_numRunners )
 {
 	ASSERT( i_pName );
 	
@@ -102,7 +102,7 @@ void JobSystem::CreateQueue( const char * i_pName, unsigned int i_numRunners )
 
 	ASSERT( queues_.find( HashedName ) == queues_.end() );
 
-	JobQueueData * pNewJobQueueData = new JobQueueData;
+	JobQueueData * pNewJobQueueData = new JobQueueData();
 	pNewJobQueueData->sharedQueue_.SetName( i_pName );
 
 	queues_[HashedName] = pNewJobQueueData;

@@ -2,7 +2,7 @@
 
 #include "ASSERT.h"
 
-inline uint8_t * LoadFile(const char * i_pFilename, size_t & o_sizeFile);
+inline uint8_t * LoadFile(const char *i_pFilename, size_t &o_sizeFile);
 
 
 
@@ -10,7 +10,7 @@ inline uint8_t * LoadFile(const char * i_pFilename, size_t & o_sizeFile);
 
 
 // implement inline
-inline uint8_t * LoadFile(const char * i_pFilename, size_t & o_sizeFile)
+inline uint8_t * LoadFile(const char *i_pFilename, size_t &o_sizeFile)
 {
 	ASSERT(i_pFilename != nullptr);
 

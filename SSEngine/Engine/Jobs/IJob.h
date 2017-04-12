@@ -19,7 +19,7 @@ public:
 #endif // _DEBUG
 
 private:
-	static CRITICAL_SECTION	globalShutdown_;
+	static CRITICAL_SECTION	criticalSection_;
 	static bool	globalIsShutdown_;
 
 #ifdef _DEBUG
@@ -48,11 +48,11 @@ FORCEINLINE void IJob::Shutdown()
 	static bool bInited = false;
 	if (bInited == false)
 	{
-		InitializeCriticalSection(&globalShutdown_);
+		InitializeCriticalSection(&criticalSection_);
 		bInited = true;
 	}
 
-	EnterCriticalSection(&globalShutdown_);
+	EnterCriticalSection(&criticalSection_);
 	globalIsShutdown_ = true;
-	LeaveCriticalSection(&globalShutdown_);
+	LeaveCriticalSection(&criticalSection_);
 }

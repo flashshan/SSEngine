@@ -30,9 +30,9 @@ public:
 
 	FORCEINLINE operator bool() const { return object_ != nullptr; }
 	FORCEINLINE bool operator==(const StrongPtr<T> & i_other) const { return object_ == i_other.object_ && counter_ == i_other.counter_; }
-	FORCEINLINE bool operator==(T * i_ptr) const { return object_ == i_ptr; }
+	FORCEINLINE bool operator==(T *i_ptr) const { return object_ == i_ptr; }
 
-	FORCEINLINE void Prefetch();
+	FORCEINLINE void Prefetch() const;
 private:
 	T *object_;
 	Counter *counter_;
@@ -64,7 +64,7 @@ public:
 	FORCEINLINE bool operator==(const WeakPtr<T> &i_other) const { return object_ == i_other.object_ && counter_ == i_other.counter_; }
 	FORCEINLINE bool operator==(T * i_ptr) const { return object_ == i_ptr; }
 
-	FORCEINLINE void Prefetch();
+	FORCEINLINE void Prefetch() const;
 private:
 	T *object_;
 	Counter *counter_;
@@ -87,7 +87,7 @@ public:
 
 	FORCEINLINE operator bool() const { return object_ == nullptr; }
 
-	FORCEINLINE void Prefetch();
+	FORCEINLINE void Prefetch() const; 
 private:
 	T * object_;
 };
@@ -227,7 +227,7 @@ template<typename T> FORCEINLINE StrongPtr<T>& StrongPtr<T>::operator=(StrongPtr
 	return *this;
 }
 
-template<typename T> FORCEINLINE void StrongPtr<T>::Prefetch()
+template<typename T> FORCEINLINE void StrongPtr<T>::Prefetch() const
 {
 	_mm_prefetch(object_, _MM_HINT_T0);
 }
@@ -344,7 +344,7 @@ template<typename T> FORCEINLINE StrongPtr<T> WeakPtr<T>::Acquire() const
 	}
 }
 
-template<typename T> FORCEINLINE void WeakPtr<T>::Prefetch()
+template<typename T> FORCEINLINE void WeakPtr<T>::Prefetch() const
 {
 	_mm_prefetch(object_, _MM_HINT_T0);
 }
@@ -379,7 +379,7 @@ template<typename T> FORCEINLINE void UniquePtr<T>::operator =(UniquePtr<T> &i_o
 	i_other.object_ = nullptr;
 }
 
-template<typename T> FORCEINLINE void UniquePtr<T>::Prefetch()
+template<typename T> FORCEINLINE void UniquePtr<T>::Prefetch() const
 {
 	_mm_prefetch(object_, _MM_HINT_T0);
 }

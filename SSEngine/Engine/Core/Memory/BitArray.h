@@ -14,16 +14,16 @@ public:
 	FORCEINLINE bool AreAllClear() const;
 	FORCEINLINE bool AreAllSet() const;
 
-	FORCEINLINE bool IsBitSet(const size_t i_bitNumber) const { return !(*this)[i_bitNumber]; }
-	FORCEINLINE bool IsBitClear(const size_t i_bitNumber) const { return (*this)[i_bitNumber]; }
+	FORCEINLINE bool IsBitSet(size_t i_bitNumber) const { return !(*this)[i_bitNumber]; }
+	FORCEINLINE bool IsBitClear(size_t i_bitNumber) const { return (*this)[i_bitNumber]; }
 
-	FORCEINLINE void SetBit(const size_t i_bitNumber);
-	FORCEINLINE void ClearBit(const size_t i_bitNumber);
+	FORCEINLINE void SetBit(size_t i_bitNumber);
+	FORCEINLINE void ClearBit(size_t i_bitNumber);
 
 	bool GetFirstClearBit(size_t & o_bitNumber) const;
 	bool GetFirstSetBit(size_t & o_bitNumber) const;
 
-	FORCEINLINE bool operator[](const size_t i_index) const;
+	FORCEINLINE bool operator[](size_t i_index) const;
 	
 	FORCEINLINE size_t GetClearCount();
 	FORCEINLINE size_t GetSetCount();
@@ -71,14 +71,14 @@ FORCEINLINE bool BitArray::AreAllSet() const
 	return !GetFirstClearBit(noUseTemp);
 }
 
-FORCEINLINE void BitArray::SetBit(const size_t i_bitNumber)
+FORCEINLINE void BitArray::SetBit(size_t i_bitNumber)
 {
 	ASSERT(i_bitNumber <= numBits_);
 	ASSERT((*this)[i_bitNumber]);
 	arrayBase_[(i_bitNumber - 1) / arrayBits_] &= (UINTPTR_MAX - (static_cast<uintPtr>(1) << (i_bitNumber - 1) % arrayBits_));
 	--clearCount_;
 }
-FORCEINLINE void BitArray::ClearBit(const size_t i_bitNumber)
+FORCEINLINE void BitArray::ClearBit(size_t i_bitNumber)
 {
 	ASSERT(i_bitNumber <= numBits_);
 	ASSERT(!(*this)[i_bitNumber]);
@@ -86,7 +86,7 @@ FORCEINLINE void BitArray::ClearBit(const size_t i_bitNumber)
 	++clearCount_;
 }
 
-FORCEINLINE bool BitArray::operator[](const size_t i_index) const
+FORCEINLINE bool BitArray::operator[](size_t i_index) const
 {
 	ASSERT(i_index <= numBits_);
 	return (arrayBase_[(i_index - 1) / arrayBits_] >> ((i_index - 1) % arrayBits_)) & 1;

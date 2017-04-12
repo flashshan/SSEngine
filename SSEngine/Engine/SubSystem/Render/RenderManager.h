@@ -18,8 +18,8 @@ public:
 	~RenderManager();
 
 	void RenderUpdate();
-	WeakPtr<RenderObject> AddRenderObject(const WeakPtr<GameObject> &i_gameObject, const char *i_filePath, const uint32 i_priority);
-	void Remove(WeakPtr<RenderObject> i_renderObject);
+	WeakPtr<RenderObject> AddRenderObject(const WeakPtr<GameObject> &i_gameObject, const char *i_filePath, uint32 i_priority);
+	void Remove(const WeakPtr<RenderObject> &i_renderObject);
 
 private:
 	FORCEINLINE RenderManager();

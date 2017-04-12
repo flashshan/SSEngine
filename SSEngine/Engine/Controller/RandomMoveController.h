@@ -6,11 +6,11 @@
 class RandomMoveController : public IController
 {
 public:
-	explicit FORCEINLINE RandomMoveController(const WeakPtr<Pawn> i_pawn);
+	explicit FORCEINLINE RandomMoveController(const WeakPtr<Pawn> &i_pawn);
 
 	virtual ~RandomMoveController();
 
-	virtual void SetPawn(const WeakPtr<Pawn> i_pawn) override { pawn_ = i_pawn; }
+	virtual void SetPawn(const WeakPtr<Pawn> &i_pawn) override { pawn_ = i_pawn; }
 	virtual WeakPtr<Pawn> GetPawn() const { return pawn_; }
 	virtual bool IsValid() const override { return pawn_; }
 
@@ -37,7 +37,7 @@ private:
 
 // implement forceinline
 
-FORCEINLINE RandomMoveController::RandomMoveController(const WeakPtr<Pawn> i_pawn)
+FORCEINLINE RandomMoveController::RandomMoveController(const WeakPtr<Pawn> &i_pawn)
 	: pawn_(i_pawn)
 {
 }

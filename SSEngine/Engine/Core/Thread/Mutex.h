@@ -11,7 +11,7 @@ public:
 
 	FORCEINLINE bool TryAcquire();
 	FORCEINLINE void Acquire();
-	FORCEINLINE bool Acquire( DWORD i_WaitMilliseconds );
+	FORCEINLINE bool Acquire(DWORD i_WaitMilliseconds );
 	FORCEINLINE void Release();
 
 	FORCEINLINE HANDLE GetHandle() const { return handle_; }
@@ -23,6 +23,7 @@ private:
 private:
 	HANDLE handle_;
 };
+
 
 // automatically acquire / release
 // you don't need to care about when to release a lock

@@ -12,7 +12,7 @@ public:
 
 	FORCEINLINE void Reset();
 
-	FORCEINLINE bool Wait( DWORD i_WaitMilliseconds );
+	FORCEINLINE bool Wait(DWORD i_WaitMilliseconds );
 	FORCEINLINE void Signal();
 
 	FORCEINLINE HANDLE GetHandle() const { return handle_; }
@@ -31,7 +31,7 @@ public:
 	FORCEINLINE AutoResetEvent(bool i_bInitiallySignaled, const char * i_name = nullptr);
 	inline ~AutoResetEvent();
 
-	FORCEINLINE bool Wait( DWORD i_WaitMilliseconds );
+	FORCEINLINE bool Wait(DWORD i_WaitMilliseconds );
 	FORCEINLINE void Signal();
 
 	FORCEINLINE HANDLE GetHandle() const { return handle_; }

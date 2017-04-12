@@ -12,7 +12,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "Engine\Engine.vcx
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6B3DDE84-5323-4968-8B61-4E1E4058628F}"
 	ProjectSection(SolutionItems) = preProject
-		readme please.txt = readme please.txt
+		File Structure.txt = File Structure.txt
+		Update log.txt = Update log.txt
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EngineTest", "EngineTest\EngineTest.vcxproj", "{1FF7DAC3-EE34-4F8F-92EE-3E12488DE837}"

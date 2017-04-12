@@ -26,7 +26,7 @@ public:
 	static FORCEINLINE void DestroyInstance();
 	inline ~ErrorMessage();
 
-	FORCEINLINE const char *GetErrorMessage(const ErrorType i_errorCode) const;
+	FORCEINLINE const char *GetErrorMessage(ErrorType i_errorCode) const;
 
 private:
 	FORCEINLINE ErrorMessage();
@@ -73,7 +73,7 @@ FORCEINLINE ErrorMessage::ErrorMessage()
 	initialMessage();
 }
 
-FORCEINLINE const char* ErrorMessage::GetErrorMessage(const ErrorType i_errorCode) const
+FORCEINLINE const char* ErrorMessage::GetErrorMessage(ErrorType i_errorCode) const
 {
 	auto it = messages_.find(static_cast<int32>(i_errorCode));
 

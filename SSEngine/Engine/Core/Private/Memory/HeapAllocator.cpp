@@ -1,7 +1,7 @@
 #include "Core\Memory\HeapAllocator.h"
 
 	
-HeapAllocator* HeapAllocator::Create(void *i_pMemory, const size_t i_sizeMemory, const uint32 i_numDescriptors)
+HeapAllocator* HeapAllocator::Create(void *i_pMemory, size_t i_sizeMemory, uint32 i_numDescriptors)
 {
 	ASSERT(i_sizeMemory > sizeof(HeapAllocator) + (sizeof(BlockDescriptor) * i_numDescriptors));
 
@@ -14,7 +14,7 @@ HeapAllocator* HeapAllocator::Create(void *i_pMemory, const size_t i_sizeMemory,
 }
 
 // create a new HeapManager
-HeapAllocator::HeapAllocator(void *i_pMemory, const size_t i_sizeMemory, const uint32 i_numDescriptors)
+HeapAllocator::HeapAllocator(void *i_pMemory, size_t i_sizeMemory, uint32 i_numDescriptors)
 	:heapMemoryBase_(i_pMemory), memorySize_(i_sizeMemory), blockMaxLength_(i_numDescriptors)
 {
 	ASSERT(i_pMemory);

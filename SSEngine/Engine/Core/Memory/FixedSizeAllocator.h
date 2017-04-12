@@ -18,7 +18,7 @@ class BitArray;
 class FixedSizeAllocator
 {
 public:
-	static FixedSizeAllocator *Create(void *i_pMemory, const size_t i_sizeMemory, const size_t i_numBlocks, const size_t i_blockSize);
+	static FixedSizeAllocator *Create(void *i_pMemory, size_t i_sizeMemory, size_t i_numBlocks, size_t i_blockSize);
 	
 	~FixedSizeAllocator();
 
@@ -39,7 +39,7 @@ public:
 
 private:
 	// create a new HeapManager
-	FixedSizeAllocator(void *i_pTotalMemory, const size_t i_sizeMemory, const size_t i_numBlocks, const size_t i_blockSize);
+	FixedSizeAllocator(void *i_pTotalMemory, size_t i_sizeMemory, size_t i_numBlocks, size_t i_blockSize);
 	
 	// hide copy constructor
 	FORCEINLINE FixedSizeAllocator(const FixedSizeAllocator &i_other) {}
@@ -103,7 +103,6 @@ FORCEINLINE bool FixedSizeAllocator::Contains(const void * i_ptr) const
 {
 	ASSERT(i_ptr);
 	return i_ptr >= blocksMemoryBase_ && i_ptr < reinterpret_cast<void *>(reinterpret_cast<uintPtr>(blocksMemoryBase_) + memorySize_);
-	//return i_ptr >= m_blocksMemoryBase && i_ptr <= reinterpret_cast<void *>(reinterpret_cast<uintPtr>(m_blocksMemoryBase) + m_blockSize * m_numBlocks);
 }
 
 // query whether a given pounsigned_inter is an outstanding allocation
@@ -123,53 +122,3 @@ FORCEINLINE size_t FixedSizeAllocator::getUsedCount() const
 {
 	return bitArray_->GetSetCount();
 }
-
-
-
-
-
-//bool SharedJobQueue::Add(IJob & i_Job)
-//{
-//	bool bAdded = false;
-//
-//	EnterCriticalSection(&m_QueueAccess);
-//	if (m_ShutdownRequested == false)
-//	{
-//		m_Jobs.push(&i_Job);
-//		bAdded = true;
-//	}
-//	LeaveCriticalSection(&m_QueueAccess);
-//
-//	if (bAdded)
-//		WakeConditionVariable(&m_WakeAndCheck);
-//
-//	return bAdded;
-//}
-//
-//IJob * SharedJobQueue::GetWhenAvailable()
-//{
-//	EnterCriticalSection(&m_QueueAccess);
-//
-//	if (m_Jobs.empty() && (m_ShutdownRequested == false))
-//	{
-//		BOOL result = SleepConditionVariableCS(&m_WakeAndCheck, &m_QueueAccess, INFINITE);
-//		ASSERT(result != 0);
-//
-//		if (m_ShutdownRequested == true)
-//		{
-//			LeaveCriticalSection(&m_QueueAccess);
-//			return nullptr;
-//		}
-//	}
-//
-//	IJob * pJob = nullptr;
-//
-//	if (!m_Jobs.empty())
-//	{
-//		pJob = m_Jobs.front();
-//		m_Jobs.pop();
-//	}
-//
-//	LeaveCriticalSection(&m_QueueAccess);
-//	return pJob;
-//}

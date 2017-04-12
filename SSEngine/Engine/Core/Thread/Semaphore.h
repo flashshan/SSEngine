@@ -6,12 +6,12 @@
 class Semaphore
 {
 public:
-	FORCEINLINE Semaphore( uint32 i_initCount, uint32 i_maxCount, const char * i_name = nullptr );
+	FORCEINLINE Semaphore(uint32 i_initCount, uint32 i_maxCount, const char * i_name = nullptr );
 	inline ~Semaphore();
 
-	FORCEINLINE void Increment( uint32 i_Count = 1 );
+	FORCEINLINE void Increment(uint32 i_Count = 1 );
 	FORCEINLINE void Decrement();
-	FORCEINLINE bool Decrement( DWORD i_WaitMilliseconds );
+	FORCEINLINE bool Decrement(DWORD i_WaitMilliseconds );
 
 	FORCEINLINE HANDLE GetHandle() const { return handle_; }
 

@@ -13,7 +13,7 @@ class Actor
 {
 public:
 	inline Actor();
-	explicit inline Actor(const Transform &i_transform, const char *i_name = "defaultName", const char *i_type = "defaultType", const bool i_canCollide = true, const bool i_static = false);
+	explicit inline Actor(const Transform &i_transform, const char *i_name = "defaultName", const char *i_type = "defaultType", bool i_canCollide = true, bool i_static = false);
 	inline Actor(const Actor &i_other);
 	inline Actor(Actor &&i_other);
 	virtual ~Actor();
@@ -32,9 +32,9 @@ public:
 	FORCEINLINE bool IsType(const char *i_type)	{ return type_ == HashedString(i_type); }
 	
 	FORCEINLINE bool GetCanCollision() const { return canCollide_; }
-	FORCEINLINE void EnableCollision(const bool i_value) { canCollide_ = i_value; }
+	FORCEINLINE void EnableCollision(bool i_value) { canCollide_ = i_value; }
 	FORCEINLINE bool GetActive() const { return isActive_; }
-	FORCEINLINE void SetActive(const bool i_value);
+	FORCEINLINE void SetActive(bool i_value);
 
 	FORCEINLINE Vector3 GetActorLocation() const { return (*gameObject_).GetLocation(); }
 	FORCEINLINE Vector3 GetActorRotation() const { return (*gameObject_).GetRotation(); }
@@ -48,9 +48,9 @@ public:
 	FORCEINLINE void SetActorVelocity(const Vector3 &i_velocity) { (*gameObject_).SetVelocity(i_velocity); }
 	FORCEINLINE void SetBoundingBox(const Box2D &i_boundingBox) { (*gameObject_).SetBoundingBox(i_boundingBox); }
 
-	FORCEINLINE void SetLocation2D(const float i_X, const float i_Y) { (*gameObject_).SetLocation(Vector3(i_X, i_Y, 0.0f)); }
-	FORCEINLINE void SetRotation2D(const float i_angle) { (*gameObject_).SetRotation(Vector3(0.0f, 0.0f, i_angle)); }
-	FORCEINLINE void SetScale2D(const float i_X, const float i_Y) { (*gameObject_).SetScale(Vector3(i_X, i_Y, 1.0f)); }
+	FORCEINLINE void SetLocation2D(float i_X, float i_Y) { (*gameObject_).SetLocation(Vector3(i_X, i_Y, 0.0f)); }
+	FORCEINLINE void SetRotation2D(float i_angle) { (*gameObject_).SetRotation(Vector3(0.0f, 0.0f, i_angle)); }
+	FORCEINLINE void SetScale2D(float i_X, float i_Y) { (*gameObject_).SetScale(Vector3(i_X, i_Y, 1.0f)); }
 
 	FORCEINLINE void AddForce(const Vector3 &i_force);
 
@@ -60,11 +60,11 @@ public:
 	void ActualUpdate();
 	virtual void LateUpdate() {}     // TO DO
 
-	FORCEINLINE void AddRenderObject(const char *i_filePath, const uint32 i_priority);
+	FORCEINLINE void AddRenderObject(const char *i_filePath, uint32 i_priority);
 	FORCEINLINE void RemoveRenderObject();
 	FORCEINLINE WeakPtr<RenderObject> GetRenderObject() { return renderObject_; }
 
-	FORCEINLINE void AddPhysicsObject(const float i_mass, const float i_drag);
+	FORCEINLINE void AddPhysicsObject(float i_mass, float i_drag);
 	FORCEINLINE void RemovePhysicsObject();
 	FORCEINLINE WeakPtr<PhysicsObject> GetPhysicsObject() { return physicsObject_; }
 
@@ -105,7 +105,7 @@ inline Actor::Actor()
 	}
 }
 
-inline Actor::Actor(const Transform &i_transform, const char *i_name, const char *i_type, const bool i_canCollide, const bool i_static)
+inline Actor::Actor(const Transform &i_transform, const char *i_name, const char *i_type, bool i_canCollide, bool i_static)
 	: name_(StringPool::GetInstance()->add(i_name)), type_(HashedString(i_type)), canCollide_(i_canCollide), isStatic_(i_static), isActive_(false),
 	gameObject_(new (NewAlignment::EAlign16) GameObject(i_transform)), renderObject_(nullptr), physicsObject_(nullptr)
 {
@@ -167,14 +167,14 @@ FORCEINLINE WeakPtr<GameObject> Actor::GetGameObject() const
 	return weakGameObject;
 }
 
-FORCEINLINE void Actor::SetActive(const bool i_value)
+FORCEINLINE void Actor::SetActive(bool i_value)
 {
 	isActive_ = i_value;
 	gameObject_->SetActive(i_value);
 }
 
 
-FORCEINLINE void Actor::AddRenderObject(const char *i_filePath, const uint32 i_priority)
+FORCEINLINE void Actor::AddRenderObject(const char *i_filePath, uint32 i_priority)
 {
 	if (renderObject_)
 	{
@@ -191,7 +191,7 @@ FORCEINLINE void Actor::RemoveRenderObject()
 	}
 }
 
-FORCEINLINE void Actor::AddPhysicsObject(const float i_mass, const float i_drag)
+FORCEINLINE void Actor::AddPhysicsObject(float i_mass, float i_drag)
 {
 	if (physicsObject_)
 	{

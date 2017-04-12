@@ -1,0 +1,132 @@
+File Structure
+Core\Basic\ 
+Assert:					Include Assert, Slow_assert, console print
+Target & BasicType:		Include platform independent type defines, 
+BasicFunction:			Include Basic functions，float check and compare，math functions
+FileIO & LuaData:		Include file loading and some lua functions
+
+Core\Math\				
+Include Box2D, Vector2, Vector3, VectorSSE, Vector4, Matrix, Rotator, Quaternion. Take the power of SSE as more as possible
+
+Core\Memory\
+Include HeapAllocator, FixedSizeAllocator, HeapManager, reload new and so on 
+
+Core\String\
+Include HashedString, StringPool and PooledString(Used in StringPool)
+
+Core\Template
+Include Strong Pointer, Weak Pointer, Unique Pointer and a lot of containers such as Array, LinkedList, List, Queue, CircleQueue, Stack. Some of them are encapsulation of stl container
+
+Core\Thread
+Include Mutex, Lock, Semaphore, AutosetEvent, ManualsetEvent and SingleWriterMultipleReader lock
+
+Object\
+Include GameObject and all of its functions, Actor, Pawn, Actor inspect many other componenet and subsystem of gameobject. Pawn is controllered by different kinds of controllers
+
+Controller\
+Include a abstract class IController, PlayerController, FocusMoveController, RandomMoveController and a Controller Manager which own all of these controllers
+
+SubSystem\Job
+Job System, Open multi-thread in the beginning, this system manage a map link name and JobQueue, JobQueue linked with many runners, runner keep on getting jobs from Queue. We can push jobs into the queue
+
+Jobs\
+Job Entities. For now, a abstract class offered, a spawnActorFromLua and a spawnPawnFromLua jobs supported now
+
+SubSystem\Render
+Render Subsystem, include RenderObject and RenderManager. Sprites controllered and rendered by GLib functions. RenderObject is inspected by actor, RenderManager own all sprites and renderObject in order to be cache friendly  
+
+SubSystem\Physics
+Physics Subsystem, include PhysicsObject and PhysicsManager, PhysicsObject is inspected by actor and controlled by controller, PhysicsManager own all physicsObject in order to be cache friendly 
+
+Manager\
+Include:  GameTimeManager(TO DO) and RealTimeManager(implemented by CPU clock), offer update information to main thread
+InputManager, mainly controlled by GLib's callback functions
+WorldManager, entity of the game world, own all actors and pawns and update them. Support functions to add acto and pawn into the game world, they are firstly added into a queue and pushed to array in the beginning of a new frame  
+
+Component\
+Include Abstract IComponent class and Transform class
+
+Engine\
+Include Startup, Shutdown, Run functions of the engine, control all other managers and singletons.
+
+EngineTest
+Include all unitTests of other systems
+
+Game
+Game\Assets
+Include data (include lua scripts and textures) used inside the game
+
+main.cpp
+High level game behavior, quite simple now. Include start, run and shutdown the engine. Create some actors and pawns and update them, check memory leak in the end
+
+
+
+
+
+
+
+
+
+
+
+
+文件结构及主要功能： 
+Core\Basic\ 
+Assert:					断言检测， SLOW_ASSERT包含console print位置，错误信息等
+Target & BasicType:		平台无关层数据类型定义
+BasicFunction:			基本方法，大小端数据转化，float检测及比较，rand方法等
+FileIO & LuaData:		文件载入及Lua支持，Lua数组读取
+
+Core\Math\
+包含Box2D, Vector2, Vector3, VectorSSE, Vector4, Matrix, Rotator, Quaternion等类，尽可能用SSE加速
+
+Core\Memory\
+内存管理，包括堆分配器，固定大小内存池分配器，多种new重载，内存管理单例等等
+
+Core\String\
+包含字符串哈希类，字符串池及池内字符串类（字符串池中 字符串的封装类）
+
+Core\Template
+包含智能指针，strong,weak,unique pointer的实现。包含各种容器。包括Array, LinkedList, List, Queue,Stack, CircleQueue等. 部分容器为stl容器的包装
+
+Core\Thread
+包含互斥量，自动锁，信号量，事件，单写多读锁的封装
+
+Object\
+包含GameObject, Actor和Pawn，GameObject保存游戏对象实际数据，Actor拥有GaneObject和引擎子系统组件及其他组件，并为gameObject的行为提供接口，pawn继承自Actor，监视一个controller并被其控制
+
+Controller\
+包含一个抽象类IController，一个玩家控制器，两种怪物控制器（以后会将自定义控制器移除引擎），以及一个控制器管理器单例，控制器监视一个pawn并控制其行为，控制器管理器拥有所有的控制器并负责更新。
+
+SubSystem\Job
+作业系统，保持细粒度的多线程任务。JobSystem单例管理一个名字和人任务队列及线程队列对应的map，可以把任务推送到任务队列，对应的线程队列持续从任务队列中提取任务并执行。
+
+Jobs\
+作业对象类，包含一个抽象类IJob，目前包含JobLoadActor和JobLoadPawn作业，均为较费时的从lua脚本读取数据生成对象的操作
+
+SubSystem\Render
+引擎渲染子系统，包括渲染对象（被Actor监视）和渲染管理器（拥有并负责管理和更新所有actor和pawn的renderObject）。同时渲染管理器管理所有载入游戏的图像资源，保证资源的内存唯一性。
+
+SubSystem\Physics
+引擎物理子系统，包括物理对象（被Actor监视）和物理管理器（拥有并管理所有物理对象），物理对象从Actor的接口由Controller提供数据，Euler Method模拟速度变化和运动
+
+Manager\
+包含游戏时间和现实时间控制器（由CPU高精度时钟实现），并提供时间差给主线程锁定帧率
+输入控制器（用GLib回调方法更新）
+世界控制器，世界控制器拥有所有Actor和Pawn对象，提供Actor和Pawn的生成方法，生成Pawn对象时会根据对象类型链接Controller。世界控制器保证对象在帧前被加入或删除并保证帧内更新行为的安全性
+
+Component\
+包含基本的Componenet transform及抽象类IComponent
+
+Engine\
+包含引擎对象，引擎的入口和出口。
+
+EngineTest
+main.cpp包含各个系统的UnitTest
+
+Game
+Game\Assets
+包含游戏中用到的lua脚本和一些自制的简单sprite
+
+main.cpp
+高层游戏行为，目前相当简单，启动引擎和各个子系统，生成Actor，Pawn并更新。最终终止引擎，并检测内存泄漏

@@ -19,7 +19,7 @@ void PlayerController::UpdateController()
 	}
 }
 
-void PlayerController::handleBasicMoveFromUserInput()
+void PlayerController::handleBasicMoveFromUserInput() const
 {
 	const float defaultVelocity = 0.1f;
 	Vector3 velocity(0.0f, 0.0f, 0.0f);
@@ -41,10 +41,10 @@ void PlayerController::handleBasicMoveFromUserInput()
 		velocity += Vector3(0, -defaultVelocity, 0);
 	}
 
-	(*pawn_).SetActorVelocity(velocity);
+	pawn_->SetActorVelocity(velocity);
 }
 
-void PlayerController::handlePhysicsMoveFromUserInput()
+void PlayerController::handlePhysicsMoveFromUserInput() const
 {
 	const float defaultForce = 10.0f;
 	Vector3 force(0.0f, 0.0f, 0.0f);
@@ -65,6 +65,6 @@ void PlayerController::handlePhysicsMoveFromUserInput()
 	{
 		force += Vector3(0, -defaultForce, 0);
 	}
-
-	(*pawn_).AddForce(force);
+	
+	pawn_->AddForce(force);
 }

@@ -4,32 +4,10 @@
 
 enum class Key : uint32 {
 	ESC = 0x1b,
-	A = 0x41,
-	B = 0x42,
-	C = 0x43,
-	D = 0x44,
-	E = 0x45,
-	F = 0x46,
-	G = 0x47,
-	H = 0x48,
-	I = 0x49,
-	J = 0x4a,
-	K = 0x4b,
-	L = 0x4c,
-	M = 0x4d,
-	N = 0x4e,
-	O = 0x4f,
-	P = 0x50,
-	Q = 0x51,
-	R = 0x52,
-	S = 0x53,
-	T = 0x54,
-	U = 0x55,
-	V = 0x56,
-	W = 0x57,
-	X = 0x58,
-	Y = 0x59,
-	Z = 0x5a
+	A = 0x41, B = 0x42, C = 0x43, D = 0x44, E = 0x45, F = 0x46, G = 0x47, 
+	H = 0x48, I = 0x49, J = 0x4a, K = 0x4b, L = 0x4c, M = 0x4d, N = 0x4e, O = 0x4f, 
+	P = 0x50, Q = 0x51, R = 0x52, S = 0x53, T = 0x54, U = 0x55, V = 0x56, W = 0x57,
+	X = 0x58, Y = 0x59, Z = 0x5a
 };
 
 // singleton class
@@ -40,8 +18,8 @@ public:
 	static FORCEINLINE InputManager *GetInstance();
 	static FORCEINLINE void DestroyInstance();
 
-	FORCEINLINE void SetState(const uint32 i_Key, const bool i_Press);
-	FORCEINLINE bool GetState(const uint32 i_Key) const;
+	FORCEINLINE void SetState(uint32 i_Key, bool i_Press);
+	FORCEINLINE bool GetState(uint32 i_Key) const;
 
 private:
 	InputManager();
@@ -82,12 +60,12 @@ FORCEINLINE void InputManager::DestroyInstance()
 }
 
 
-FORCEINLINE void InputManager::SetState(const uint32 i_Key, const bool i_Press)
+FORCEINLINE void InputManager::SetState(uint32 i_Key, bool i_Press)
 {
 	keyState_[i_Key] = i_Press;
 }
 
-FORCEINLINE bool InputManager::GetState(const uint32 i_Key) const
+FORCEINLINE bool InputManager::GetState(uint32 i_Key) const
 {
 	return keyState_[static_cast<uint8>(i_Key)];
 }

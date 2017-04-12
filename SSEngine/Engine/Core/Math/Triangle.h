@@ -20,7 +20,6 @@ public:
 	
 	FORCEINLINE Triangle& ChangeOrigin(const Vector3 &i_a, const Vector3 &i_b, const Vector3 &i_c);
 
-
 public:
 	Vector3 V_[3];
 	Vector3 originV_[3];

@@ -19,7 +19,7 @@ public:
 	inline GameObject& operator =(GameObject &&i_other);
 
 	FORCEINLINE bool GetActive() const { return isActive_; }
-	FORCEINLINE void SetActive(const bool i_value) { isActive_ = i_value; }
+	FORCEINLINE void SetActive(bool i_value) { isActive_ = i_value; }
 
 	FORCEINLINE Vector3 GetLocation() const { return transform_.GetLocation(); }
 	FORCEINLINE Vector3 GetRotation() const { return transform_.GetRotation(); }
@@ -34,10 +34,10 @@ public:
 	FORCEINLINE void Scale(const Vector3 &i_vector) { transform_.Scale(i_vector); }
 
 	FORCEINLINE Vector3 GetVelocity() const { return velocity_; }
-	FORCEINLINE void SetVelocity(const Vector3 i_velocity) { velocity_ = i_velocity; }
+	FORCEINLINE void SetVelocity(const Vector3& i_velocity) { velocity_ = i_velocity; }
 
 	FORCEINLINE Box2D GetBoundingBox() const { return boundingBox_; }
-	FORCEINLINE void SetBoundingBox(const Box2D i_boundingBox) { boundingBox_ = i_boundingBox; }
+	FORCEINLINE void SetBoundingBox(const Box2D& i_boundingBox) { boundingBox_ = i_boundingBox; }
 
 	FORCEINLINE Matrix GetObjectToWorld() const { return objectToWorld_; }
 	FORCEINLINE void SetObjectToWorld(const Matrix& i_matrix) { objectToWorld_ = i_matrix; }

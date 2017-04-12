@@ -82,12 +82,14 @@ void Actor::handleCollisionWith(Actor& i_other)
 	}
 	
 	// Magic code for calculation collision betwwen this and i_other, content from lecture 8
+	Matrix test1 = i_other.gameObject_->GetWorldToObject();
+	Matrix test2 = gameObject_->GetObjectToWorld();
 	Matrix thisToOther = i_other.gameObject_->GetWorldToObject() * gameObject_->GetObjectToWorld();
 	Vector4 XExtendInOther = thisToOther.MultiplyLeft(Vector4(GetBoundingBox().GetExtend().X, 0.0f, 0.0f, 0.0f));
 	Vector4 YExtendInOther = thisToOther.MultiplyLeft(Vector4(0.0f, GetBoundingBox().GetExtend().Y, 0.0f, 0.0f));
 
-	float XProjectOnOther = Math::Abs(XExtendInOther.X) + Math::Abs(YExtendInOther.X);
-	float YProjectOnOther = Math::Abs(XExtendInOther.Y) + Math::Abs(YExtendInOther.Y);
+	float XProjectOnOther = Math::AbsF(XExtendInOther.X) + Math::AbsF(YExtendInOther.X);
+	float YProjectOnOther = Math::AbsF(XExtendInOther.Y) + Math::AbsF(YExtendInOther.Y);
 
 	float XExtend = i_other.GetBoundingBox().GetExtend().X + XProjectOnOther;
 	float YExtend = i_other.GetBoundingBox().GetExtend().Y + YProjectOnOther;

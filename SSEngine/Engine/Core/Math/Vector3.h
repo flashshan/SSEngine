@@ -4,19 +4,25 @@
 #include "Core\Basic\LuaData.h"
 
 struct Vector4;
+struct VectorSSE;
 
 struct Vector3 {
 public:
 	FORCEINLINE Vector3() {}
-	FORCEINLINE Vector3(const float i_x, const float i_y, const float i_z);
-	FORCEINLINE explicit Vector3(const Vector2 & i_vector, const float i_z = 0.0f);
+	FORCEINLINE Vector3(float i_x, float i_y, float i_z);
+	FORCEINLINE explicit Vector3(const Vector2 & i_vector, float i_z = 0.0f);
 	FORCEINLINE explicit Vector3(const Vector4 & i_vector);
+	FORCEINLINE explicit Vector3(const VectorSSE &i_vectorSSE);
+
+
+	FORCEINLINE Vector3(const Vector3 &i_other);
+	FORCEINLINE Vector3& operator=(const Vector3 &i_other);
 
 	FORCEINLINE static Vector3 Zero();
 	FORCEINLINE static Vector3 Unit();
 	FORCEINLINE static Vector3 RandomNormal();
 
-	FORCEINLINE Vector3& Normalize(const float i_tolerance = SMALL_NUMBER);
+	FORCEINLINE Vector3& Normalize(float i_tolerance = SMALL_NUMBER);
 
 	FORCEINLINE static float Dot(const Vector3 &i_vector1, const Vector3 &i_vector2);
 	FORCEINLINE float Dot(const Vector3 &i_vector) const;
@@ -31,25 +37,25 @@ public:
 	FORCEINLINE float Length() const;
 	FORCEINLINE float LengthSquare() const;
 
-	FORCEINLINE bool Equal(const Vector3 &i_vector, const float i_tolerance) const;
+	FORCEINLINE bool Equal(const Vector3 &i_vector, float i_tolerance = SMALL_NUMBER) const;
 
 	FORCEINLINE Vector3 operator -() const;
 
 	FORCEINLINE Vector3 operator +(const Vector3 &i_vector) const;
 	FORCEINLINE Vector3 operator -(const Vector3 &i_vector) const;
-	FORCEINLINE Vector3 operator *(const float i_float) const;
+	FORCEINLINE Vector3 operator *(float i_float) const;
 	FORCEINLINE Vector3 operator *(const Vector3 &i_vector) const;
-	FORCEINLINE Vector3 operator /(const float i_float) const;
+	FORCEINLINE Vector3 operator /(float i_float) const;
 	FORCEINLINE Vector3 operator /(const Vector3 &i_vector) const;
 
 	FORCEINLINE Vector3& operator +=(const Vector3 &i_vector);
 	FORCEINLINE Vector3& operator -=(const Vector3 &i_vector);
-	FORCEINLINE Vector3& operator *=(const float i_float);
+	FORCEINLINE Vector3& operator *=(float i_float);
 	FORCEINLINE Vector3& operator *=(const Vector3 &i_vector);
-	FORCEINLINE Vector3& operator /=(const float i_float);
+	FORCEINLINE Vector3& operator /=(float i_float);
 	FORCEINLINE Vector3& operator /=(const Vector3 &i_vector);
 
-	FORCEINLINE float operator [](const uint32 i_index) const;
+	FORCEINLINE float operator [](uint32 i_index) const;
 
 public:
 	float X, Y, Z;
@@ -65,7 +71,7 @@ public:
 
 
 
-FORCEINLINE Vector3::Vector3(const float i_x, const float i_y, const float i_z) 
+FORCEINLINE Vector3::Vector3(float i_x, float i_y, float i_z) 
 	: X(i_x), Y(i_y), Z(i_z) 
 {
 	ASSERT(!Float::IsNAN(i_x));
@@ -74,9 +80,22 @@ FORCEINLINE Vector3::Vector3(const float i_x, const float i_y, const float i_z)
 }
 
 
-FORCEINLINE Vector3::Vector3(const Vector2 & i_vector, const float i_z)
+FORCEINLINE Vector3::Vector3(const Vector2 & i_vector, float i_z)
 	: X(i_vector.X), Y(i_vector.Y), Z(i_z)
 {
+}
+
+FORCEINLINE Vector3::Vector3(const Vector3 &i_other)
+	: X(i_other.X), Y(i_other.Y), Z(i_other.Z)
+{
+}
+
+FORCEINLINE Vector3& Vector3::operator=(const Vector3 &i_other)
+{
+	X = i_other.X;
+	Y = i_other.Y;
+	Z = i_other.Z;
+	return *this;
 }
 
 
@@ -168,7 +187,7 @@ FORCEINLINE float Vector3::LengthSquare() const
 	return X * X + Y * Y + Z * Z;
 }
 
-FORCEINLINE bool Vector3::Equal(const Vector3 &i_vector, const float i_tolerance) const
+FORCEINLINE bool Vector3::Equal(const Vector3 &i_vector, float i_tolerance) const
 {
 	return Float::EqualFast(X, i_vector.X, i_tolerance) && Float::EqualFast(Y, i_vector.Y, i_tolerance) && Float::EqualFast(Z, i_vector.Z, i_tolerance);
 }
@@ -186,7 +205,7 @@ FORCEINLINE Vector3 Vector3::operator -(const Vector3 &i_vector) const
 {
 	return Vector3(X - i_vector.X, Y - i_vector.Y, Z - i_vector.Z);
 }
-FORCEINLINE Vector3 Vector3::operator *(const float i_float) const
+FORCEINLINE Vector3 Vector3::operator *(float i_float) const
 {
 	return Vector3(X * i_float, Y * i_float, Z * i_float);
 }
@@ -194,7 +213,7 @@ FORCEINLINE Vector3 Vector3::operator *(const Vector3 &i_vector) const
 {
 	return Vector3(X * i_vector.X, Y * i_vector.Y, Z * i_vector.Z);
 }
-FORCEINLINE Vector3 Vector3::operator /(const float i_float) const
+FORCEINLINE Vector3 Vector3::operator /(float i_float) const
 {
 	return Vector3(X / i_float, Y / i_float, Z / i_float);
 }
@@ -217,7 +236,7 @@ FORCEINLINE Vector3& Vector3::operator -=(const Vector3 &i_vector)
 	Z -= i_vector.Z;
 	return *this;
 }
-FORCEINLINE Vector3& Vector3::operator *=(const float i_float)
+FORCEINLINE Vector3& Vector3::operator *=(float i_float)
 {
 	X *= i_float;
 	Y *= i_float;
@@ -231,7 +250,7 @@ FORCEINLINE Vector3& Vector3::operator *=(const Vector3 &i_vector)
 	Z *= i_vector.Z;
 	return *this;
 }
-FORCEINLINE Vector3& Vector3::operator /=(const float i_float)
+FORCEINLINE Vector3& Vector3::operator /=(float i_float)
 {
 	X /= i_float;
 	Y /= i_float;
@@ -261,7 +280,7 @@ FORCEINLINE Vector2::Vector2(const Vector3 & i_vector)
 
 
 // for LoadData
-inline Vector3 GetVector3(lua_State * i_pState, int i_index)
+inline Vector3 GetVector3(lua_State * i_pState, int32 i_index)
 {
 	ASSERT(i_pState);
 	ASSERT(lua_gettop(i_pState) >= -i_index);

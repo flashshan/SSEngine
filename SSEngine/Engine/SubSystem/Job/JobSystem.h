@@ -27,7 +27,7 @@ public:
 	static FORCEINLINE JobSystem* GetInstance();
 	static FORCEINLINE void DestroyInstance();
 
-	void CreateQueue(const char * i_pName, unsigned int i_numRunners);
+	void CreateQueue(const char * i_pName, uint32 i_numRunners);
 	void AddRunner(const HashedString & i_QueueName);
 	void AddRunner(JobQueueData & i_QueueData);
 	void RunJob(IJob & i_Job, const char *i_queueName);

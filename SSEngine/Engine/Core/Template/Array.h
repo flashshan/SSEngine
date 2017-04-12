@@ -10,7 +10,7 @@ template<typename T> class Array {
 public:
 	FORCEINLINE Array();
 	FORCEINLINE Array(size_t i_size);
-	FORCEINLINE Array(size_t i_size, T& i_value);
+	FORCEINLINE Array(size_t i_size, const T& i_value);
 	FORCEINLINE Array(const Array<T> &i_other);
 	FORCEINLINE Array(Array<T> &&i_other);
 	inline ~Array();
@@ -51,13 +51,12 @@ template <typename T> FORCEINLINE Array<T>::Array()
 {
 }
 
-
 template <typename T> FORCEINLINE Array<T>::Array(size_t i_size)
 	: elements_(i_size)
 {
 }
 
-template <typename T> FORCEINLINE Array<T>::Array(size_t i_size, T& i_value)
+template <typename T> FORCEINLINE Array<T>::Array(size_t i_size, const T& i_value)
 	: elements_(i_size, i_value)
 {
 }

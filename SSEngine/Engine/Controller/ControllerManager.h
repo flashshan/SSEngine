@@ -18,13 +18,13 @@ public:
 
 	inline ~ControllerManager();
 
-	FORCEINLINE void AddPlayerController(const WeakPtr<Pawn> i_player);
-	FORCEINLINE void AddMonsterController(const StrongPtr<IController> i_controller);
+	FORCEINLINE void AddPlayerController(const WeakPtr<Pawn> &i_player);
+	FORCEINLINE void AddMonsterController(const StrongPtr<IController> &i_controller);
 	
-	void RemoveMonsterController(WeakPtr<IController> i_monsterController);
-	FORCEINLINE void RemoveMonsterControllerByIndex(const int32 i_index);
+	void RemoveMonsterController(const WeakPtr<IController> &i_monsterController);
+	FORCEINLINE void RemoveMonsterControllerByIndex(uint32 i_index);
 
-	FORCEINLINE StrongPtr<PlayerController> GetPlayerController(const uint32 i_index);
+	FORCEINLINE WeakPtr<PlayerController> GetPlayerController(uint32 i_index);
 
 	void UpdatePlayerController();
 	void UpdateMonsterController();
@@ -80,7 +80,7 @@ inline ControllerManager::~ControllerManager()
 	monsterControllers_.Clear();
 }
 
-FORCEINLINE void ControllerManager::AddPlayerController(const WeakPtr<Pawn> i_player)
+FORCEINLINE void ControllerManager::AddPlayerController(const WeakPtr<Pawn> &i_player)
 {
 	StrongPtr<PlayerController> newPlayerController = new TRACK_NEW PlayerController(i_player);
 
@@ -90,23 +90,23 @@ FORCEINLINE void ControllerManager::AddPlayerController(const WeakPtr<Pawn> i_pl
 	LeaveCriticalSection(&criticalSection_);
 }
 
-FORCEINLINE void ControllerManager::AddMonsterController(const StrongPtr<IController> i_monsterController)
+FORCEINLINE void ControllerManager::AddMonsterController(const StrongPtr<IController> &i_monsterController)
 {
 	EnterCriticalSection(&criticalSection_);
 	monsterControllers_.Add(i_monsterController);
 	LeaveCriticalSection(&criticalSection_);
 }
 
-FORCEINLINE void ControllerManager::RemoveMonsterControllerByIndex(const int32 i_index)
+FORCEINLINE void ControllerManager::RemoveMonsterControllerByIndex(uint32 i_index)
 {
 	EnterCriticalSection(&criticalSection_);
 	monsterControllers_.NoOrderRemove(i_index);
 	LeaveCriticalSection(&criticalSection_);
 }
 
-FORCEINLINE StrongPtr<PlayerController> ControllerManager::GetPlayerController(const uint32 i_index)
+FORCEINLINE WeakPtr<PlayerController> ControllerManager::GetPlayerController(uint32 i_index)
 {
 	ASSERT(i_index < playerControllers_.Size());
-	return playerControllers_[i_index];
+	return WeakPtr<PlayerController>(playerControllers_[i_index]);
 }
 

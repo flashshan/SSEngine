@@ -13,7 +13,7 @@ public:
 	FORCEINLINE Vector2 GetExtend() const { return extend_; }
 
 	inline Box2D& Transform(const Matrix &i_matrix);
-	inline Box2D GetTransform(const Matrix &i_matrix);
+	inline Box2D GetTransform(const Matrix &i_matrix) const;
 
 private:
 	Vector2 center_, extend_;
@@ -41,7 +41,7 @@ inline Box2D& Box2D::Transform(const Matrix &i_matrix)
 	return *this;
 }
 
-inline Box2D Box2D::GetTransform(const Matrix &i_matrix)
+inline Box2D Box2D::GetTransform(const Matrix &i_matrix) const
 {
 	return Box2D(Vector2(Vector4(center_).ToPoint().Mul(i_matrix)), Vector2(Vector4(extend_).ToPoint().Mul(i_matrix)));
 }

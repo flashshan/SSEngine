@@ -1,7 +1,7 @@
 #include "Core\Basic\LuaData.h"
 
 
-size_t ReadIntArray(lua_State * i_pState, int i_index, int * o_pInts, size_t i_numInts)
+size_t ReadIntArray(lua_State *i_pState, int i_index, int *o_pInts, size_t i_numInts)
 {
 	ASSERT(i_pState);
 	ASSERT(lua_gettop(i_pState) >= -i_index);
@@ -37,7 +37,7 @@ size_t ReadIntArray(lua_State * i_pState, int i_index, int * o_pInts, size_t i_n
 	return index;
 }
 
-size_t ReadFloatArray(lua_State * i_pState, int i_index, float * o_pFloats, size_t i_numFloats)
+size_t ReadFloatArray(lua_State *i_pState, int i_index, float *o_pFloats, size_t i_numFloats)
 {
 	ASSERT(i_pState);
 	ASSERT(lua_gettop(i_pState) >= -i_index);
@@ -69,7 +69,7 @@ size_t ReadFloatArray(lua_State * i_pState, int i_index, float * o_pFloats, size
 	return index;
 }
 
-size_t GetFloatArray(lua_State * i_pState, int i_indexTable, const char * i_pArrayKey, float * o_pFloats, size_t i_numFloats)
+size_t GetFloatArray(lua_State *i_pState, int i_indexTable, const char *i_pArrayKey, float *o_pFloats, size_t i_numFloats)
 {
 	ASSERT(i_pArrayKey);
 

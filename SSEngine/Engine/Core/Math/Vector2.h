@@ -5,14 +5,18 @@
 
 struct Vector3;
 struct Vector4;
+struct VectorSSE;
 
 struct Vector2 {
 public:
 	FORCEINLINE Vector2() {}
-	FORCEINLINE Vector2(const float i_x, const float i_y);
+	FORCEINLINE Vector2(float i_x, float i_y);
 	FORCEINLINE explicit Vector2(const Vector3 & i_vector);
 	FORCEINLINE explicit Vector2(const Vector4 & i_vector);
-
+	FORCEINLINE explicit Vector2(const VectorSSE &i_vectorSSE);
+	
+	FORCEINLINE Vector2(const Vector2 &i_other);
+	FORCEINLINE Vector2& operator=(const Vector2 &i_other);
 
 	static FORCEINLINE Vector2 Zero();
 	static FORCEINLINE Vector2 Unit();
@@ -29,25 +33,25 @@ public:
 	static FORCEINLINE float Distance(const Vector2 &i_vector1, const Vector2 &i_vector2);
 	FORCEINLINE float Distance(const Vector2 &i_vector) const;
 
-	FORCEINLINE Vector2& Normalize(const float tolerance = SMALL_NUMBER);
+	FORCEINLINE Vector2& Normalize(float tolerance = SMALL_NUMBER);
 	FORCEINLINE float Length() const;
 	FORCEINLINE float LengthSquare() const;
 
-	FORCEINLINE bool Equal(const Vector2 &i_vector, float i_tolerance);
+	FORCEINLINE bool Equal(const Vector2 &i_vector, float i_tolerance = SMALL_NUMBER);
 
 	FORCEINLINE Vector2 operator -() const;
 	FORCEINLINE Vector2 operator +(const Vector2 &i_vector) const;
 	FORCEINLINE Vector2 operator -(const Vector2 &i_vector) const;
-	FORCEINLINE Vector2 operator *(const float i_float) const;
+	FORCEINLINE Vector2 operator *(float i_float) const;
 	FORCEINLINE Vector2 operator *(const Vector2 &i_vector) const;
-	FORCEINLINE Vector2 operator /(const float i_float) const;
+	FORCEINLINE Vector2 operator /(float i_float) const;
 	FORCEINLINE Vector2 operator /(const Vector2 &i_vector) const;
 
 	FORCEINLINE Vector2& operator +=(const Vector2 &i_vector);
 	FORCEINLINE Vector2& operator -=(const Vector2 &i_vector);
-	FORCEINLINE Vector2& operator *=(const float i_float);
+	FORCEINLINE Vector2& operator *=(float i_float);
 	FORCEINLINE Vector2& operator *=(const Vector2 &i_vector);
-	FORCEINLINE Vector2& operator /=(const float i_float);
+	FORCEINLINE Vector2& operator /=(float i_float);
 	FORCEINLINE Vector2& operator /=(const Vector2 &i_vector);
 
 	FORCEINLINE float operator [](uint32 i_index) const;
@@ -62,13 +66,24 @@ public:
 // implement forceinline
 
 
-FORCEINLINE Vector2::Vector2(const float i_x, const float i_y)
+FORCEINLINE Vector2::Vector2(float i_x, float i_y)
 	: X(i_x), Y(i_y)
 {
 	ASSERT(!Float::IsNAN(i_x));
 	ASSERT(!Float::IsNAN(i_y));
 }
 
+FORCEINLINE Vector2::Vector2(const Vector2 &i_other)
+	: X(i_other.X), Y(i_other.Y)
+{
+}
+
+FORCEINLINE Vector2& Vector2::operator=(const Vector2 &i_other)
+{
+	X = i_other.X;
+	Y = i_other.Y;
+	return *this;
+}
 
 FORCEINLINE Vector2 Vector2::Zero()
 {
@@ -127,11 +142,17 @@ FORCEINLINE float Vector2::Distance(const Vector2 &i_vector) const
 
 FORCEINLINE Vector2& Vector2::Normalize(float tolerance)
 {
-	float magSq = Length();
-	ASSERT(magSq > tolerance);
-
-	X /= magSq;
-	Y /= magSq;
+	float magSq = 1.0f / Length();
+	if (magSq > tolerance)
+	{
+		X /= magSq;
+		Y /= magSq;
+	}
+	else
+	{
+		X = 0.0f;
+		Y = 0.0f;
+	}
 	return *this;
 }
 
@@ -165,7 +186,7 @@ FORCEINLINE Vector2 Vector2::operator -(const Vector2 &i_vector) const
 	return Vector2(X - i_vector.X, Y - i_vector.Y);
 }
 
-FORCEINLINE Vector2 Vector2::operator *(const float i_float) const
+FORCEINLINE Vector2 Vector2::operator *(float i_float) const
 {
 	return Vector2(X * i_float, Y * i_float);
 }
@@ -175,7 +196,7 @@ FORCEINLINE Vector2 Vector2::operator *(const Vector2 &i_vector) const
 	return Vector2(X * i_vector.X, Y * i_vector.Y);
 }
 
-FORCEINLINE Vector2 Vector2::operator /(const float i_float) const
+FORCEINLINE Vector2 Vector2::operator /(float i_float) const
 {
 	return Vector2(X / i_float, Y / i_float);
 }
@@ -199,7 +220,7 @@ FORCEINLINE Vector2& Vector2::operator -=(const Vector2 &i_vector)
 	return *this;
 }
 
-FORCEINLINE Vector2& Vector2::operator *=(const float i_float)
+FORCEINLINE Vector2& Vector2::operator *=(float i_float)
 {
 	X *= i_float;
 	Y *= i_float;
@@ -213,7 +234,7 @@ FORCEINLINE Vector2& Vector2::operator *=(const Vector2 &i_vector)
 	return *this;
 }
 
-FORCEINLINE Vector2& Vector2::operator /=(const float i_float)
+FORCEINLINE Vector2& Vector2::operator /=(float i_float)
 {
 	X /= i_float;
 	Y /= i_float;

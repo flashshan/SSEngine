@@ -173,6 +173,7 @@
     <ClInclude Include="Core\Math\Vector2.h" />
     <ClInclude Include="Core\Math\Vector3.h" />
     <ClInclude Include="Core\Math\Vector4.h" />
+    <ClInclude Include="Core\Math\VectorSSE.h" />
     <ClInclude Include="Core\Memory\BitArray.h" />
     <ClInclude Include="Core\Memory\FixedSizeAllocator.h" />
     <ClInclude Include="Core\Memory\HeapManager.h" />
@@ -239,7 +240,6 @@
     <ClCompile Include="Core\Private\String\PooledString.cpp" />
     <ClCompile Include="Core\Private\String\StringPool.cpp" />
     <ClCompile Include="Engine\Private\Engine.cpp" />
-    <ClCompile Include="Jobs\main.cpp" />
     <ClCompile Include="Jobs\Private\IJob.cpp" />
     <ClCompile Include="Jobs\Private\JobLoadActor.cpp" />
     <ClCompile Include="Jobs\Private\JobLoadPawn.cpp" />
@@ -257,9 +257,6 @@
     <ClCompile Include="SubSystem\Private\Physics\PhysicsObject.cpp" />
     <ClCompile Include="SubSystem\Private\Render\RenderManager.cpp" />
     <ClCompile Include="SubSystem\Private\Render\RenderObject.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="..\readme please.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

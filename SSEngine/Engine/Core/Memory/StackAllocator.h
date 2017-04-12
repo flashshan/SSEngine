@@ -6,18 +6,18 @@
 class StackAllocator
 {
 public:
-	static StackAllocator *CreateStackAllocator(void *i_pMemory, const size_t i_sizeMemory);
+	static StackAllocator *CreateStackAllocator(void *i_pMemory, size_t i_sizeMemory);
 	
 	~StackAllocator();
 
 	void freeToMarker();
-	void alloc(const size_t i_size);
+	void alloc(size_t i_size);
 	
 	void clear();
 	void* getMarker() { return lastMark_; }
 
 private:
-	StackAllocator(void *i_pMemory, const size_t i_sizeMemory);
+	StackAllocator(void *i_pMemory, size_t i_sizeMemory);
 	FORCEINLINE StackAllocator(const StackAllocator &i_other) {}
 	FORCEINLINE StackAllocator& operator=(const StackAllocator &i_other) {}
 

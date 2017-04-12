@@ -85,7 +85,7 @@ void RenderManager::RenderUpdate()
 	GLib::EndRendering();
 }
 
-WeakPtr<RenderObject> RenderManager::AddRenderObject(const WeakPtr<GameObject> &i_gameObject, const char *i_filePath, const uint32 i_priority)
+WeakPtr<RenderObject> RenderManager::AddRenderObject(const WeakPtr<GameObject> &i_gameObject, const char *i_filePath, uint32 i_priority)
 {
 	GLib::Sprites::Sprite *tempSprite;
 
@@ -112,7 +112,7 @@ WeakPtr<RenderObject> RenderManager::AddRenderObject(const WeakPtr<GameObject> &
 }
 
 // go through the set, seldomly used
-void RenderManager::Remove(WeakPtr<RenderObject> i_renderObject)
+void RenderManager::Remove(const WeakPtr<RenderObject> &i_renderObject)
 {
 	EnterCriticalSection(&criticalSection);
 	for (auto && item : renderObjects_)

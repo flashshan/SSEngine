@@ -30,13 +30,13 @@ struct BlockDescriptor
 class HeapAllocator
 {
 public:
-	static HeapAllocator *Create(void *i_pMemory, const size_t i_sizeMemory, const uint32 i_numDescriptors);
+	static HeapAllocator *Create(void *i_pMemory, size_t i_sizeMemory, uint32 i_numDescriptors);
 	
 	~HeapAllocator();
 
 	// allocate - with and without alignment requirement
-	void *alloc(const size_t i_size);
-	void *alloc(const size_t i_size, const uint32 i_alignment);
+	void *alloc(size_t i_size);
+	void *alloc(size_t i_size, uint32 i_alignment);
 
 	// free
 	bool free(const void *i_ptr);
@@ -63,14 +63,14 @@ public:
 
 private:
 	// create a new HeapManager
-	HeapAllocator(void *i_pMemory, const size_t i_sizeMemory, const uint32 i_numDescriptors);
+	HeapAllocator(void *i_pMemory, size_t i_sizeMemory, uint32 i_numDescriptors);
 	
 	// hide copy constructor
 	FORCEINLINE HeapAllocator(const HeapAllocator &i_other) {}
 	FORCEINLINE HeapAllocator& operator=(const HeapAllocator &i_other) {}
 
 	// return previous alignment position 
-	FORCEINLINE uintPtr alignment(const uintPtr i_pos, const uint32 i_align) const;
+	FORCEINLINE uintPtr alignment(uintPtr i_pos, uint32 i_align) const;
 
 	// double list quick sort
 	BlockDescriptor *qsort(BlockDescriptor *i_head);
@@ -142,7 +142,7 @@ inline void HeapAllocator::ShowUsedBlocks() const
 }
 
 
-FORCEINLINE uintPtr HeapAllocator::alignment(const uintPtr i_pos, const uint32 i_align) const
+FORCEINLINE uintPtr HeapAllocator::alignment(uintPtr i_pos, uint32 i_align) const
 {
 	return i_pos - i_pos % i_align;
 }

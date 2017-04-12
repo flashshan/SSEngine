@@ -290,6 +290,9 @@
     <ClInclude Include="SubSystem\Collision\CollisionObject.h">
       <Filter>SubSystem\Collision</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Math\VectorSSE.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Object\Private\GameObject.cpp">
@@ -412,17 +415,11 @@
     <ClCompile Include="Jobs\Private\IJob.cpp">
       <Filter>Jobs\Private</Filter>
     </ClCompile>
-    <ClCompile Include="Jobs\main.cpp">
-      <Filter>Jobs</Filter>
-    </ClCompile>
     <ClCompile Include="Jobs\Private\JobLoadActor.cpp">
       <Filter>Jobs\Private</Filter>
     </ClCompile>
     <ClCompile Include="Jobs\Private\JobLoadPawn.cpp">
       <Filter>Jobs\Private</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="..\readme please.txt" />
   </ItemGroup>
 </Project>

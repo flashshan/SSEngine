@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Vector4.h"
+#include "Core\Math\VectorSSE.h"
 
 ALIGN(16) struct Matrix {
 public:
@@ -11,19 +11,22 @@ public:
 		float i_41, float i_42, float i_43, float i_44);
 	explicit FORCEINLINE Matrix(const float *i_floatArray);
 	FORCEINLINE Matrix(const Vector4 &i_v1, const Vector4 &i_v2, const Vector4 &i_v3, const Vector4 &i_v4);
-
+	FORCEINLINE Matrix(const VectorSSE &i_v1, const VectorSSE &i_v2, const VectorSSE &i_v3, const VectorSSE &i_v4);
+	
 	FORCEINLINE static Matrix CreateZero();
 	FORCEINLINE static Matrix CreateIdentity();
 
-	FORCEINLINE static Matrix CreateTranslate(const float i_xTranslate, const float i_yTranslate, const float i_zTranslate);
-	FORCEINLINE static Matrix CreateTranslate(const Vector3 i_Vector);
-	FORCEINLINE static Matrix CreateXRotation(const float i_XRadian);
-	FORCEINLINE static Matrix CreateYRotation(const float i_YRadian);
-	FORCEINLINE static Matrix CreateZRotation(const float i_ZRadian);
-	FORCEINLINE static Matrix CreateScale(const float i_xScale, const float i_yScale, const float i_zScale);
-	FORCEINLINE static Matrix CreateScale(const Vector3 i_scale);
+	FORCEINLINE static Matrix CreateTranslate(float i_xTranslate, float i_yTranslate, float i_zTranslate);
+	FORCEINLINE static Matrix CreateTranslate(const Vector3& i_Vector);
+	FORCEINLINE static Matrix CreateXRotation(float i_XRadian);
+	FORCEINLINE static Matrix CreateYRotation(float i_YRadian);
+	FORCEINLINE static Matrix CreateZRotation(float i_ZRadian);
+	FORCEINLINE static Matrix CreateScale(float i_xScale, float i_yScale, float i_zScale);
+	FORCEINLINE static Matrix CreateScale(const Vector3& i_scale);
 
 	FORCEINLINE bool IsSingular() const;
+	FORCEINLINE VectorSSE GetRow(uint32 i_index) const;
+	FORCEINLINE VectorSSE GetCol(uint32 i_index) const;
 
 	Matrix& Transpose();
 	FORCEINLINE Matrix GetTranspose() const;
@@ -31,17 +34,20 @@ public:
 	Matrix& Inverse();
 	Matrix GetInverse() const;
 
-	Matrix operator*(const float i_float) const;
-	Matrix& operator*=(const float i_float);
-	Matrix operator/(const float i_float) const;
-	Matrix& operator/=(const float i_float);
+	Matrix operator*(float i_float) const;
+	Matrix& operator*=(float i_float);
+	Matrix operator/(float i_float) const;
+	Matrix& operator/=(float i_float);
 	Matrix operator*(const Matrix &i_other) const;
 	Matrix& operator*=(const Matrix &i_other);
 
-	FORCEINLINE float operator [](const int i_index) const;
+	FORCEINLINE float operator [](uint32 i_index) const;
 
 	Vector4 MultiplyLeft(const Vector4 &i_vector) const;
 	Vector4 MultiplyRight(const Vector4 &i_vector) const;
+
+	VectorSSE Matrix::MultiplyLeft(const VectorSSE &i_vector) const;
+	VectorSSE Matrix::MultiplyRight(const VectorSSE &i_vector) const;
 
 public:
 	static Matrix FastMatrix;
@@ -88,6 +94,14 @@ FORCEINLINE Matrix::Matrix(const Vector4 &i_v1, const Vector4 &i_v2, const Vecto
 	ASSERT(!Float::IsNAN(M[0][0]));
 }
 
+FORCEINLINE Matrix::Matrix(const VectorSSE &i_v1, const VectorSSE &i_v2, const VectorSSE &i_v3, const VectorSSE &i_v4)
+	: M{ i_v1[0], i_v1[1], i_v1[2], i_v1[3],
+		 i_v2[0], i_v2[1], i_v2[2], i_v2[3],
+		 i_v3[0], i_v3[1], i_v3[2], i_v3[3],
+		 i_v4[0], i_v4[1], i_v4[2], i_v4[3] }
+{
+}
+
 
 FORCEINLINE Matrix Matrix::CreateZero()
 {
@@ -105,7 +119,7 @@ FORCEINLINE Matrix Matrix::CreateIdentity()
 				  0.0f, 0.0f, 0.0f, 1.0f);
 }
 
-FORCEINLINE Matrix Matrix::CreateTranslate(const float i_xTranslate, const float i_yTranslate, const float i_zTranslate)
+FORCEINLINE Matrix Matrix::CreateTranslate(float i_xTranslate, float i_yTranslate, float i_zTranslate)
 {
 	return Matrix(1.0f, 0.0f, 0.0f, 0.0f,
 				  0.0f, 1.0f, 0.0f, 0.0f,
@@ -113,7 +127,7 @@ FORCEINLINE Matrix Matrix::CreateTranslate(const float i_xTranslate, const float
 				  i_xTranslate, i_yTranslate, i_zTranslate, 1.0f);
 }
 
-FORCEINLINE Matrix Matrix::CreateTranslate(const Vector3 i_Vector)
+FORCEINLINE Matrix Matrix::CreateTranslate(const Vector3& i_Vector)
 {
 	return Matrix(1.0f, 0.0f, 0.0f, 0.0f,
 				  0.0f, 1.0f, 0.0f, 0.0f,
@@ -121,7 +135,7 @@ FORCEINLINE Matrix Matrix::CreateTranslate(const Vector3 i_Vector)
 				  i_Vector.X, i_Vector.Y, i_Vector.Z, 1.0f);
 }
 
-FORCEINLINE Matrix Matrix::CreateXRotation(const float i_XRadian)
+FORCEINLINE Matrix Matrix::CreateXRotation(float i_XRadian)
 {
 	float Cos = cos(i_XRadian), Sin = sin(i_XRadian);
 	return Matrix(1.0f, 0.0f, 0.0f, 0.0f,
@@ -130,7 +144,7 @@ FORCEINLINE Matrix Matrix::CreateXRotation(const float i_XRadian)
 				  0.0f, 0.0f, 0.0f, 1.0f);
 }
 
-FORCEINLINE Matrix Matrix::CreateYRotation(const float i_YRadian)
+FORCEINLINE Matrix Matrix::CreateYRotation(float i_YRadian)
 {
 	float Cos = cos(i_YRadian), Sin = sin(i_YRadian);
 	return Matrix(Cos, 0.0f, -Sin, 0.0f,
@@ -139,7 +153,7 @@ FORCEINLINE Matrix Matrix::CreateYRotation(const float i_YRadian)
 				  0.0f, 0.0f, 0.0f, 1.0f);
 }
 
-FORCEINLINE Matrix Matrix::CreateZRotation(const float i_ZRadian)
+FORCEINLINE Matrix Matrix::CreateZRotation(float i_ZRadian)
 {
 	float Cos = cos(i_ZRadian), Sin = sin(i_ZRadian);
 	return Matrix(Cos, -Sin, 0.0f, 0.0f,
@@ -148,7 +162,7 @@ FORCEINLINE Matrix Matrix::CreateZRotation(const float i_ZRadian)
 				  0.0f, 0.0f, 0.0f, 1.0f);
 }
 
-FORCEINLINE Matrix Matrix::CreateScale(const float i_xScale, const float i_yScale, const float i_zScale)
+FORCEINLINE Matrix Matrix::CreateScale(float i_xScale, float i_yScale, float i_zScale)
 {
 	return Matrix(i_xScale, 0.0f, 0.0f, 0.0f,
 				  0.0f, i_yScale, 0.0f, 0.0f,
@@ -156,7 +170,7 @@ FORCEINLINE Matrix Matrix::CreateScale(const float i_xScale, const float i_yScal
 				  0.0f, 0.0f, 0.0f, 1.0f);
 }
 
-FORCEINLINE Matrix Matrix::CreateScale(const Vector3 i_scale)
+FORCEINLINE Matrix Matrix::CreateScale(const Vector3& i_scale)
 {
 	return Matrix(i_scale.X, 0.0f, 0.0f, 0.0f,
 				  0.0f, i_scale.Y, 0.0f, 0.0f,
@@ -182,7 +196,17 @@ FORCEINLINE Matrix Matrix::GetTranspose() const
 				  M[0][3], M[1][3], M[2][3], M[3][3]);
 }
 
-FORCEINLINE float Matrix::operator [](const int i_index) const
+FORCEINLINE VectorSSE Matrix::GetRow(uint32 i_index) const
+{
+	return VectorSSE(M[i_index][0], M[i_index][1], M[i_index][2], M[i_index][3]);
+}
+
+FORCEINLINE VectorSSE Matrix::GetCol(uint32 i_index) const
+{
+	return VectorSSE(M[0][i_index], M[1][i_index], M[2][i_index], M[3][i_index]);
+}
+
+FORCEINLINE float Matrix::operator [](uint32 i_index) const
 {
 	ASSERT(i_index < 16);
 	return M[i_index / 4][i_index % 4];
@@ -198,3 +222,9 @@ FORCEINLINE Vector4 Vector4::Mul(const Matrix &i_matrix) const
 	return i_matrix.MultiplyLeft(*this);
 }
 
+// for VectorSSE
+FORCEINLINE VectorSSE VectorSSE::Mul(const Matrix &i_matrix) const
+{
+	ASSERT(!Float::IsNAN(i_matrix.M[0][0]));
+	return i_matrix.MultiplyLeft(*this);
+}

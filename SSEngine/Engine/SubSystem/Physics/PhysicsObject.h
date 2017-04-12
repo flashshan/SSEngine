@@ -5,7 +5,7 @@
 
 class PhysicsObject {
 public:
-	explicit FORCEINLINE PhysicsObject(const WeakPtr<GameObject> &i_gameOject, const float i_mass = 1.0f, const float i_drag = 0.1f);
+	explicit FORCEINLINE PhysicsObject(const WeakPtr<GameObject> &i_gameOject, float i_mass = 1.0f, float i_drag = 0.1f);
 	FORCEINLINE ~PhysicsObject();
 
 	void UpdatePhysics();
