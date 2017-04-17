@@ -12,7 +12,7 @@ public:
 	virtual ~FocusMoveController();
 
 	virtual void SetPawn(const WeakPtr<Pawn> &i_pawn) override { pawn_ = i_pawn; }
-	virtual WeakPtr<Pawn> GetPawn() const { return pawn_; }
+	virtual WeakPtr<Pawn> GetControlledPawn() const { return pawn_; }
 	virtual bool IsValid() const override { return pawn_; }
 
 	virtual void UpdateController() override;

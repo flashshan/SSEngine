@@ -2,20 +2,6 @@
 
 #include "Target.h"
 
-// math define
-#define PI 3.1415926535897932f
-#define HALF_PI 1.57079632679f
-#define INV_PI 0.31830988618f
-
-#define EULER_NUMBER 2.71828182845904523536f
-
-#define RAND_MAX 0x7fff
-#define SMALL_NUMBER 1.e-8f
-#define BIG_NUMBER 3.4e+38f
-
-#define MAX_NAME_LENGTH 50
-
-#define SIGN_BIT ((1 << 31))
 
 #ifdef TARGET_WINDOWS
 
@@ -50,3 +36,20 @@ typedef unsigned int			uintPtr;
 #endif // _WIN64
 
 #endif // WINDOW
+
+// math define
+namespace Constants
+{
+	static const float Pi = 3.1415926535897932f;
+	static const float PiByTwo = 1.57079632679f;
+	static const float OneOverPi = 0.31830988618f;
+	static const float RAD_TO_DEG = 57.29577637f;
+	static const float DEG_TO_RAD = 0.0174532935f;
+	static const float EULER_NUMBER = 2.71828182845904523536f;
+
+	static const float SMALL_NUMBER = 1.e-8f;
+	static const float RELATIVE_SMALL_NUMBER = 1.e-4f;
+	static const float BIG_NUMBER = 3.4e+38f;
+	static const int32 MAX_NAME_LENGTH = 50;
+	static const uint32 SIGN_BIT = ((1 << 31));
+}

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core\Math\VectorSSE.h"
+#include "Axis.h"
 
 ALIGN(16) struct Matrix {
 public:
@@ -42,6 +43,7 @@ public:
 	Matrix& operator*=(const Matrix &i_other);
 
 	FORCEINLINE float operator [](uint32 i_index) const;
+	inline Vector3 GetScaledAxis(EAxis i_axis) const;
 
 	Vector4 MultiplyLeft(const Vector4 &i_vector) const;
 	Vector4 MultiplyRight(const Vector4 &i_vector) const;
@@ -212,6 +214,21 @@ FORCEINLINE float Matrix::operator [](uint32 i_index) const
 	return M[i_index / 4][i_index % 4];
 }
 
+inline Vector3 Matrix::GetScaledAxis(EAxis i_axis) const
+{
+	switch (i_axis)
+	{
+	case EAxis::X:
+		return Vector3(M[0][0], M[0][1], M[0][2]);
+	case EAxis::Y:
+		return Vector3(M[1][0], M[1][1], M[1][2]);
+	case EAxis::Z:
+		return Vector3(M[2][0], M[2][1], M[2][2]);
+	default:
+		ASSERT(0);
+		return Vector3::Zero();
+	}
+}
 
 
 // for Vector4

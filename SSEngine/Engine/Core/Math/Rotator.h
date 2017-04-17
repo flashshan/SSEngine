@@ -14,6 +14,9 @@ public:
 
 	FORCEINLINE Rotator& operator=(const Rotator &i_other);
 
+	static FORCEINLINE Rotator FromEuler(const Vector3 &i_euler);
+	static FORCEINLINE Rotator Zero();
+
 	// check if exactly the same
 	FORCEINLINE bool operator==(const Rotator &i_other) const;
 	FORCEINLINE bool operator!=(const Rotator &i_other) const;
@@ -26,15 +29,15 @@ public:
 	FORCEINLINE Rotator& operator-=(const Rotator &i_other);
 	FORCEINLINE Rotator& operator*=(float i_scale);
 
-	FORCEINLINE bool IsZero(float i_tolerance = SMALL_NUMBER) const;
-	FORCEINLINE bool Equal(const Rotator& i_other, float i_tolerance = SMALL_NUMBER) const;
+	FORCEINLINE bool IsZero(float i_tolerance = Constants::SMALL_NUMBER) const;
+	FORCEINLINE bool Equal(const Rotator& i_other, float i_tolerance = Constants::SMALL_NUMBER) const;
 
 	FORCEINLINE Rotator& Inverse();
 	FORCEINLINE Rotator GetInverse() const;
 	
 	inline Vector3 ToVector() const;
 	FORCEINLINE Vector3 ToEuler() const;
-	//Quaternion ToQuaternion() const;
+	FORCEINLINE Quaternion ToQuaternion() const;
 
 	FORCEINLINE Vector3 RotateVector(const Vector3 &i_vector) const;
 	FORCEINLINE Vector3 UnrotateVector(const Vector3 &i_vector) const;
@@ -48,7 +51,6 @@ public:
 	FORCEINLINE Rotator& Denormalized();
 	FORCEINLINE Rotator GetDenormalized() const;
 
-	static FORCEINLINE Rotator Zero();
 	static FORCEINLINE float ClampAxis(float i_angle);
 	static FORCEINLINE float NormalizeAxis(float i_angle);
 
@@ -78,6 +80,7 @@ FORCEINLINE Rotator::Rotator(const Quaternion &i_quaternion)
 	ASSERT(!Float::IsNAN(Pitch));
 	ASSERT(!Float::IsNAN(Yaw));
 	ASSERT(!Float::IsNAN(Roll));
+	// TO DO
 }
 
 FORCEINLINE Rotator::Rotator(const Rotator &i_other)
@@ -182,70 +185,16 @@ FORCEINLINE Vector3 Rotator::ToEuler() const
 	return Vector3(Roll, Pitch, Yaw);
 }
 
-//Quaternion Rotator::ToQuaternion() const
-//{
-	//const Vector4 Angles = MakeVectorRegister(Pitch, Yaw, Roll, 0.0f);
-	//const VectorRegister HalfAngles = VectorMultiply(Angles, GlobalVectorConstants::DEG_TO_RAD_HALF);
-
-	//VectorRegister SinAngles, CosAngles;
-	//VectorSinCos(&SinAngles, &CosAngles, &HalfAngles);
-
-	//// Vectorized conversion, measured 20% faster than using scalar version after VectorSinCos.
-	//// Indices within VectorRegister (for shuffles): P=0, Y=1, R=2
-	//const VectorRegister SR = VectorReplicate(SinAngles, 2);
-	//const VectorRegister CR = VectorReplicate(CosAngles, 2);
-
-	//const VectorRegister SY_SY_CY_CY_Temp = VectorShuffle(SinAngles, CosAngles, 1, 1, 1, 1);
-
-	//const VectorRegister SP_SP_CP_CP = VectorShuffle(SinAngles, CosAngles, 0, 0, 0, 0);
-	//const VectorRegister SY_CY_SY_CY = VectorShuffle(SY_SY_CY_CY_Temp, SY_SY_CY_CY_Temp, 0, 2, 0, 2);
-
-	//const VectorRegister CP_CP_SP_SP = VectorShuffle(CosAngles, SinAngles, 0, 0, 0, 0);
-	//const VectorRegister CY_SY_CY_SY = VectorShuffle(SY_SY_CY_CY_Temp, SY_SY_CY_CY_Temp, 2, 0, 2, 0);
-
-	//const uint32 Neg = uint32(1 << 31);
-	//const uint32 Pos = uint32(0);
-	//const VectorRegister SignBitsLeft = MakeVectorRegister(Pos, Neg, Pos, Pos);
-	//const VectorRegister SignBitsRight = MakeVectorRegister(Neg, Neg, Neg, Pos);
-	//const VectorRegister LeftTerm = VectorBitwiseXor(SignBitsLeft, VectorMultiply(CR, VectorMultiply(SP_SP_CP_CP, SY_CY_SY_CY)));
-	//const VectorRegister RightTerm = VectorBitwiseXor(SignBitsRight, VectorMultiply(SR, VectorMultiply(CP_CP_SP_SP, CY_SY_CY_SY)));
-
-	//FQuat RotationQuat;
-	//const VectorRegister Result = VectorAdd(LeftTerm, RightTerm);
-	//VectorStoreAligned(Result, &RotationQuat);
-
-
-
-	//const float DEG_TO_RAD = PI / (180.f);
-	//const float DIVIDE_BY_2 = DEG_TO_RAD / 2.f;
-	//float SP, SY, SR;
-	//float CP, CY, CR;
-
-	//FMath::SinCos(&SP, &CP, Pitch*DIVIDE_BY_2);
-	//FMath::SinCos(&SY, &CY, Yaw*DIVIDE_BY_2);
-	//FMath::SinCos(&SR, &CR, Roll*DIVIDE_BY_2);
-
-	//FQuat RotationQuat;
-	//RotationQuat.X = CR*SP*SY - SR*CP*CY;
-	//RotationQuat.Y = -CR*SP*CY - SR*CP*SY;
-	//RotationQuat.Z = CR*CP*SY - SR*SP*CY;
-	//RotationQuat.W = CR*CP*CY + SR*SP*SY;
-
-
-	//RotationQuat.DiagnosticCheckNaN();
-
-	//return RotationQuat;
-//}
 
 FORCEINLINE Vector3 Rotator::RotateVector(const Vector3 &i_vector) const
 {
-	// TO DO
+	// TO DO, use rotator to generate a matrix, then transform the vector
 	return Vector3(0, 0, 0);
 }
 
 FORCEINLINE Vector3 Rotator::UnrotateVector(const Vector3 &i_vector) const
 {
-	// TO DO
+	// TO DO, the same as above
 	return Vector3(0, 0, 0);
 }
 
@@ -287,6 +236,12 @@ FORCEINLINE Rotator& Rotator::Denormalized()
 FORCEINLINE Rotator Rotator::GetDenormalized() const
 {
 	return Rotator(ClampAxis(Pitch), ClampAxis(Yaw), ClampAxis(Roll));
+}
+
+
+FORCEINLINE Rotator Rotator::FromEuler(const Vector3 &i_euler)
+{
+	return Rotator(i_euler.Y, i_euler.Z, i_euler.X);
 }
 
 

@@ -94,5 +94,7 @@ separate collide condition into three parts(enter, leave and collide)           
 V1.09
 update a much better use of SSE 																		     // Engine\Core\Math\VectorSSE.h
 change implementations in Matrix to use the power of VectorSSE												 // Engine\Core\Math\Private\Matrix.cpp
-Build Rotator and Quaternion with the power of VectorSSE (In test)													 // Engine\Core\Math\Rotator.h   Quaternion.h
+Build Rotator and Quaternion with the power of VectorSSE (In test)											 // Engine\Core\Math\Rotator.h   Quaternion.h
 Check code style, delete useless const, check const reference values										 
+add huge amount of math, mainly focus on Matrix, Rotator, Quaternion and angle math (in test)
+change #define into static const since define will overwrite each other if they have same name

@@ -165,6 +165,7 @@
     <ClInclude Include="Core\Basic\LuaData.h" />
     <ClInclude Include="Core\Basic\Target.h" />
     <ClInclude Include="Core\CoreMinimal.h" />
+    <ClInclude Include="Core\Math\Axis.h" />
     <ClInclude Include="Core\Math\Box2D.h" />
     <ClInclude Include="Core\Math\Matrix.h" />
     <ClInclude Include="Core\Math\Quaternion.h" />
@@ -224,7 +225,6 @@
     <ClCompile Include="Core\Private\Basic\BasicFunctions.cpp" />
     <ClCompile Include="Core\Private\Basic\ErrorMessage.cpp" />
     <ClCompile Include="Core\Private\Basic\LoadData.cpp" />
-    <ClCompile Include="Core\Private\Math\Box2D.cpp" />
     <ClCompile Include="Core\Private\Math\Matrix.cpp" />
     <ClCompile Include="Core\Private\Math\Quaternion.cpp" />
     <ClCompile Include="Core\Private\Math\Rotator.cpp" />

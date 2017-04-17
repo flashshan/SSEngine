@@ -73,8 +73,8 @@ void JobSystem::AddRunner( JobQueueData & i_QueueData )
 	
 	pNewRunner->runnerInput_.queue_ = &i_QueueData.sharedQueue_;
 #ifdef _DEBUG
-	char ThreadName[MAX_NAME_LENGTH];
-	sprintf_s( ThreadName, MAX_NAME_LENGTH, "%s %d", i_QueueData.sharedQueue_.GetName(), int( runners + 1 ) );
+	char ThreadName[Constants::MAX_NAME_LENGTH];
+	sprintf_s( ThreadName, Constants::MAX_NAME_LENGTH, "%s %d", i_QueueData.sharedQueue_.GetName(), int( runners + 1 ) );
 	pNewRunner->runnerInput_.threadName_ = ThreadName;
 #endif
 

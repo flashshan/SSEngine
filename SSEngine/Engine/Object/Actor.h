@@ -97,7 +97,7 @@ private:
 // all actors are created with active = false
 inline Actor::Actor()
 	: name_(StringPool::GetInstance()->add("defaultName")), type_(HashedString("defaultType")), canCollide_(true), isStatic_(false), isActive_(false),
-	gameObject_(new (NewAlignment::EAlign16) GameObject()), renderObject_(nullptr), physicsObject_(nullptr)
+	gameObject_(new TRACK_NEW GameObject()), renderObject_(nullptr), physicsObject_(nullptr)
 {
 	if (isStatic_)
 	{
@@ -107,7 +107,7 @@ inline Actor::Actor()
 
 inline Actor::Actor(const Transform &i_transform, const char *i_name, const char *i_type, bool i_canCollide, bool i_static)
 	: name_(StringPool::GetInstance()->add(i_name)), type_(HashedString(i_type)), canCollide_(i_canCollide), isStatic_(i_static), isActive_(false),
-	gameObject_(new (NewAlignment::EAlign16) GameObject(i_transform)), renderObject_(nullptr), physicsObject_(nullptr)
+	gameObject_(new TRACK_NEW GameObject(i_transform)), renderObject_(nullptr), physicsObject_(nullptr)
 {
 	if (isStatic_)
 	{

@@ -194,17 +194,19 @@ Matrix& Matrix::operator*=(float i_float)
 
 Matrix Matrix::operator/(float i_float) const
 {
-	return Matrix(M[0][0] / i_float, M[0][1] / i_float, M[0][2] / i_float, M[0][3] / i_float,
-		M[1][0] / i_float, M[1][1] / i_float, M[1][2] / i_float, M[1][3] / i_float,
-		M[2][0] / i_float, M[2][1] / i_float, M[2][2] / i_float, M[2][3] / i_float,
-		M[3][0] / i_float, M[3][1] / i_float, M[3][2] / i_float, M[3][3] / i_float);
+	const float reciprocal = 1.0f / i_float;
+	return Matrix(M[0][0] * reciprocal, M[0][1] * reciprocal, M[0][2] * reciprocal, M[0][3] * reciprocal,
+		M[1][0] * reciprocal, M[1][1] * reciprocal, M[1][2] * reciprocal, M[1][3] * reciprocal,
+		M[2][0] * reciprocal, M[2][1] * reciprocal, M[2][2] * reciprocal, M[2][3] * reciprocal,
+		M[3][0] * reciprocal, M[3][1] * reciprocal, M[3][2] * reciprocal, M[3][3] * reciprocal);
 }
 
 Matrix& Matrix::operator/=(float i_float)
 {
+	const float reciprocal = 1.0f / i_float;
 	for (int i = 0;i < 16;++i)
 	{
-		M[i / 4][i % 4] /= i_float;
+		M[i / 4][i % 4] *= reciprocal;
 	}
 	return *this;
 }

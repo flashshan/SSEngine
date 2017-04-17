@@ -19,7 +19,7 @@ public:
 	FORCEINLINE static Vector4 Zero();
 	FORCEINLINE static Vector4 Unit();
 
-	FORCEINLINE Vector4& Normalize(float i_tolerance = SMALL_NUMBER);
+	FORCEINLINE Vector4& Normalize(float i_tolerance = Constants::SMALL_NUMBER);
 
 	FORCEINLINE static float Dot(const Vector4 &i_vector1, const Vector4 &i_vector2);
 	FORCEINLINE float Dot(const Vector4 &i_vector) const;
@@ -32,7 +32,7 @@ public:
 
 	FORCEINLINE Vector4& ToVector();
 	FORCEINLINE Vector4& ToPoint();
-	FORCEINLINE bool Equal(const Vector4 &i_vector, float i_tolerance) const;
+	FORCEINLINE bool Equal(const Vector4 &i_vector, float i_tolerance = Constants::SMALL_NUMBER) const;
 
 	FORCEINLINE Vector4 operator -() const;
 	FORCEINLINE Vector4 operator +(const Vector4 &i_vector) const;
@@ -206,7 +206,8 @@ FORCEINLINE Vector4 Vector4::operator *(const Vector4 &i_vector) const
 }
 FORCEINLINE Vector4 Vector4::operator /(float i_float) const
 {
-	return Vector4(X / i_float, Y / i_float, Z / i_float, W / i_float);
+	const float reciprocal = 1.0f / i_float;
+	return Vector4(X * reciprocal, Y * reciprocal, Z * reciprocal, W * reciprocal);
 }
 FORCEINLINE Vector4 Vector4::operator /(const Vector4 &i_vector) const
 {
@@ -247,10 +248,11 @@ FORCEINLINE Vector4& Vector4::operator *=(const Vector4 &i_vector)
 }
 FORCEINLINE Vector4& Vector4::operator /=(float i_float)
 {
-	X /= i_float;
-	Y /= i_float;
-	Z /= i_float;
-	W /= i_float;
+	const float reciprocal = 1.0f / i_float;
+	X *= reciprocal;
+	Y *= reciprocal;
+	Z *= reciprocal;
+	W *= reciprocal;
 	return *this;
 }
 FORCEINLINE Vector4& Vector4::operator /=(const Vector4 &i_vector)

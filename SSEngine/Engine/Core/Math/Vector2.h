@@ -33,11 +33,11 @@ public:
 	static FORCEINLINE float Distance(const Vector2 &i_vector1, const Vector2 &i_vector2);
 	FORCEINLINE float Distance(const Vector2 &i_vector) const;
 
-	FORCEINLINE Vector2& Normalize(float tolerance = SMALL_NUMBER);
+	FORCEINLINE Vector2& Normalize(float tolerance = Constants::SMALL_NUMBER);
 	FORCEINLINE float Length() const;
 	FORCEINLINE float LengthSquare() const;
 
-	FORCEINLINE bool Equal(const Vector2 &i_vector, float i_tolerance = SMALL_NUMBER);
+	FORCEINLINE bool Equal(const Vector2 &i_vector, float i_tolerance = Constants::SMALL_NUMBER);
 
 	FORCEINLINE Vector2 operator -() const;
 	FORCEINLINE Vector2 operator +(const Vector2 &i_vector) const;
@@ -97,9 +97,7 @@ FORCEINLINE Vector2 Vector2::Unit()
 
 FORCEINLINE Vector2 Vector2::RandomNormal()
 {
-	Vector2 res((float)rand() / (float)RAND_MAX * 2.0f - 1.0f, (float)rand() / (float)RAND_MAX * 2.0f - 1.0f);
-	res.Normalize();
-	return res;
+	return Vector2(Math::RandWithinOne() * 2.0f - 1.0f, Math::RandWithinOne() * 2.0f - 1.0f);
 }
 
 FORCEINLINE float Vector2::Dot(const Vector2 &i_vector1, const Vector2 &i_vector2)

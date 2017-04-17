@@ -6,6 +6,9 @@
 
 namespace Basic {
 	template<typename T> FORCEINLINE void Swap(T &i_Left, T &i_Right);
+	template<typename T> FORCEINLINE T Max(const T &i_value1, const T&i_value2);
+	template<typename T> FORCEINLINE T Min(const T &i_value1, const T&i_value2);
+	template<typename T> FORCEINLINE T Clamp(const T& i_value, const T& i_min, const T& i_max);
 
 	// reverse between small end and big end machine
 	FORCEINLINE int16 SwapInt16(int16 i_value);
@@ -28,15 +31,10 @@ namespace Float {
 	FORCEINLINE bool IsZero(float i_val);
 	FORCEINLINE bool IsFinite(float i_val);
 
-	FORCEINLINE void RandInit(int32 Seed) { srand(Seed); }
-	FORCEINLINE int32 Rand() { return rand(); }
-	FORCEINLINE float RandWithinOne();
-	FORCEINLINE uint32 RandInRange(uint32 i_lowerBound, uint32 i_upperBound);
-
 	// fastest
-	FORCEINLINE bool EqualFast(float i_lhs, float i_rhs, float i_maxDiff = SMALL_NUMBER);
+	FORCEINLINE bool EqualFast(float i_lhs, float i_rhs, float i_maxDiff = Constants::SMALL_NUMBER);
 	// balanced
-	FORCEINLINE bool EqualRelated(float i_lhs, float i_rhs, float i_maxDiff = SMALL_NUMBER);
+	FORCEINLINE bool EqualRelated(float i_lhs, float i_rhs, float i_maxDiff = Constants::SMALL_NUMBER);
 	// slow but sure
 	FORCEINLINE bool EqualAccurate(float i_lhs, float i_rhs, float i_maxDiff, uint32 i_maxULPS = 12);
 
@@ -44,6 +42,8 @@ namespace Float {
 }
 
 struct Rotator;
+struct VectorSSE;
+struct Quaternion;
 
 namespace Math {
 
@@ -55,11 +55,30 @@ namespace Math {
 	FORCEINLINE int Abs(int i_value);
 	FORCEINLINE float AbsF(float i_float);
 
+	FORCEINLINE void RandInit(int32 i_seed) { srand(i_seed); }
+	FORCEINLINE int32 Rand() { return rand(); }
+	FORCEINLINE float RandWithinOne();
+	FORCEINLINE uint32 RandInRange(uint32 i_lowerBound, uint32 i_upperBound);
+
+	// from Unreal
+	FORCEINLINE float FastAsin(float i_value);
+
 	FORCEINLINE void SinCos(float* o_scalarSin, float* o_scalarCos, float i_Value);
+	FORCEINLINE void VectorSinCos(VectorSSE* o_sinAngles, VectorSSE* o_cosAngles, const VectorSSE* i_angles);
 
 
 	FORCEINLINE Rotator Lerp(const Rotator& i_rotator1, const Rotator& i_rotator2, float i_alpha);
 	FORCEINLINE Rotator LerpRange(const Rotator& i_rotator1, const Rotator& i_rotator2, float i_alpha);
+	
+	FORCEINLINE Quaternion Lerp(const Quaternion &i_quat1, const Quaternion &i_quat2, float i_alpha);
+	FORCEINLINE Quaternion BiLerp(const Quaternion& i_quat00, const Quaternion& i_quat10, const Quaternion& i_quat01, const Quaternion& i_quat11, float i_fracX, float i_fracY);
+	FORCEINLINE Quaternion CubicInterp(const Quaternion& i_quatP0, const Quaternion& i_quatT0, const Quaternion& i_quatP1, const Quaternion& i_quatT1, float i_alpha);
+
+
+	// from Unreal
+	FORCEINLINE float InvSqrt(float i_float);
+	FORCEINLINE float InvSqrtEst(float i_float);
+
 }
 
 
@@ -76,6 +95,22 @@ namespace Basic {
 		i_Left = i_Right;
 		i_Right = temp;
 	}
+
+	template<typename T> FORCEINLINE T Max(const T &i_value1, const T&i_value2)
+	{
+		return (i_value1 < i_value2) ? i_value2 : i_value1;
+	}
+
+	template<typename T> FORCEINLINE T Min(const T &i_value1, const T&i_value2)
+	{
+		return (i_value1 < i_value2) ? i_value1 : i_value2;
+	}
+
+	template<typename T> FORCEINLINE T Clamp(const T& i_value, const T& i_min, const T& i_max)
+	{
+		return i_value < i_min ? i_min : i_value < i_max ? i_value : i_max;
+	}
+
 
 	FORCEINLINE int16 SwapInt16(int16 i_value)
 	{
@@ -156,21 +191,11 @@ namespace Float {
 
 	FORCEINLINE bool IsZero(float i_val)
 	{
-		return EqualFast(i_val, static_cast<float>(SMALL_NUMBER));
+		return EqualFast(i_val, static_cast<float>(Constants::SMALL_NUMBER));
 	}
 	FORCEINLINE bool IsFinite(float i_val)
 	{
 		return ((*(uint32*)&i_val) & 0x7F800000) != 0x7F800000;
-	}
-
-	FORCEINLINE float RandWithinOne()
-	{
-		return static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-	}
-	FORCEINLINE uint32 RandInRange(uint32 i_lowerBound, uint32 i_upperBound)
-	{
-		ASSERT(i_lowerBound < i_upperBound);
-		return i_lowerBound + rand() % (i_upperBound - i_lowerBound);
 	}
 
 
@@ -217,20 +242,20 @@ namespace Math {
 
 	FORCEINLINE float DegreesToRadians(float i_Degrees)
 	{
-		static const float DegToRad = static_cast<float>(PI) / 180.0f;
+		static const float DegToRad = static_cast<float>(Constants::Pi) / 180.0f;
 		return i_Degrees * DegToRad;
 	}
 
 	FORCEINLINE float RadiansToDegrees(float i_Radians)
 	{
-		static const float RadToDeg = 180.0f / static_cast<float>(PI);
+		static const float RadToDeg = 180.0f / static_cast<float>(Constants::Pi);
 		return i_Radians * RadToDeg;
 	}
 
 	// from Unreal
 	FORCEINLINE float Fmod(float X, float Y)
 	{
-		ASSERT(Math::AbsF(Y) > SMALL_NUMBER);
+		ASSERT(Math::AbsF(Y) > Constants::SMALL_NUMBER);
 
 		const float Quotient = static_cast<float>(static_cast<int32>(X / Y));
 		float IntPortion = Y * Quotient;
@@ -256,10 +281,37 @@ namespace Math {
 		return i_float > 0 ? i_float : -i_float;
 	}
 
+
+	FORCEINLINE float RandWithinOne()
+	{
+		return static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+	}
+	FORCEINLINE uint32 RandInRange(uint32 i_lowerBound, uint32 i_upperBound)
+	{
+		ASSERT(i_lowerBound < i_upperBound);
+		return i_lowerBound + rand() % (i_upperBound - i_lowerBound);
+	}
+
+
+	FORCEINLINE float FastAsin(float i_value)
+	{
+		// Clamp input to [-1,1].
+		float x = Math::AbsF(i_value);
+		float omx = 1.0f - x;
+		omx = (omx < 0.f) ? 0.f : omx;
+
+		float root = sqrtf(omx);
+		// 7-degree minimax approximation
+		float result = ((((((-0.0012624911f * x + 0.0066700901f) * x - 0.0170881256f) * x + 0.0308918810f) * x - 0.0501743046f) * x + 0.0889789874f) * x - 0.2145988016f) * x + Constants::PiByTwo;
+		result *= root;  // acos(|x|)
+						 // acos(x) = pi - acos(-x) when x < 0, asin(x) = pi/2 - acos(x)
+		return ((i_value >= 0.0f) ? Constants::PiByTwo - result : result - Constants::PiByTwo);
+	}
+
 	FORCEINLINE void SinCos(float* o_scalarSin, float* o_scalarCos, float i_Value)
 	{
 		// Map Value to y in [-pi,pi], x = 2*pi*quotient + remainder.
-		float quotient = (INV_PI*0.5f)*i_Value;
+		float quotient = (Constants::OneOverPi*0.5f)*i_Value;
 		if (i_Value >= 0.0f)
 		{
 			quotient = static_cast<float>(static_cast<int>(quotient + 0.5f));
@@ -268,18 +320,18 @@ namespace Math {
 		{
 			quotient = static_cast<float>(static_cast<int>(quotient - 0.5f));
 		}
-		float y = i_Value - (2.0f*PI)*quotient;
+		float y = i_Value - (2.0f*Constants::Pi)*quotient;
 
 		// Map y to [-pi/2,pi/2] with sin(y) = sin(Value).
 		float sign;
-		if (y > HALF_PI)
+		if (y > Constants::PiByTwo)
 		{
-			y = PI - y;
+			y = Constants::Pi - y;
 			sign = -1.0f;
 		}
-		else if (y < -HALF_PI)
+		else if (y < -Constants::PiByTwo)
 		{
-			y = -PI - y;
+			y = -Constants::Pi - y;
 			sign = -1.0f;
 		}
 		else
@@ -295,5 +347,65 @@ namespace Math {
 		// 10-degree minimax approximation
 		float p = ((((-2.6051615e-07f * y2 + 2.4760495e-05f) * y2 - 0.0013888378f) * y2 + 0.041666638f) * y2 - 0.5f) * y2 + 1.0f;
 		*o_scalarCos = sign*p;
+	}
+
+
+	FORCEINLINE float InvSqrt(float i_float)
+	{
+		// Performs two passes of Newton-Raphson iteration on the hardware estimate
+		//    v^-0.5 = x
+		// => x^2 = v^-1
+		// => 1/(x^2) = v
+		// => F(x) = x^-2 - v
+		//    F'(x) = -2x^-3
+
+		//    x1 = x0 - F(x0)/F'(x0)
+		// => x1 = x0 + 0.5 * (x0^-2 - Vec) * x0^3
+		// => x1 = x0 + 0.5 * (x0 - Vec * x0^3)
+		// => x1 = x0 + x0 * (0.5 - 0.5 * Vec * x0^2)
+		//
+		// This final form has one more operation than the legacy factorization (X1 = 0.5*X0*(3-(Y*X0)*X0)
+		// but retains better accuracy (namely InvSqrt(1) = 1 exactly).
+
+		const __m128 fOneHalf = _mm_set_ss(0.5f);
+		__m128 Y0, X0, X1, X2, FOver2;
+		float temp;
+
+		Y0 = _mm_set_ss(i_float);
+		X0 = _mm_rsqrt_ss(Y0);	// 1/sqrt estimate (12 bits)
+		FOver2 = _mm_mul_ss(Y0, fOneHalf);
+
+		// 1st Newton-Raphson iteration
+		X1 = _mm_mul_ss(X0, X0);
+		X1 = _mm_sub_ss(fOneHalf, _mm_mul_ss(FOver2, X1));
+		X1 = _mm_add_ss(X0, _mm_mul_ss(X0, X1));
+
+		// 2nd Newton-Raphson iteration
+		X2 = _mm_mul_ss(X1, X1);
+		X2 = _mm_sub_ss(fOneHalf, _mm_mul_ss(FOver2, X2));
+		X2 = _mm_add_ss(X1, _mm_mul_ss(X1, X2));
+
+		_mm_store_ss(&temp, X2);
+		return temp;
+	}
+
+	FORCEINLINE float InvSqrtEst(float i_float)
+	{
+		// Performs one pass of Newton-Raphson iteration on the hardware estimate
+		const __m128 fOneHalf = _mm_set_ss(0.5f);
+		__m128 Y0, X0, X1, FOver2;
+		float temp;
+
+		Y0 = _mm_set_ss(i_float);
+		X0 = _mm_rsqrt_ss(Y0);	// 1/sqrt estimate (12 bits)
+		FOver2 = _mm_mul_ss(Y0, fOneHalf);
+
+		// 1st Newton-Raphson iteration
+		X1 = _mm_mul_ss(X0, X0);
+		X1 = _mm_sub_ss(fOneHalf, _mm_mul_ss(FOver2, X1));
+		X1 = _mm_add_ss(X0, _mm_mul_ss(X0, X1));
+
+		_mm_store_ss(&temp, X1);
+		return temp;
 	}
 }

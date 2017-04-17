@@ -22,7 +22,7 @@ public:
 	FORCEINLINE static Vector3 Unit();
 	FORCEINLINE static Vector3 RandomNormal();
 
-	FORCEINLINE Vector3& Normalize(float i_tolerance = SMALL_NUMBER);
+	FORCEINLINE Vector3& Normalize(float i_tolerance = Constants::SMALL_NUMBER);
 
 	FORCEINLINE static float Dot(const Vector3 &i_vector1, const Vector3 &i_vector2);
 	FORCEINLINE float Dot(const Vector3 &i_vector) const;
@@ -37,7 +37,7 @@ public:
 	FORCEINLINE float Length() const;
 	FORCEINLINE float LengthSquare() const;
 
-	FORCEINLINE bool Equal(const Vector3 &i_vector, float i_tolerance = SMALL_NUMBER) const;
+	FORCEINLINE bool Equal(const Vector3 &i_vector, float i_tolerance = Constants::SMALL_NUMBER) const;
 
 	FORCEINLINE Vector3 operator -() const;
 
@@ -67,8 +67,9 @@ public:
 
 
 
-// implement forceinline
 
+
+// implement forceinline
 
 
 FORCEINLINE Vector3::Vector3(float i_x, float i_y, float i_z) 
@@ -111,9 +112,9 @@ FORCEINLINE Vector3 Vector3::Unit()
 
 FORCEINLINE Vector3 Vector3::RandomNormal()
 {
-	return Vector3(static_cast<float>(rand() / RAND_MAX) * 2.0f - 1.0f, 
-				   static_cast<float>(rand() / RAND_MAX) * 2.0f - 1.0f, 
-				   static_cast<float>(rand() / RAND_MAX) * 2.0f - 1.0f);
+	return Vector3(Math::RandWithinOne() * 2.0f - 1.0f, 
+				   Math::RandWithinOne() * 2.0f - 1.0f, 
+				   Math::RandWithinOne() * 2.0f - 1.0f);
 }
 
 FORCEINLINE Vector3& Vector3::Normalize(float i_tolerance)
@@ -127,9 +128,9 @@ FORCEINLINE Vector3& Vector3::Normalize(float i_tolerance)
 	}
 	else
 	{
-		X = 0.0f;
-		Y = 0.0f;
-		Z = 0.0f;
+		X = 0.f;
+		Y = 0.f;
+		Z = 0.f;
 	}
 	return *this;
 }
@@ -215,7 +216,8 @@ FORCEINLINE Vector3 Vector3::operator *(const Vector3 &i_vector) const
 }
 FORCEINLINE Vector3 Vector3::operator /(float i_float) const
 {
-	return Vector3(X / i_float, Y / i_float, Z / i_float);
+	const float reciprocal = 1.0f / i_float;
+	return Vector3(X * reciprocal, Y * reciprocal, Z * reciprocal);
 }
 FORCEINLINE Vector3 Vector3::operator /(const Vector3 &i_vector) const
 {
@@ -252,9 +254,10 @@ FORCEINLINE Vector3& Vector3::operator *=(const Vector3 &i_vector)
 }
 FORCEINLINE Vector3& Vector3::operator /=(float i_float)
 {
-	X /= i_float;
-	Y /= i_float;
-	Z /= i_float;
+	const float reciprocal = 1.0f / i_float;
+	X *= reciprocal;
+	Y *= reciprocal;
+	Z *= reciprocal;
 	return *this;
 }
 FORCEINLINE Vector3& Vector3::operator /=(const Vector3 &i_vector)

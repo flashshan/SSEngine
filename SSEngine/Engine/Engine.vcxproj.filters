@@ -293,6 +293,9 @@
     <ClInclude Include="Core\Math\VectorSSE.h">
       <Filter>Core\Math</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Math\Axis.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Object\Private\GameObject.cpp">
@@ -353,9 +356,6 @@
       <Filter>Component\Private</Filter>
     </ClCompile>
     <ClCompile Include="Core\Private\Math\Rotator.cpp">
-      <Filter>Core\Private\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\Private\Math\Box2D.cpp">
       <Filter>Core\Private\Math</Filter>
     </ClCompile>
     <ClCompile Include="Controller\Private\ControllerManager.cpp">

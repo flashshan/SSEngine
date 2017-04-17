@@ -29,7 +29,7 @@ void ControllerManager::UpdatePlayerController()
 	uint32 size = static_cast<uint32>(playerControllers_.Size());
 	for (uint32 i = 0; i < size; ++i)
 	{
-		if (playerControllers_[i]->GetPawn()->GetActive())
+		if (playerControllers_[i]->GetControlledPawn()->GetActive())
 		{
 			playerControllers_[i]->UpdateController();
 		}
@@ -45,7 +45,7 @@ void ControllerManager::UpdateMonsterController()
 	{
 		if (monsterControllers_[i]->IsValid())
 		{
-			if (monsterControllers_[i]->GetPawn()->GetActive())
+			if (monsterControllers_[i]->GetControlledPawn()->GetActive())
 			{
 				monsterControllers_[i]->UpdateController();
 			}
