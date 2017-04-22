@@ -98,7 +98,7 @@ void JobSystem::CreateQueue( const char * i_pName, uint32 i_numRunners )
 {
 	ASSERT( i_pName );
 	
-	HashedString	HashedName( i_pName );
+	HashedString HashedName( i_pName );
 
 	ASSERT( queues_.find( HashedName ) == queues_.end() );
 

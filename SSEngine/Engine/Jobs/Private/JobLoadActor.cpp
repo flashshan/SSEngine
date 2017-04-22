@@ -4,5 +4,5 @@
 
 void JobLoadActor::Run()
 {
-	WorldManager::GetInstance()->SpawnPawnFromLua<Pawn>(luaFilePath_);
+	WorldManager::GetInstance()->SpawnActorFromLua<Actor>(luaFilePath_);
 }

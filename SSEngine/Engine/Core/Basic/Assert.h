@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "ErrorMessage.h"
+#include "Target.h"
 
 namespace Console {
 	// Console Print
@@ -49,6 +50,6 @@ namespace Console {
 						BREAK_IN_DEBUGGER(); \
 					 }
 #else
-#define ASSERT(cond) void(0);
-#define SLOW_ASSERT(cond, code) void(0);
+#define ASSERT(cond) NOOP;
+#define SLOW_ASSERT(cond, code) NOOP;
 #endif

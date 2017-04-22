@@ -102,6 +102,15 @@
     <Filter Include="SubSystem\Collision">
       <UniqueIdentifier>{3d97ed60-5980-4423-94bd-6d805a876063}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SubSystem\Private\Collision">
+      <UniqueIdentifier>{1fdf2e0b-3af4-4c01-b6ee-82da01bf3f3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Profile">
+      <UniqueIdentifier>{5e04d57e-126e-4f8a-89d5-f490cbf44ad2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Private\Profile">
+      <UniqueIdentifier>{3b0c8365-2393-45ce-a654-0a010189ab50}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Object\GameObject.h">
@@ -115,9 +124,6 @@
     </ClInclude>
     <ClInclude Include="Manager\GameTimeManager.h">
       <Filter>Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\Actor.h">
-      <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="Object\Pawn.h">
       <Filter>Object</Filter>
@@ -296,6 +302,21 @@
     <ClInclude Include="Core\Math\Axis.h">
       <Filter>Core\Math</Filter>
     </ClInclude>
+    <ClInclude Include="Manager\ResourceManagere.h">
+      <Filter>Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Actor.h">
+      <Filter>Object\Private</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Profile\Accumulator.h">
+      <Filter>Core\Profile</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Profile\ProfileManager.h">
+      <Filter>Core\Profile</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Profile\ScopedTimer.h">
+      <Filter>Core\Profile</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Object\Private\GameObject.cpp">
@@ -420,6 +441,18 @@
     </ClCompile>
     <ClCompile Include="Jobs\Private\JobLoadPawn.cpp">
       <Filter>Jobs\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="Manager\Private\ResourceManagere.cpp">
+      <Filter>Manager\Private</Filter>
+    </ClCompile>
+    <ClCompile Include="SubSystem\Private\Collision\CollisionManager.cpp">
+      <Filter>SubSystem\Private\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="SubSystem\Private\Collision\CollisionObject.cpp">
+      <Filter>SubSystem\Private\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Private\Profile\ProfileManager.cpp">
+      <Filter>Core\Private\Profile</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

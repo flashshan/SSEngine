@@ -9,7 +9,7 @@
 template<typename T> struct LinkedListNode {
 	T Data;
 	LinkedListNode<T> *Next;
-	FORCEINLINE LinkedListNode(const T &i_data, const LinkedListNode<T> *i_next = nullptr) : Data(i_data), Next(i_next) {}
+	FORCEINLINE LinkedListNode(const T &i_data, LinkedListNode<T> *i_next = nullptr) : Data(i_data), Next(i_next) {}
 	FORCEINLINE LinkedListNode(const LinkedListNode<T> &i_other) : Data(i_other.Data), Next(i_other.Next) {}
 };
 
@@ -17,7 +17,7 @@ template<typename T> struct ListNode {
 	T Data;
 	ListNode<T> *Previous;
 	ListNode<T> *Next;
-	FORCEINLINE ListNode(const T &i_data, const ListNode<T> *i_previous = nullptr, const ListNode<T> *i_next = nullptr) : Data(i_data), Previous(i_previous), Next(i_next) {}
+	FORCEINLINE ListNode(const T &i_data, ListNode<T> *i_previous = nullptr, ListNode<T> *i_next = nullptr) : Data(i_data), Previous(i_previous), Next(i_next) {}
 	FORCEINLINE ListNode(const ListNode<T> &i_other) : Data(i_other.Data), Previous(i_other.Previous), Next(i_other.Next) {}
 };
 

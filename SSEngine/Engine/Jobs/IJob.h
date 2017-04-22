@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Windows.h>
+#include "Core\String\StringPool.h"
 
 class IJob
 {
@@ -15,7 +16,7 @@ public:
 
 #ifdef _DEBUG
 	FORCEINLINE const char* GetName() const { return name_; }
-	FORCEINLINE void SetName(const char *i_name) { name_ = i_name; }
+	FORCEINLINE void SetName(const char *i_name) { name_ = i_name ? StringPool::GetInstance()->add(i_name) : StringPool::GetInstance()->add(""); }
 #endif // _DEBUG
 
 private:
@@ -33,7 +34,7 @@ private:
 // implement forceinline
 FORCEINLINE IJob::IJob(const char *i_name)
 #ifdef _DEBUG
-	: name_(i_name ? i_name : "")
+	: name_(i_name ? StringPool::GetInstance()->add(i_name) : StringPool::GetInstance()->add(""))
 #endif // _DEBUG
 {
 }

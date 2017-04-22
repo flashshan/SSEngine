@@ -3,7 +3,7 @@
 #include "Manager\RealTimeManager.h"
 
 
-void PhysicsObject::UpdatePhysics()
+void PhysicsObject::DoPhysics()
 {
 	if (gameObject_ && gameObject_->GetActive())
 	{

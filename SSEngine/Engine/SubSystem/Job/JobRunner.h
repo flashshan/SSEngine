@@ -1,13 +1,13 @@
 #pragma once
 
 #include "SharedJobQueue.h"
-
+#include "Core\String\StringPool.h"
 
 struct JobRunnerInput
 {
 	SharedJobQueue *queue_;
 #ifdef _DEBUG
-	std::string	threadName_;
+	const char *threadName_;
 #endif
 };
 

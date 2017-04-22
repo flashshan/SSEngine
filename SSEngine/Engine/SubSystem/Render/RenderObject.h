@@ -4,11 +4,15 @@
 
 #include "Core\Template\Pointers.h"
 #include "Object\GameObject.h"
+#include "Manager\ResourceManagere.h"
 
 class RenderObject {
 public:
-	FORCEINLINE RenderObject(const WeakPtr<GameObject> &i_gameOject, GLib::Sprites::Sprite *i_sprite, uint32 i_priority);
+	FORCEINLINE RenderObject(const WeakPtr<GameObject> &i_gameOject, const char *i_filePath, uint32 i_priority);
+	FORCEINLINE RenderObject(const RenderObject &i_other);
+	FORCEINLINE RenderObject& operator=(const RenderObject &i_other);
 	inline ~RenderObject();
+
 
 	FORCEINLINE bool HasSprite() const;
 	FORCEINLINE const GLib::Sprites::Sprite *GetSprite() const;
@@ -16,13 +20,9 @@ public:
 	FORCEINLINE uint32 GetPriority() const;
 
 	FORCEINLINE bool IsValid() const;
-	FORCEINLINE void DoRender();
+	FORCEINLINE void DoRender() const;
 
-	FORCEINLINE bool operator<(const RenderObject &i_other);
-private:
-	// No copy constructor
-	FORCEINLINE RenderObject(const RenderObject &i_other) {}
-	FORCEINLINE RenderObject& operator=(const RenderObject &i_other) {}
+	FORCEINLINE bool operator<(const RenderObject &i_other) const;
 
 private:
 	WeakPtr<GameObject> gameObject_;
@@ -39,10 +39,24 @@ private:
 
 // implement forceinline
 
-FORCEINLINE RenderObject::RenderObject(const WeakPtr<GameObject> &i_gameObject, GLib::Sprites::Sprite *i_sprite, uint32 i_priority)
-	: gameObject_(i_gameObject), sprite_(i_sprite), priority_(i_priority)
+FORCEINLINE RenderObject::RenderObject(const WeakPtr<GameObject> &i_gameObject, const char *i_filePath, uint32 i_priority)
+	: gameObject_(i_gameObject), sprite_(ResourceManager::GetInstance()->AddSprite(i_filePath)), priority_(i_priority)
 {
 }
+
+FORCEINLINE RenderObject::RenderObject(const RenderObject &i_other)
+	: gameObject_(i_other.gameObject_), sprite_(i_other.sprite_), priority_(i_other.priority_) 
+{
+}
+
+FORCEINLINE RenderObject& RenderObject::operator=(const RenderObject &i_other)
+{
+	gameObject_ = i_other.gameObject_;
+	sprite_ = i_other.sprite_;
+	priority_ = i_other.priority_;
+	return *this;
+}
+
 
 FORCEINLINE bool RenderObject::HasSprite() const
 {
@@ -69,14 +83,14 @@ FORCEINLINE bool RenderObject::IsValid() const
 	return gameObject_;
 }
 
-FORCEINLINE void RenderObject::DoRender()
+FORCEINLINE void RenderObject::DoRender() const
 {
 	if (gameObject_ && gameObject_->GetActive())
 	{	
 		if (sprite_ != nullptr)
 		{
 			/*gameObject_.Prefetch();*/
-			GLib::Sprites::RenderSprite(*sprite_, GLib::Point2D((*gameObject_).GetLocation().X, (*gameObject_).GetLocation().Y), 0.0f);
+			GLib::Sprites::RenderSprite(*sprite_, GLib::Point2D((*gameObject_).GetLocation().X, (*gameObject_).GetLocation().Y), Math::DegreesToRadians((*gameObject_).GetRotation().Roll));
 		}
 	}
 }
@@ -86,7 +100,36 @@ inline RenderObject::~RenderObject()
 {
 }
 
-FORCEINLINE bool RenderObject::operator<(const RenderObject &i_other)
+FORCEINLINE bool RenderObject::operator<(const RenderObject &i_other) const
 {
 	return priority_ < i_other.priority_;
+}
+
+
+// for strong and weak pointer
+// RenderObject will be delete by array container
+template<> FORCEINLINE void StrongPtr<RenderObject>::ClearPointer()
+{
+	if (object_ != nullptr)
+	{
+		if (--(counter_->StrongCounter) == 0 || counter_->WeakCounter == 0)
+		{
+			delete counter_;
+		}
+	}
+	object_ = nullptr;
+	counter_ = nullptr;
+}
+
+template<> FORCEINLINE void WeakPtr<RenderObject>::ClearPointer()
+{
+	object_ = nullptr;
+	if (counter_ != nullptr)
+	{
+		if ((--counter_->WeakCounter) == 0 && counter_->StrongCounter == 0)
+		{
+			delete counter_;
+		}
+	}
+	counter_ = nullptr;
 }

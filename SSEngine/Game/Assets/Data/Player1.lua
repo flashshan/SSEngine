@@ -5,11 +5,10 @@ Pawn =
 	
 	transform = {
 		 location = {0.0, 0.0, 0.0},
-		 rotation = {0.0, 0.0, 0.0},
+		 rotation = {0.0, 0.0, 0},
 		 scale = {1.0, 1.0, 1.0}
 	},
 	
-	canCollide = true,
 	static = false,
 	
 	boundingBox = {
@@ -25,5 +24,10 @@ Pawn =
 	physicsObject = {
 		mass = 0.1,
 		drag = 0.001
-	}
+	},
+	
+	collisionObject = {
+		collideType = "Overlap",
+		active = true
+	},
 }

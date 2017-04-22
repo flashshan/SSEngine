@@ -480,20 +480,6 @@ FORCEINLINE Quaternion Quaternion::FastBilerpUnNormalized(const Quaternion &i_qu
 
 
 
-// for VectorSSE
-
-FORCEINLINE VectorSSE::VectorSSE(const Quaternion &i_quat)
-	: XYZW(_mm_setr_ps(i_quat.X, i_quat.Y, i_quat.Z, i_quat.W))
-{
-}
-
-
-// for Rotator
-FORCEINLINE Quaternion Rotator::ToQuaternion() const
-{
-	return Quaternion(*this);
-}
-
 // for math
 FORCEINLINE Quaternion Math::Lerp(const Quaternion &i_quat1, const Quaternion &i_quat2, float i_alpha)
 {
@@ -508,4 +494,25 @@ FORCEINLINE Quaternion Math::BiLerp(const Quaternion& i_quat00, const Quaternion
 FORCEINLINE Quaternion Math::CubicInterp(const Quaternion& i_quatP0, const Quaternion& i_quatT0, const Quaternion& i_quatP1, const Quaternion& i_quatT1, float i_alpha)
 {
 	return Quaternion::Squad(i_quatP0, i_quatT0, i_quatP1, i_quatT1, i_alpha);
+}
+
+
+// for VectorSSE
+
+FORCEINLINE VectorSSE::VectorSSE(const Quaternion &i_quat)
+	: XYZW(_mm_setr_ps(i_quat.X, i_quat.Y, i_quat.Z, i_quat.W))
+{
+}
+
+
+// for Rotator
+FORCEINLINE Quaternion Rotator::ToQuaternion() const
+{
+	return Quaternion(*this);
+}
+
+// for matrix
+FORCEINLINE Quaternion Matrix::ToQuaternion() const
+{
+	return Quaternion(*this);
 }

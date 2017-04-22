@@ -1,73 +1,88 @@
-//#pragma once
-//
-//#include <vector>
-//
-//#include "Core\Template\List.h"
-//#include "Core\Memory\New.h"
-//#include "CollisionObject.h"
-//
-//// singleton class
-//class PhysicsManager
-//{
-//public:
-//	static FORCEINLINE PhysicsManager *CreateInstance();
-//	static FORCEINLINE PhysicsManager *GetInstance();
-//	static FORCEINLINE void DestroyInstance();
-//	inline ~PhysicsManager();
-//
-//	void PhysicsUpdate() const;
-//	StrongPtr<PhysicsObject>& AddPhysicsObject(const StrongPtr<GameObject> &i_gameObject, const float i_mass, const float i_drag);
-//	void RemoveFromList(PhysicsObject &i_physicsObject);
-//
-//private:
-//	FORCEINLINE PhysicsManager();
-//	FORCEINLINE PhysicsManager(PhysicsManager &i_other) {}
-//	FORCEINLINE PhysicsManager& operator=(PhysicsManager &i_othre) {}
-//
-//
-//	static PhysicsManager* globalInstance_;
-//
-//private:
-//	// for test, change to vector in future
-//	LinkedList<StrongPtr<PhysicsObject>> physicsObjectList_;
-//};
-//
-//
-//
-//
-//
-//
-//// implement physics
-//
-//FORCEINLINE PhysicsManager *PhysicsManager::CreateInstance()
-//{
-//	ASSERT(PhysicsManager::globalInstance_ == nullptr);
-//	PhysicsManager::globalInstance_ = new TRACK_NEW PhysicsManager();
-//	return PhysicsManager::globalInstance_;
-//}
-//
-//FORCEINLINE PhysicsManager *PhysicsManager::GetInstance()
-//{
-//	ASSERT(PhysicsManager::globalInstance_ != nullptr);
-//	return PhysicsManager::globalInstance_;
-//}
-//
-//FORCEINLINE void PhysicsManager::DestroyInstance()
-//{
-//	ASSERT(PhysicsManager::globalInstance_ != nullptr);
-//	delete PhysicsManager::globalInstance_;
-//	PhysicsManager::globalInstance_ = nullptr;
-//}
-//
-//FORCEINLINE PhysicsManager::PhysicsManager()
-//{
-//}
-//
-//inline PhysicsManager::~PhysicsManager()
-//{
-//	//physicsObjectList_.Clear();
-//}
-//
-//
-//
-//
+#pragma once
+
+#include <Windows.h>
+
+#include "Core\Memory\New.h"
+#include "CollisionObject.h"
+
+
+// singleton class
+class CollisionManager
+{
+public:
+	static FORCEINLINE CollisionManager *CreateInstance();
+	static FORCEINLINE CollisionManager *GetInstance();
+	static FORCEINLINE void DestroyInstance();
+	inline ~CollisionManager();
+
+	void CollisionUpdate();
+	FORCEINLINE WeakPtr<CollisionObject> AddCollisionObject(const CollisionObject &i_collisionObject);
+	void Remove(const WeakPtr<CollisionObject> &i_collisionObject);
+	FORCEINLINE void RemoveByIndex(size_t i_index);
+
+private:
+	FORCEINLINE CollisionManager();
+	FORCEINLINE CollisionManager(CollisionManager &i_other) {}
+	FORCEINLINE CollisionManager& operator=(CollisionManager &i_othre) {}
+
+	static CollisionManager* globalInstance_;
+
+private:
+	Array<CollisionElement> collisionElements_;
+
+	CRITICAL_SECTION criticalSection_;
+};
+
+
+
+
+
+
+
+// implement physics
+
+FORCEINLINE CollisionManager *CollisionManager::CreateInstance()
+{
+	ASSERT(CollisionManager::globalInstance_ == nullptr);
+	CollisionManager::globalInstance_ = new TRACK_NEW CollisionManager();
+	return CollisionManager::globalInstance_;
+}
+
+FORCEINLINE CollisionManager *CollisionManager::GetInstance()
+{
+	ASSERT(CollisionManager::globalInstance_ != nullptr);
+	return CollisionManager::globalInstance_;
+}
+
+FORCEINLINE void CollisionManager::DestroyInstance()
+{
+	ASSERT(CollisionManager::globalInstance_ != nullptr);
+	delete CollisionManager::globalInstance_;
+	CollisionManager::globalInstance_ = nullptr;
+}
+
+FORCEINLINE CollisionManager::CollisionManager()
+{
+	InitializeCriticalSection(&criticalSection_);
+}
+
+inline CollisionManager::~CollisionManager()
+{
+	collisionElements_.Clear();
+}
+
+FORCEINLINE void CollisionManager::RemoveByIndex(size_t i_index)
+{
+	EnterCriticalSection(&criticalSection_);
+	collisionElements_.NoOrderRemove(i_index);
+	LeaveCriticalSection(&criticalSection_);
+}
+
+FORCEINLINE WeakPtr<CollisionObject> CollisionManager::AddCollisionObject(const CollisionObject &i_collisionObject)
+{
+	EnterCriticalSection(&criticalSection_);
+	collisionElements_.Add(CollisionElement(i_collisionObject));
+	LeaveCriticalSection(&criticalSection_);
+
+	return WeakPtr<CollisionObject>(collisionElements_.Back().Pointer);
+}

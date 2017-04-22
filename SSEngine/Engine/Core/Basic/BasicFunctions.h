@@ -63,7 +63,7 @@ namespace Math {
 	// from Unreal
 	FORCEINLINE float FastAsin(float i_value);
 
-	FORCEINLINE void SinCos(float* o_scalarSin, float* o_scalarCos, float i_Value);
+	FORCEINLINE void SinCos(float* o_scalarSin, float* o_scalarCos, float i_rad);
 	FORCEINLINE void VectorSinCos(VectorSSE* o_sinAngles, VectorSSE* o_cosAngles, const VectorSSE* i_angles);
 
 
@@ -89,11 +89,16 @@ namespace Math {
 
 namespace Basic {
 
+	//template<typename T> FORCEINLINE void Swap(T &i_Left, T &i_Right)
+	//{
+	//	T temp = i_Left;
+	//	i_Left = i_Right;
+	//	i_Right = temp;
+	//}
+
 	template<typename T> FORCEINLINE void Swap(T &i_Left, T &i_Right)
 	{
-		T temp = i_Left;
-		i_Left = i_Right;
-		i_Right = temp;
+		std::swap(i_Left, i_Right);
 	}
 
 	template<typename T> FORCEINLINE T Max(const T &i_value1, const T&i_value2)
@@ -242,14 +247,12 @@ namespace Math {
 
 	FORCEINLINE float DegreesToRadians(float i_Degrees)
 	{
-		static const float DegToRad = static_cast<float>(Constants::Pi) / 180.0f;
-		return i_Degrees * DegToRad;
+		return i_Degrees * Constants::DEG_TO_RAD;
 	}
 
 	FORCEINLINE float RadiansToDegrees(float i_Radians)
 	{
-		static const float RadToDeg = 180.0f / static_cast<float>(Constants::Pi);
-		return i_Radians * RadToDeg;
+		return i_Radians * Constants::RAD_TO_DEG;
 	}
 
 	// from Unreal
@@ -308,11 +311,11 @@ namespace Math {
 		return ((i_value >= 0.0f) ? Constants::PiByTwo - result : result - Constants::PiByTwo);
 	}
 
-	FORCEINLINE void SinCos(float* o_scalarSin, float* o_scalarCos, float i_Value)
+	FORCEINLINE void SinCos(float* o_scalarSin, float* o_scalarCos, float i_rad)
 	{
 		// Map Value to y in [-pi,pi], x = 2*pi*quotient + remainder.
-		float quotient = (Constants::OneOverPi*0.5f)*i_Value;
-		if (i_Value >= 0.0f)
+		float quotient = (Constants::OneOverPi*0.5f)*i_rad;
+		if (i_rad >= 0.0f)
 		{
 			quotient = static_cast<float>(static_cast<int>(quotient + 0.5f));
 		}
@@ -320,7 +323,7 @@ namespace Math {
 		{
 			quotient = static_cast<float>(static_cast<int>(quotient - 0.5f));
 		}
-		float y = i_Value - (2.0f*Constants::Pi)*quotient;
+		float y = i_rad - (2.0f*Constants::Pi)*quotient;
 
 		// Map y to [-pi/2,pi/2] with sin(y) = sin(Value).
 		float sign;

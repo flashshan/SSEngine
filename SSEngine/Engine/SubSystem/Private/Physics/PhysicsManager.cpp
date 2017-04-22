@@ -5,12 +5,12 @@ PhysicsManager *PhysicsManager::globalInstance_ = nullptr;
 
 void PhysicsManager::PhysicsUpdate()
 {
-	size_t count = physicsObjects_.Size();
+	size_t count = physicsElements_.Size();
 	for(size_t i=0; i<count;++i)
 	{
-		if (physicsObjects_[i]->IsValid())
+		if (physicsElements_[i].Pointer->IsValid())
 		{
-			physicsObjects_[i]->UpdatePhysics();
+			physicsElements_[i].Pointer->DoPhysics();
 		}
 		else
 		{
@@ -20,27 +20,19 @@ void PhysicsManager::PhysicsUpdate()
 	}
 }
 
-WeakPtr<PhysicsObject> PhysicsManager::AddPhysicsObject(const WeakPtr<GameObject> &i_gameObject, float i_mass, float i_drag)
-{
-	StrongPtr<PhysicsObject> newPhysicsObject = new TRACK_NEW PhysicsObject(i_gameObject, i_mass, i_drag);
-	ASSERT(newPhysicsObject);
-	EnterCriticalSection(&criticalSection);
-	physicsObjects_.Add(newPhysicsObject);
-	LeaveCriticalSection(&criticalSection);
-	return WeakPtr<PhysicsObject>(physicsObjects_.Back());
-}
 
+// go through array to delete certain element, seldomly used
 void PhysicsManager::Remove(const WeakPtr<PhysicsObject> &i_physicsObject)
 {
 	if (!i_physicsObject) return;
 
 	EnterCriticalSection(&criticalSection);
-	size_t count = physicsObjects_.Size();
+	size_t count = physicsElements_.Size();
 	for (size_t i = 0; i < count; ++i)
 	{
-		if (&(*physicsObjects_[i]) == &(*i_physicsObject))
+		if (&(*physicsElements_[i].Pointer) == &(*i_physicsObject))
 		{
-			physicsObjects_.NoOrderRemove(i);
+			physicsElements_.NoOrderRemove(i);
 			break;
 		}
 	}

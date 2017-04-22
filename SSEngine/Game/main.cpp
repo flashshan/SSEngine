@@ -75,8 +75,12 @@ int WINAPI wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_l
 
 		// spawn walls
 
-		WorldManager::GetInstance()->SpawnActorFromLua<Actor>("Assets\\Data\\LeftWall.lua");
-		WorldManager::GetInstance()->SpawnActorFromLua<Actor>("Assets\\Data\\RightWall.lua");
+		JobLoadActor *jobLoadWall = new TRACK_NEW JobLoadActor("Assets\\Data\\LeftWall.lua");
+		ASSERT(jobLoadWall);
+		JobSystem::GetInstance()->RunJob(*jobLoadWall, "Default");
+		jobLoadWall = new TRACK_NEW JobLoadActor("Assets\\Data\\RightWall.lua");
+		ASSERT(jobLoadWall);
+		JobSystem::GetInstance()->RunJob(*jobLoadWall, "Default");
 
 		// assign player
 		for (int32 i = 0; i < playerNumber; ++i)

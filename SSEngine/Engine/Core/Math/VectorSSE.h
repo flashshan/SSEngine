@@ -23,6 +23,7 @@ public:
 	static FORCEINLINE VectorSSE CreateFromUint32(uint32 i_x, uint32 i_y, uint32 i_z, uint32 i_w);        // assign by 32 * 4 bits
 
 	FORCEINLINE void GetFloatArray(float *o_array) const;
+	FORCEINLINE void GetFloatArrayUnAligned(float *o_array) const;
 
 	FORCEINLINE VectorSSE Replicate(uint32 i_index) const;
 	
@@ -233,6 +234,15 @@ FORCEINLINE void VectorSSE::GetFloatArray(float *o_array) const
 {
 	_mm_store_ps(o_array, XYZW);
 }
+
+// o_array don't need to be 16 bit aligned
+FORCEINLINE void VectorSSE::GetFloatArrayUnAligned(float *o_array) const
+{
+	ALIGN(16) float res[4];
+	_mm_store_ps(res, XYZW);
+	memcpy(o_array, res, sizeof(float) * 4);
+}
+
 
 
 FORCEINLINE VectorSSE VectorSSE::Replicate(uint32 i_index) const
@@ -561,7 +571,7 @@ FORCEINLINE Vector3::Vector3(const VectorSSE &i_vectorSSE)
 
 FORCEINLINE Vector4::Vector4(const VectorSSE &i_vectorSSE)
 {
-	i_vectorSSE.GetFloatArray(&X);
+	i_vectorSSE.GetFloatArrayUnAligned(&X);
 }
 
 

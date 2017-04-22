@@ -12,10 +12,6 @@ SharedJobQueue::SharedJobQueue() :
 
 SharedJobQueue::~SharedJobQueue()
 {
-#ifdef _DEBUG
-	if (name_ != nullptr)
-		free(const_cast<char *>(name_));
-#endif // _DEBUG
 }
 
 bool SharedJobQueue::Add( IJob & i_Job )

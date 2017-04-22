@@ -3,6 +3,8 @@
 #include "Core\Math\VectorSSE.h"
 #include "Axis.h"
 
+struct Quaternion;
+
 ALIGN(16) struct Matrix {
 public:
 	FORCEINLINE Matrix();
@@ -43,7 +45,9 @@ public:
 	Matrix& operator*=(const Matrix &i_other);
 
 	FORCEINLINE float operator [](uint32 i_index) const;
+	
 	inline Vector3 GetScaledAxis(EAxis i_axis) const;
+	FORCEINLINE Quaternion ToQuaternion() const;
 
 	Vector4 MultiplyLeft(const Vector4 &i_vector) const;
 	Vector4 MultiplyRight(const Vector4 &i_vector) const;
@@ -139,27 +143,30 @@ FORCEINLINE Matrix Matrix::CreateTranslate(const Vector3& i_Vector)
 
 FORCEINLINE Matrix Matrix::CreateXRotation(float i_XRadian)
 {
-	float Cos = cos(i_XRadian), Sin = sin(i_XRadian);
+	float sin, cos;
+	Math::SinCos(&sin, &cos, i_XRadian);
 	return Matrix(1.0f, 0.0f, 0.0f, 0.0f,
-				  0.0f, Cos, -Sin, 0.0f,
-				  0.0f, Sin, Cos, 0.0f,
+				  0.0f, cos, sin, 0.0f,
+				  0.0f, -sin, cos, 0.0f,
 				  0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 FORCEINLINE Matrix Matrix::CreateYRotation(float i_YRadian)
 {
-	float Cos = cos(i_YRadian), Sin = sin(i_YRadian);
-	return Matrix(Cos, 0.0f, -Sin, 0.0f,
+	float sin, cos;
+	Math::SinCos(&sin, &cos, i_YRadian);
+	return Matrix(cos, 0.0f, sin, 0.0f,
 				  0.0f, 1.0f, 0.0f, 0.0f,
-				  Sin, 0.0f, Cos, 0.0f,
+				  -sin, 0.0f, cos, 0.0f,
 				  0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 FORCEINLINE Matrix Matrix::CreateZRotation(float i_ZRadian)
 {
-	float Cos = cos(i_ZRadian), Sin = sin(i_ZRadian);
-	return Matrix(Cos, -Sin, 0.0f, 0.0f,
-				  Sin, Cos, 0.0f, 0.0f,
+	float sin, cos;
+	Math::SinCos(&sin, &cos, i_ZRadian);
+	return Matrix(cos, sin, 0.0f, 0.0f,
+				  -sin, cos, 0.0f, 0.0f,
 				  0.0f, 0.0f, 1.0f, 0.0f,
 				  0.0f, 0.0f, 0.0f, 1.0f);
 }

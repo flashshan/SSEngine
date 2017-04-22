@@ -1,50 +1,135 @@
-//#pragma once
-//
-//#include "Core\Template\Pointers.h"
-//#include "Object\GameObject.h"
-//
-//class PhysicsObject {
-//public:
-//	explicit FORCEINLINE PhysicsObject(const StrongPtr<GameObject> &i_gameOject, const float i_mass = 1.0f, const float i_drag = 0.1f);
-//	FORCEINLINE ~PhysicsObject();
-//
-//	void UpdatePhysics();
-//
-//	FORCEINLINE float GetMass() const { return mass_; }
-//	FORCEINLINE Vector3 GetForce() const { return force_; }
-//
-//	FORCEINLINE void SetMass(float i_mass) { mass_ = i_mass; }
-//	FORCEINLINE void SetForce(const Vector3 &i_force) { force_ = i_force; }
-//	FORCEINLINE bool IsValid() const;
-//
-//	void RemovePhysicsObject();
-//private:
-//	// No copy constructor
-//	FORCEINLINE PhysicsObject(const PhysicsObject &i_other) {}
-//	FORCEINLINE PhysicsObject& operator=(const PhysicsObject &i_other) {}
-//
-//private:
-//	WeakPtr<GameObject> gameObject_;
-//	float mass_;
-//	float drag_;
-//
-//	Vector3 force_;
-//};
-//
-//
-//
-//FORCEINLINE PhysicsObject::PhysicsObject(const StrongPtr<GameObject> &i_gameOject, const float i_mass, float i_drag)
-//	: gameObject_(i_gameOject), mass_(i_mass), drag_(i_drag), force_(Vector3(0.0f, 0.0f, 0.0f))
-//{
-//}
-//
-//FORCEINLINE PhysicsObject::~PhysicsObject()
-//{
-//}
-//
-//FORCEINLINE bool PhysicsObject::IsValid() const
-//{
-//	return gameObject_;
-//}
-//
-//
+#pragma once
+
+#include "Core\Template\Array.h"
+#include "Core\Template\Pointers.h"
+#include "Object\GameObject.h"
+
+enum class CollisionType : uint8{
+	EBlock,
+	EOverlap
+};
+
+struct CollisionElement;
+
+class CollisionObject {
+public:
+	explicit FORCEINLINE CollisionObject(const WeakPtr<GameObject> &i_gameOject, CollisionType i_collideType = CollisionType::EBlock, bool i_active = true);
+	FORCEINLINE ~CollisionObject();
+	FORCEINLINE CollisionObject(const CollisionObject &i_other);
+	FORCEINLINE CollisionObject& operator=(const CollisionObject &i_other);
+
+	void DoCollision(size_t i_index, Array<CollisionElement> &i_collisionElements);
+
+	FORCEINLINE WeakPtr<GameObject> GetGameObject() const { return gameObject_; }
+	FORCEINLINE CollisionType GetCollideType() const { return collideType_; }
+	FORCEINLINE bool GetActive() const { return active_; }
+
+	FORCEINLINE void SetCollideType(CollisionType i_collideType) { collideType_ = i_collideType; }
+	FORCEINLINE void SetActive(bool &i_active) { active_ = i_active; }
+	FORCEINLINE bool IsValid() const;
+
+private:
+	void handleCollisionWith(const CollisionObject& i_other);
+
+	WeakPtr<GameObject> gameObject_;
+	CollisionType collideType_;
+	bool active_;
+};
+
+
+
+
+// hold a strongPointer and a PhysicsObject it point to, for cache cohorency
+struct CollisionElement {
+	FORCEINLINE CollisionElement(const CollisionObject &i_collisionObject);
+	FORCEINLINE CollisionElement(const CollisionElement &i_other);
+	FORCEINLINE CollisionElement &operator=(const CollisionElement &i_other);
+
+	StrongPtr<CollisionObject> Pointer;
+private:
+	CollisionObject Object;
+};
+
+
+
+
+
+
+FORCEINLINE CollisionObject::CollisionObject(const WeakPtr<GameObject> &i_gameOject, CollisionType i_collideType, bool i_active)
+	: gameObject_(i_gameOject), collideType_(i_collideType), active_(i_active)
+{
+}
+
+FORCEINLINE CollisionObject::~CollisionObject()
+{
+}
+
+FORCEINLINE CollisionObject::CollisionObject(const CollisionObject &i_other)
+	: gameObject_(i_other.gameObject_), collideType_(i_other.collideType_), active_(i_other.active_)
+{
+}
+
+FORCEINLINE CollisionObject& CollisionObject::operator=(const CollisionObject &i_other)
+{
+	gameObject_ = i_other.gameObject_;
+	collideType_ = i_other.collideType_;
+	active_ = i_other.active_;
+	return *this;
+}
+
+FORCEINLINE bool CollisionObject::IsValid() const
+{
+	return gameObject_;
+}
+
+
+
+
+
+FORCEINLINE CollisionElement::CollisionElement(const CollisionObject &i_collisionObject)
+	: Object(i_collisionObject), Pointer(&Object)
+{
+}
+
+FORCEINLINE CollisionElement::CollisionElement(const CollisionElement &i_other)
+	: Object(i_other.Object), Pointer(&Object)
+{
+
+}
+
+FORCEINLINE CollisionElement &CollisionElement::operator=(const CollisionElement &i_other)
+{
+	Object = i_other.Object;
+	Pointer = &Object;
+	return *this;
+}
+
+
+
+// for strong and weak pointer
+// CollisionObject will be delete by array container
+template<> FORCEINLINE void StrongPtr<CollisionObject>::ClearPointer()
+{
+	if (object_ != nullptr)
+	{
+		if (--(counter_->StrongCounter) == 0 || counter_->WeakCounter == 0)
+		{
+			delete counter_;
+		}
+	}
+	object_ = nullptr;
+	counter_ = nullptr;
+}
+
+template<> FORCEINLINE void WeakPtr<CollisionObject>::ClearPointer()
+{
+	object_ = nullptr;
+	if (counter_ != nullptr)
+	{
+		if ((--counter_->WeakCounter) == 0 && counter_->StrongCounter == 0)
+		{
+			delete counter_;
+		}
+	}
+	counter_ = nullptr;
+}

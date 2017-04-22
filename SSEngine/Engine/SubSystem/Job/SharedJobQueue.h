@@ -2,6 +2,7 @@
 
 #include <Windows.h>
 #include "Core\Template\Queue.h"
+#include "Core\String\StringPool.h"
 #include "Jobs\IJob.h"
 
 
@@ -17,9 +18,8 @@ public:
 	bool Add( IJob & i_Job );
 	IJob *GetWhenAvailable();
 
-
 	FORCEINLINE const char* GetName() const { return name_; }
-	FORCEINLINE void SetName(const char *i_name) { name_ = _strdup(i_name); }
+	FORCEINLINE void SetName(const char *i_name) { name_ = i_name ? StringPool::GetInstance()->add(i_name) : StringPool::GetInstance()->add(""); }
 
 private:
 	Queue<IJob *> Jobs_;

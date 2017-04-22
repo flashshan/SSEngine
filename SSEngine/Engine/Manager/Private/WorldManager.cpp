@@ -131,20 +131,18 @@ template<> WeakPtr<Actor> WorldManager::SpawnActorFromLua<Actor>(const char *i_l
 		result = lua_getglobal(luaState, "Actor");
 		ASSERT(result == LUA_TTABLE);
 		
-		const char *actorName = nullptr;
 		lua_pushstring(luaState, "name");
 		type = lua_gettable(luaState, -2);
 		ASSERT(type == LUA_TSTRING);
-		actorName = lua_tostring(luaState, -1);
+		const char *actorName = lua_tostring(luaState, -1);
 		ASSERT(actorName != nullptr);
 		actorName = _strdup(actorName);
 		lua_pop(luaState, 1);
 
-		const char *actorType = nullptr;
 		lua_pushstring(luaState, "type");
 		type = lua_gettable(luaState, -2);
 		ASSERT(type == LUA_TSTRING);
-		actorType = lua_tostring(luaState, -1);
+		const char *actorType = lua_tostring(luaState, -1);
 		ASSERT(actorType != nullptr);
 		actorType = _strdup(actorType);
 		lua_pop(luaState, 1);
@@ -167,7 +165,7 @@ template<> WeakPtr<Actor> WorldManager::SpawnActorFromLua<Actor>(const char *i_l
 		ASSERT(type == LUA_TTABLE);
 		float rotation[3] = { 0.0f };
 		ReadFloatArray(luaState, -1, rotation, 3);
-		actorTransform.SetRotation(Vector3(rotation[0], rotation[1], rotation[2]));
+		actorTransform.SetRotation(Rotator(rotation[0], rotation[1], rotation[2]));
 		lua_pop(luaState, 1);
 
 		lua_pushstring(luaState, "scale");
@@ -178,17 +176,14 @@ template<> WeakPtr<Actor> WorldManager::SpawnActorFromLua<Actor>(const char *i_l
 		actorTransform.SetScale(Vector3(scale[0], scale[1], scale[2]));
 		lua_pop(luaState, 2);
 
-		lua_pushstring(luaState, "canCollide");
+		lua_pushstring(luaState, "static");
 		type = lua_gettable(luaState, -2);
 		ASSERT(type == LUA_TBOOLEAN);
-		lua_pushstring(luaState, "static");
-		type = lua_gettable(luaState, -3);
-		ASSERT(type == LUA_TBOOLEAN);
-		int canCollide = lua_toboolean(luaState, -2);
-		int tempStatic = lua_toboolean(luaState, -1);
-		lua_pop(luaState, 2);
 
-		actor = new TRACK_NEW Actor(actorTransform, actorName, actorType, (canCollide != 0), (tempStatic != 0));
+		int tempStatic = lua_toboolean(luaState, -1);
+		lua_pop(luaState, 1);
+
+		actor = new TRACK_NEW Actor(actorTransform, actorName, actorType, (tempStatic != 0));
 		ASSERT(actor != nullptr);
 		free(const_cast<char*>(actorName));
 		free(const_cast<char*>(actorType));
@@ -236,10 +231,11 @@ template<> WeakPtr<Actor> WorldManager::SpawnActorFromLua<Actor>(const char *i_l
 
 			const char *renderPath = lua_tostring(luaState, -2);
 			uint32 priority = static_cast<uint32>(lua_tonumber(luaState, -1));
-			actor->AddRenderObject(renderPath, priority);
-
-			lua_pop(luaState, 3);
+			actor->AddRenderObject(RenderObject(actor->GetGameObject(), renderPath, priority));
+			lua_pop(luaState, 2);
 		}
+		lua_pop(luaState, 1);
+
 
 		lua_pushstring(luaState, "physicsObject");
 		type = lua_gettable(luaState, -2);
@@ -257,7 +253,38 @@ template<> WeakPtr<Actor> WorldManager::SpawnActorFromLua<Actor>(const char *i_l
 
 			float mass = static_cast<float>(lua_tonumber(luaState, -2));
 			float drag = static_cast<float>(lua_tonumber(luaState, -1));
-			actor->AddPhysicsObject(mass, drag);
+			actor->AddPhysicsObject(PhysicsObject(actor->GetGameObject(), mass, drag));
+
+			lua_pop(luaState, 2);
+		}
+		lua_pop(luaState, 1);
+
+		lua_pushstring(luaState, "collisionObject");
+		type = lua_gettable(luaState, -2);
+		ASSERT((type == LUA_TNIL) || (type == LUA_TTABLE));
+
+		if (type == LUA_TTABLE)
+		{
+			lua_pushstring(luaState, "collideType");
+			type = lua_gettable(luaState, -2);
+			ASSERT(type == LUA_TSTRING);
+
+			lua_pushstring(luaState, "active");
+			type = lua_gettable(luaState, -3);
+			ASSERT(type == LUA_TBOOLEAN);
+
+			CollisionType collisionType;
+			const char *type = lua_tostring(luaState, -2);
+			if (type == "Block")
+			{
+				collisionType = CollisionType::EBlock;
+			}
+			else if (type == "Overlap")
+			{
+				collisionType = CollisionType::EOverlap;
+			}
+			int active = lua_toboolean(luaState, -1);
+			actor->AddCollisionObject(CollisionObject(actor->GetGameObject(), collisionType, (active != 0)));
 
 			lua_pop(luaState, 2);
 		}
@@ -300,20 +327,18 @@ template<> WeakPtr<Pawn> WorldManager::SpawnPawnFromLua<Pawn>(const char *i_luaF
 		result = lua_getglobal(luaState, "Pawn");
 		ASSERT(result == LUA_TTABLE);
 
-		const char *pawnName = nullptr;
 		lua_pushstring(luaState, "name");
 		type = lua_gettable(luaState, -2);
 		ASSERT(type == LUA_TSTRING);
-		pawnName = lua_tostring(luaState, -1);
+		const char *pawnName = lua_tostring(luaState, -1);
 		ASSERT(pawnName != nullptr);
 		pawnName = _strdup(pawnName);
 		lua_pop(luaState, 1);
 
-		const char *pawnType = nullptr;
 		lua_pushstring(luaState, "type");
 		type = lua_gettable(luaState, -2);
 		ASSERT(type == LUA_TSTRING);
-		pawnType = lua_tostring(luaState, -1);
+		const char *pawnType = lua_tostring(luaState, -1);
 		ASSERT(pawnType != nullptr);
 		pawnType = _strdup(pawnType);
 		lua_pop(luaState, 1);
@@ -336,7 +361,7 @@ template<> WeakPtr<Pawn> WorldManager::SpawnPawnFromLua<Pawn>(const char *i_luaF
 		ASSERT(type == LUA_TTABLE);
 		float rotation[3] = { 0.0f };
 		ReadFloatArray(luaState, -1, rotation, 3);
-		pawnTransform.SetRotation(Vector3(rotation[0], rotation[1], rotation[2]));
+		pawnTransform.SetRotation(Rotator(rotation[0], rotation[1], rotation[2]));
 		lua_pop(luaState, 1);
 
 		lua_pushstring(luaState, "scale");
@@ -346,18 +371,14 @@ template<> WeakPtr<Pawn> WorldManager::SpawnPawnFromLua<Pawn>(const char *i_luaF
 		ReadFloatArray(luaState, -1, scale, 3);
 		pawnTransform.SetScale(Vector3(scale[0], scale[1], scale[2]));
 		lua_pop(luaState, 2);
-
-		lua_pushstring(luaState, "canCollide");
+	
+		lua_pushstring(luaState, "static");
 		type = lua_gettable(luaState, -2);
 		ASSERT(type == LUA_TBOOLEAN);
-		lua_pushstring(luaState, "static");
-		type = lua_gettable(luaState, -3);
-		ASSERT(type == LUA_TBOOLEAN);
-		int canCollide = lua_toboolean(luaState, -2);
 		int tempStatic = lua_toboolean(luaState, -1);
-		lua_pop(luaState, 2);
+		lua_pop(luaState, 1);
 
-		pawn = new TRACK_NEW Pawn(pawnTransform, pawnName, pawnType, (canCollide != 0), (tempStatic != 0));
+		pawn = new TRACK_NEW Pawn(pawnTransform, pawnName, pawnType, (tempStatic != 0));
 		ASSERT(pawn != nullptr);
 		free(const_cast<char*>(pawnName));
 		free(const_cast<char*>(pawnType));
@@ -406,10 +427,12 @@ template<> WeakPtr<Pawn> WorldManager::SpawnPawnFromLua<Pawn>(const char *i_luaF
 
 			const char *renderPath = lua_tostring(luaState, -2);
 			uint32 priority = static_cast<uint32>(lua_tonumber(luaState, -1));
-			pawn->AddRenderObject(renderPath, priority);
+			pawn->AddRenderObject(RenderObject(pawn->GetGameObject(), renderPath, priority));
 
-			lua_pop(luaState, 3);
+			lua_pop(luaState, 2);
 		}
+		lua_pop(luaState, 1);
+
 
 		lua_pushstring(luaState, "physicsObject");
 		type = lua_gettable(luaState, -2);
@@ -427,7 +450,38 @@ template<> WeakPtr<Pawn> WorldManager::SpawnPawnFromLua<Pawn>(const char *i_luaF
 
 			float mass = static_cast<float>(lua_tonumber(luaState, -2));
 			float drag = static_cast<float>(lua_tonumber(luaState, -1));
-			pawn->AddPhysicsObject(mass, drag);
+			pawn->AddPhysicsObject(PhysicsObject(pawn->GetGameObject(), mass, drag));
+
+			lua_pop(luaState, 2);
+		}
+		lua_pop(luaState, 1);
+
+		lua_pushstring(luaState, "collisionObject");
+		type = lua_gettable(luaState, -2);
+		ASSERT((type == LUA_TNIL) || (type == LUA_TTABLE));
+
+		if (type == LUA_TTABLE)
+		{
+			lua_pushstring(luaState, "collideType");
+			type = lua_gettable(luaState, -2);
+			ASSERT(type == LUA_TSTRING);
+
+			lua_pushstring(luaState, "active");
+			type = lua_gettable(luaState, -3);
+			ASSERT(type == LUA_TBOOLEAN);
+
+			CollisionType collisionType;
+			const char *type = lua_tostring(luaState, -2);
+			if (type == "Block")
+			{
+				collisionType = CollisionType::EBlock;
+			}
+			else if (type == "Overlap")
+			{
+				collisionType = CollisionType::EOverlap;
+			}
+			int active = lua_toboolean(luaState, -1);
+			pawn->AddCollisionObject(CollisionObject(pawn->GetGameObject(), collisionType, (active != 0)));
 
 			lua_pop(luaState, 2);
 		}

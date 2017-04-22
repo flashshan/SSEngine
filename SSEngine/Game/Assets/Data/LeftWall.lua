@@ -5,11 +5,10 @@ Actor =
 	
 	transform = {
 		 location = {-300, -200, 0.0},
-		 rotation = {0.0, 0.0, 0.0},
+		 rotation = {0.0, 0.0, 10.0},
 		 scale = {1.0, 1.0, 1.0}
 	},
 	
-	canCollide = true,
 	static = true,
 	
 	boundingBox = {
@@ -20,5 +19,10 @@ Actor =
 	renderObject = {
 		path = "Assets\\Texture\\Wall.dds",
 		priority = 0.0
+	},
+	
+	collisionObject = {
+		collideType = "Overlap",
+		active = true
 	},
 }

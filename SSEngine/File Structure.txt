@@ -20,6 +20,9 @@ Include Strong Pointer, Weak Pointer, Unique Pointer and a lot of containers suc
 Core\Thread
 Include Mutex, Lock, Semaphore, AutosetEvent, ManualsetEvent and SingleWriterMultipleReader lock
 
+Core\Profiler
+Profiler Manager, Accumulator and ScopedTimer, profiler for every phase of Engine update, support profiler for function, scoped function, subsystem, each update and so on
+
 Object\
 Include GameObject and all of its functions, Actor, Pawn, Actor inspect many other componenet and subsystem of gameobject. Pawn is controllered by different kinds of controllers
 

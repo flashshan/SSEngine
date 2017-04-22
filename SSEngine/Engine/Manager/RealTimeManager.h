@@ -14,7 +14,7 @@ public:
 	static FORCEINLINE RealTimeManager *CreateInstance();
 	static FORCEINLINE RealTimeManager *GetInstance();
 	static FORCEINLINE void DestroyInstance();
-	
+
 	void CalcLastFrameTime_ms();
 	FORCEINLINE void SetLastTimeMark();
 
@@ -22,6 +22,7 @@ public:
 	FORCEINLINE float GetLastFrameTimeS() const;
 	FORCEINLINE float GetLastMarkTimeMS() const;
 
+	FORCEINLINE float GetCurrentTimeMS();
 private:
 	FORCEINLINE RealTimeManager();
 	FORCEINLINE RealTimeManager(const RealTimeManager &i_other) {}
@@ -30,8 +31,10 @@ private:
 	static RealTimeManager *globalInstance_;
 
 private:
+	LARGE_INTEGER startTick_;
 	LARGE_INTEGER lastMarkStartTick_;
 	LARGE_INTEGER lastFrameStartTick_;
+	LARGE_INTEGER frequency_;
 	float lastMarkTime_;
 	float lastFrameTime_;
 };
@@ -63,6 +66,16 @@ FORCEINLINE void RealTimeManager::DestroyInstance()
 	RealTimeManager::globalInstance_ = nullptr;
 }
 
+FORCEINLINE float RealTimeManager::GetCurrentTimeMS()
+{
+	LARGE_INTEGER currentTick, elapsedMS;
+	QueryPerformanceCounter(&currentTick);
+
+	elapsedMS.QuadPart = (currentTick.QuadPart - startTick_.QuadPart);
+	return static_cast<float>(elapsedMS.QuadPart) * 1000000 / static_cast<float>(frequency_.QuadPart);
+}
+
+
 
 FORCEINLINE float RealTimeManager::GetLastFrameTimeMS() const
 {
@@ -82,6 +95,9 @@ FORCEINLINE float RealTimeManager::GetLastMarkTimeMS() const
 FORCEINLINE RealTimeManager::RealTimeManager()
 {
 	lastFrameStartTick_.QuadPart = 0;
+
+	QueryPerformanceCounter(&startTick_);
+	QueryPerformanceFrequency(&frequency_);
 }
 
 FORCEINLINE void RealTimeManager::SetLastTimeMark()
@@ -91,3 +107,5 @@ FORCEINLINE void RealTimeManager::SetLastTimeMark()
 
 	lastMarkStartTick_ = currentTick;
 }
+
+

@@ -23,6 +23,8 @@
 #define DLLEXPORT __declspec(dllexport)
 #define DLLIMPORT __declspec(dllimport)
 
+#define NOOP __noop
+
 #ifdef _WIN64
 #define TARGET_PLATFORM "window 64"
 

@@ -181,6 +181,9 @@
     <ClInclude Include="Core\Memory\HeapAllocator.h" />
     <ClInclude Include="Core\Memory\New.h" />
     <ClInclude Include="Core\Memory\StackAllocator.h" />
+    <ClInclude Include="Core\Profile\Accumulator.h" />
+    <ClInclude Include="Core\Profile\ProfileManager.h" />
+    <ClInclude Include="Core\Profile\ScopedTimer.h" />
     <ClInclude Include="Core\String\HashedString.h" />
     <ClInclude Include="Core\String\PooledString.h" />
     <ClInclude Include="Core\String\StringPool.h" />
@@ -201,6 +204,7 @@
     <ClInclude Include="Manager\GameTimeManager.h" />
     <ClInclude Include="Manager\InputManager.h" />
     <ClInclude Include="Manager\RealTimeManager.h" />
+    <ClInclude Include="Manager\ResourceManagere.h" />
     <ClInclude Include="Manager\WorldManager.h" />
     <ClInclude Include="Object\Actor.h" />
     <ClInclude Include="Object\GameObject.h" />
@@ -236,6 +240,7 @@
     <ClCompile Include="Core\Private\Memory\HeapAllocator.cpp" />
     <ClCompile Include="Core\Private\Memory\New.cpp" />
     <ClCompile Include="Core\Private\Memory\StackAllocator.cpp" />
+    <ClCompile Include="Core\Private\Profile\ProfileManager.cpp" />
     <ClCompile Include="Core\Private\String\HashedString.cpp" />
     <ClCompile Include="Core\Private\String\PooledString.cpp" />
     <ClCompile Include="Core\Private\String\StringPool.cpp" />
@@ -246,10 +251,13 @@
     <ClCompile Include="Manager\Private\GameTimeManager.cpp" />
     <ClCompile Include="Manager\Private\InputManager.cpp" />
     <ClCompile Include="Manager\Private\RealTimeManager.cpp" />
+    <ClCompile Include="Manager\Private\ResourceManagere.cpp" />
     <ClCompile Include="Manager\Private\WorldManager.cpp" />
     <ClCompile Include="Object\Private\Actor.cpp" />
     <ClCompile Include="Object\Private\GameObject.cpp" />
     <ClCompile Include="Object\Private\Pawn.cpp" />
+    <ClCompile Include="SubSystem\Private\Collision\CollisionManager.cpp" />
+    <ClCompile Include="SubSystem\Private\Collision\CollisionObject.cpp" />
     <ClCompile Include="SubSystem\Private\Job\JobRunner.cpp" />
     <ClCompile Include="SubSystem\Private\Job\JobSystem.cpp" />
     <ClCompile Include="SubSystem\Private\Job\SharedJobQueue.cpp" />

@@ -1,24 +1,37 @@
 #pragma once
 
 #include <set>
-#include "Core\Memory\New.h"
 
-#include "Core\String\HashedString.h"
+#include "Core\Memory\New.h"
 #include "RenderObject.h"
 
-GLib::Sprites::Sprite * CreateSprite(const char * i_pFilename);
 
-//singleton class
+// hold a strongPointer and a RenderObject it point to, for cache cohorency
+struct RenderElement {
+	explicit FORCEINLINE RenderElement(const RenderObject &i_renderObject);
+	FORCEINLINE RenderElement(const RenderElement &i_other);
+	FORCEINLINE RenderElement &operator=(const RenderElement &i_other);
+	FORCEINLINE bool operator<(const RenderElement &i_other) const;
+
+private:
+	RenderObject Object;
+public:
+	StrongPtr<RenderObject> Pointer;
+};
+
+
+
+//singleton Mananger class
 class RenderManager
 {
 public:
 	static FORCEINLINE RenderManager *CreateInstance();
 	static FORCEINLINE RenderManager *GetInstance();
 	static FORCEINLINE void DestroyInstance();
-	~RenderManager();
+	inline ~RenderManager();
 
 	void RenderUpdate();
-	WeakPtr<RenderObject> AddRenderObject(const WeakPtr<GameObject> &i_gameObject, const char *i_filePath, uint32 i_priority);
+	FORCEINLINE WeakPtr<RenderObject> AddRenderObject(const RenderObject &i_renderObject);
 	void Remove(const WeakPtr<RenderObject> &i_renderObject);
 
 private:
@@ -29,12 +42,10 @@ private:
 	static RenderManager *globalInstance_;
 
 private:
-	// for test, change to vector in future
-	std::multiset<StrongPtr<RenderObject>> renderObjects_;
-	//LinkedList<StrongPtr<RenderObject>> renderObjectList_;
-	std::map<HashedString, GLib::Sprites::Sprite*> spriteResources_;
+	// multiset to support order for priority
+	std::multiset<RenderElement> renderElements_;
 
-	CRITICAL_SECTION criticalSection;
+	CRITICAL_SECTION criticalSection_;
 };
 
 
@@ -42,7 +53,34 @@ private:
 
 
 
-// implement
+// implement forceinline
+
+FORCEINLINE RenderElement::RenderElement(const RenderObject &i_renderObject)
+	: Object(i_renderObject), Pointer(&Object)
+{
+}
+
+
+FORCEINLINE RenderElement::RenderElement(const RenderElement &i_other)
+	: Object(i_other.Object), Pointer(&Object)
+{
+}
+
+FORCEINLINE RenderElement &RenderElement::operator=(const RenderElement &i_other)
+{
+	Object = i_other.Object;
+	Pointer = &Object;
+	return *this;
+}
+
+FORCEINLINE bool RenderElement::operator<(const RenderElement &i_other) const
+{
+	return Pointer->GetPriority() < i_other.Pointer->GetPriority();
+}
+
+
+
+
 
 FORCEINLINE RenderManager *RenderManager::CreateInstance()
 {
@@ -67,5 +105,23 @@ FORCEINLINE void RenderManager::DestroyInstance()
 
 FORCEINLINE RenderManager::RenderManager()
 {
-	InitializeCriticalSection(&criticalSection);
+	InitializeCriticalSection(&criticalSection_);
 }
+
+inline RenderManager::~RenderManager()
+{
+	renderElements_.clear();
+}
+
+FORCEINLINE WeakPtr<RenderObject> RenderManager::AddRenderObject(const RenderObject &i_renderObject)
+{
+	EnterCriticalSection(&criticalSection_);
+	RenderElement tempElement(i_renderObject);
+	renderElements_.insert(tempElement);
+	LeaveCriticalSection(&criticalSection_);
+
+	auto it = renderElements_.find(tempElement);
+	ASSERT(it != renderElements_.end());
+	return WeakPtr<RenderObject>(it->Pointer);
+}
+

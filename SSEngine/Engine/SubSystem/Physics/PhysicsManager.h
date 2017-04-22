@@ -7,6 +7,18 @@
 #include "Core\Memory\New.h"
 #include "PhysicsObject.h"
 
+// hold a strongPointer and a PhysicsObject it point to, for cache cohorency
+struct PhysicsElement {
+	FORCEINLINE PhysicsElement(const PhysicsObject &i_physicsObject);
+	FORCEINLINE PhysicsElement(const PhysicsElement &i_other);
+	FORCEINLINE PhysicsElement &operator=(const PhysicsElement &i_other);
+
+	StrongPtr<PhysicsObject> Pointer;
+private:
+	PhysicsObject Object;
+};
+
+
 // singleton class
 class PhysicsManager
 {
@@ -17,7 +29,7 @@ public:
 	inline ~PhysicsManager();
 
 	void PhysicsUpdate();
-	WeakPtr<PhysicsObject> AddPhysicsObject(const WeakPtr<GameObject> &i_gameObject, float i_mass, float i_drag);
+	FORCEINLINE WeakPtr<PhysicsObject> AddPhysicsObject(const PhysicsObject &i_physicsObject);
 	void Remove(const WeakPtr<PhysicsObject> &i_physicsObject);
 	FORCEINLINE void RemoveByIndex(size_t i_index);
 
@@ -29,7 +41,7 @@ private:
 	static PhysicsManager* globalInstance_;
 
 private:
-	Array<StrongPtr<PhysicsObject>> physicsObjects_;
+	Array<PhysicsElement> physicsElements_;
 	
 	CRITICAL_SECTION criticalSection;
 };
@@ -39,7 +51,30 @@ private:
 
 
 
+
 // implement physics
+
+FORCEINLINE PhysicsElement::PhysicsElement(const PhysicsObject &i_physicsObject)
+	: Object(i_physicsObject), Pointer(&Object)
+{
+}
+
+FORCEINLINE PhysicsElement::PhysicsElement(const PhysicsElement &i_other)
+	: Object(i_other.Object), Pointer(&Object)
+{
+
+}
+
+FORCEINLINE PhysicsElement &PhysicsElement::operator=(const PhysicsElement &i_other)
+{
+	Object = i_other.Object;
+	Pointer = &Object;
+	return *this;
+}
+
+
+
+
 
 FORCEINLINE PhysicsManager *PhysicsManager::CreateInstance()
 {
@@ -68,13 +103,20 @@ FORCEINLINE PhysicsManager::PhysicsManager()
 
 inline PhysicsManager::~PhysicsManager()
 {
-	physicsObjects_.Clear();
+	physicsElements_.Clear();
 }
 
 FORCEINLINE void PhysicsManager::RemoveByIndex(size_t i_index)
 {
 	EnterCriticalSection(&criticalSection);
-	physicsObjects_.NoOrderRemove(i_index);
+	physicsElements_.NoOrderRemove(i_index);
 	LeaveCriticalSection(&criticalSection);
 }
 
+FORCEINLINE WeakPtr<PhysicsObject> PhysicsManager::AddPhysicsObject(const PhysicsObject &i_physicsObject)
+{
+	EnterCriticalSection(&criticalSection);
+	physicsElements_.Add(PhysicsElement(i_physicsObject));
+	LeaveCriticalSection(&criticalSection);
+	return WeakPtr<PhysicsObject>(physicsElements_.Back().Pointer);
+}

@@ -7,7 +7,7 @@ class Pawn : public Actor
 {
 public:
 	inline Pawn();
-	explicit inline Pawn(const Transform &i_transform, const char *i_name = "defaultName", const char *i_type = "defaultType", bool i_canCollide = true, bool i_static = false);
+	explicit inline Pawn(const Transform &i_transform, const char *i_name = "defaultName", const char *i_type = "defaultType", bool i_static = false);
 	inline Pawn(const Pawn &i_other);
 	inline Pawn(Pawn &&i_other);
 	virtual ~Pawn();
@@ -44,8 +44,8 @@ inline Pawn::Pawn()
 {
 }
 
-inline Pawn::Pawn(const Transform &i_transform, const char *i_name, const char *i_type, const bool i_canCollide, const bool i_static)
-	: Actor(i_transform, i_name, i_type, i_canCollide, i_static), controller_()
+inline Pawn::Pawn(const Transform &i_transform, const char *i_name, const char *i_type, const bool i_static)
+	: Actor(i_transform, i_name, i_type, i_static), controller_()
 {
 }
 
