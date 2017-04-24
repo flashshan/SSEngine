@@ -5,7 +5,7 @@ Pawn =
 	
 	transform = {
 		 location = {100, 150, 0.0},
-		 rotation = {0.0, 0.0, 80.0},
+		 rotation = {0.0, 0.0, 0},
 		 scale = {1.0, 1.0, 1.0}
 	},
 	
@@ -22,7 +22,7 @@ Pawn =
 	},
 	
 	collisionObject = {
-		collideType = "Overlap",
+		collideType = "Block",
 		active = true
 	},
 }

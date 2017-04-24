@@ -305,9 +305,6 @@
     <ClInclude Include="Manager\ResourceManagere.h">
       <Filter>Manager</Filter>
     </ClInclude>
-    <ClInclude Include="Object\Actor.h">
-      <Filter>Object\Private</Filter>
-    </ClInclude>
     <ClInclude Include="Core\Profile\Accumulator.h">
       <Filter>Core\Profile</Filter>
     </ClInclude>
@@ -316,6 +313,9 @@
     </ClInclude>
     <ClInclude Include="Core\Profile\ScopedTimer.h">
       <Filter>Core\Profile</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Actor.h">
+      <Filter>Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

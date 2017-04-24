@@ -16,7 +16,7 @@ public:
 
 	FORCEINLINE static Triangle Identity();
 
-	FORCEINLINE Triangle& Transform(const Matrix &i_Matrix);
+	FORCEINLINE Triangle& Transform(const Matrix &i_matrix);
 	
 	FORCEINLINE Triangle& ChangeOrigin(const Vector3 &i_a, const Vector3 &i_b, const Vector3 &i_c);
 
@@ -42,11 +42,11 @@ FORCEINLINE Triangle Triangle::Identity()
 	return Triangle(Vector3(1.0f, 0.0f, 0.0f), Vector3(0.0f, 1.0f, 0.0f), Vector3(0.0f, 0.0f, 1.0f));
 }
 
-FORCEINLINE Triangle& Triangle::Transform(const Matrix &i_Matrix)
+FORCEINLINE Triangle& Triangle::Transform(const Matrix &i_matrix)
 {
-	V_[0] = Vector3(i_Matrix.MultiplyLeft(Vector4(originV_[0], 1.0f)));
-	V_[1] = Vector3(i_Matrix.MultiplyLeft(Vector4(originV_[1], 1.0f)));
-	V_[2] = Vector3(i_Matrix.MultiplyLeft(Vector4(originV_[2], 1.0f)));
+	V_[0] = Vector3(Vector4(originV_[0], 1.f).Mul(i_matrix));
+	V_[1] = Vector3(Vector4(originV_[1], 1.f).Mul(i_matrix));
+	V_[2] = Vector3(Vector4(originV_[2], 1.f).Mul(i_matrix));
 }
 
 FORCEINLINE Triangle& Triangle::ChangeOrigin(const Vector3 &i_a, const Vector3 &i_b, const Vector3 &i_c)

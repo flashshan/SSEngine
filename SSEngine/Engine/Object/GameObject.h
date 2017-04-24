@@ -1,10 +1,12 @@
 #pragma once
 
+#include "Core\Template\Array.h"
 #include "Core\Math\Vector3.h"
 #include "Core\Math\Box2D.h"
 #include "Component\Transform.h"
 
 class Actor;
+struct CollideRecord;
 
 class GameObject
 {
@@ -48,6 +50,7 @@ public:
 	FORCEINLINE Matrix GetWorldToObject() const { return worldToObject_; }
 	FORCEINLINE void SetWorldToObject(const Matrix& i_matrix) { worldToObject_ = i_matrix; }
 	void Update();
+	void Update(Array<CollideRecord> *i_record);
 
 private:
 	Matrix objectToWorld_;
@@ -58,6 +61,8 @@ private:
 	Box2D boundingBox_;
 	bool isStatic_;
 	bool isActive_;
+
+
 };
 
 

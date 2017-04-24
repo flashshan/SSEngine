@@ -35,78 +35,80 @@ Add unitTest for container and smart pointer      // in EngineTest\unit_test.cpp
 
 V1.03
 Reconstruct files structure of Engine project
-Add simple api for unique pointer																				// in Engine\Core\Template\Pointer.h
-Add RenerObject and RenderManager, RenderManager is a subsystem in this game which control all render objects.  // Engine\SubSystem\RenderManager.h
-A renderObject is related to a gameobject																		// Engine\Subsystem\RenderObject.h
-Replace normal pointer to smart pointer	as more as possible														// Game\main.cpp
+Add simple api for unique pointer																							// in Engine\Core\Template\Pointer.h
+Add RenerObject and RenderManager, RenderManager is a subsystem in this game which control all render objects.				// Engine\SubSystem\RenderManager.h
+A renderObject is related to a gameobject																					// Engine\Subsystem\RenderObject.h
+Replace normal pointer to smart pointer	as more as possible																	// Game\main.cpp
 Add StringPool, HashString and pooledString and their functions							// Engine/Core/String/
 
 
 V1.04 
 Reconstruct engine(maybe the last time), change file structure, change code standard.
-Add stringPool into use																				         // Init in Engine/Engine/Private/Engine.cpp and use in Object/Actor.h (which store type and name)
-add actor and pawn object structure																			 // Actor own gameObject and observe components, pawn inherites from Actor and observe a controller
-add three kinds of controller, which control pawns, include player and monsters							     // Engine\Controller\Controller.h 
-add ControllerManager, singleton which owns all controllers	(should move out of engine in the future)		 // Engine\Controller\ControllerManager.h
-add WorldManager, singleton which owns all actors and pawns (Game Scene)									 // Engine\Manager\WorldManager.h	
+Add stringPool into use																										// Init in Engine/Engine/Private/Engine.cpp and use in Object/Actor.h (which store type and name)
+add actor and pawn object structure																							// Actor own gameObject and observe components, pawn inherites from Actor and observe a controller
+add three kinds of controller, which control pawns, include player and monsters												// Engine\Controller\Controller.h 
+add ControllerManager, singleton which owns all controllers	(should move out of engine in the future)						// Engine\Controller\ControllerManager.h
+add WorldManager, singleton which owns all actors and pawns (Game Scene)													// Engine\Manager\WorldManager.h	
 fix bugs in FixedSizeAllocator
 
 
 V1.05
-add Physics objects, controllered by controller and update gameobject's parameters							 // Engine\Subsystem\PhysicsObject.h
-add Physics Manager, singleton who owns all physics objects and update them				                     // Engine\SubSystem\PhysicsManage.h 
-add Engine states, add Engine functions, rewrite code in Game/main.cpp relate to new structure				 // Game\main.cpp    Engine\Engine\Engine.h
-add HeapManage, singleton init when the engine start. control all other new									 // Engine\Core/Memory\HeapManager.h
-separate new into a new file, overload new use functions in HeapManager                                      // Engine\Core/Memory\New.h
-Control all other singletons in Engine. Add static function Create, Get, Destroy into all singletons         // All singletons
+add Physics objects, controllered by controller and update gameobject's parameters											// Engine\Subsystem\PhysicsObject.h
+add Physics Manager, singleton who owns all physics objects and update them													// Engine\SubSystem\PhysicsManage.h 
+add Engine states, add Engine functions, rewrite code in Game/main.cpp relate to new structure								// Game\main.cpp    Engine\Engine\Engine.h
+add HeapManage, singleton init when the engine start. control all other new													// Engine\Core/Memory\HeapManager.h
+separate new into a new file, overload new use functions in HeapManager														// Engine\Core/Memory\New.h
+Control all other singletons in Engine. Add static function Create, Get, Destroy into all singletons						// All singletons
 add box2D class into gameobject
 
 
 V1.06
-add drag into physicsObject, the drag = -velocity ^ 2 * k;													 // Engine\Subsystem\PhysicsObject.h
-add support for CircleQueue																					 // Engine\Core\Template\CircleQueue.h
-separate loadfile function into core																		 // Engine\Core\Basic\FileIO.h												
-add lua into ThirdParty\Lua, add support for lua															 // Engine\Core\Basic\LuaData.h
-add Assets folder in Game and add lua script																 // Game\Assets\Data\Player1.lua
-add lua load in worldManager to load actor and pawn from lua, used in Game\main.cpp        					 // Engine\Manager\WorldManager.h
-modify EngineTest project into a window application, add UnitTest for lua and circleQueue					 // EngineTest\main.cpp
+add drag into physicsObject, the drag = -velocity ^ 2 * k;																	// Engine\Subsystem\PhysicsObject.h
+add support for CircleQueue																									// Engine\Core\Template\CircleQueue.h
+separate loadfile function into core																						// Engine\Core\Basic\FileIO.h												
+add lua into ThirdParty\Lua, add support for lua																			// Engine\Core\Basic\LuaData.h
+add Assets folder in Game and add lua script																				// Game\Assets\Data\Player1.lua
+add lua load in worldManager to load actor and pawn from lua, used in Game\main.cpp        									// Engine\Manager\WorldManager.h
+modify EngineTest project into a window application, add UnitTest for lua and circleQueue									// EngineTest\main.cpp
 
 V1.07
 big changes, provide multi-thread features
-add job system into the Engine (testing), initial in Engine and ShutDown when engine shut down				 // Engine\SubSystem\Job
-add some simple jobs (Load Actor and Pawn from lua) and use these jobs in Game\main.cpp						 // Engine\Jobs\
+add job system into the Engine (testing), initial in Engine and ShutDown when engine shut down								// Engine\SubSystem\Job
+add some simple jobs (Load Actor and Pawn from lua) and use these jobs in Game\main.cpp										// Engine\Jobs\
 change heapAllocator and fixedSizeAllocator's operations to thread-safe operations 
 // assignment notification:
-Support all necessary functions within Vector4 and Matrix, some of them are done in SIMD					 // Engine\Core\Math\
+Support all necessary functions within Vector4 and Matrix, some of them are done in SIMD									// Engine\Core\Math\
 
 V1.08
 change container for PhysicsManager and RenderManger
-support priority in RenderManager, objects with higher priority are rendered later							 // Engine\SubSystem\Render\RenderManager.h
-add collision into actor, support debug information when they collide(in test)								 // Engine\Object\Private\Actor.cpp
-add properties (canCollide, isStatic, isActive) into actor, which control collision and update				 // Engine\Object\Actor.h
+support priority in RenderManager, objects with higher priority are rendered later											// Engine\SubSystem\Render\RenderManager.h
+add collision into actor, support debug information when they collide(in test)												// Engine\Object\Private\Actor.cpp
+add properties (canCollide, isStatic, isActive) into actor, which control collision and update								// Engine\Object\Actor.h
 change the flows of actors were added into the world. All new actors are added into a queue which will not be update in this frame,
-in next frame, actors in the queue will be pushed into array which allow actors to update					 // Engine\Manager\WorldManager.h
+in next frame, actors in the queue will be pushed into array which allow actors to update									// Engine\Manager\WorldManager.h
 change necessary functions in all singletons to be thread-safe to some extent, mainly controlled by critical section.
-Fixed bugs within RealTimeManager, add Sleep in main thread to lock frame rate to 60 fps.					 // Engine\Engine\Engine.h
+Fixed bugs within RealTimeManager, add Sleep in main thread to lock frame rate to 60 fps.									// Engine\Engine\Engine.h
 collision bugs fixed, DEBUG_PRINT when they collide
-separate collide condition into three parts(enter, leave and collide)                                        // Engine\Object\Private\Actor.cpp
+separate collide condition into three parts(enter, leave and collide)														// Engine\Object\Private\Actor.cpp
 
 V1.09
-update a much better use of SSE 																		     // Engine\Core\Math\VectorSSE.h
-change implementations in Matrix to use the power of VectorSSE												 // Engine\Core\Math\Private\Matrix.cpp
-Build Rotator and Quaternion with the power of VectorSSE (In test)											 // Engine\Core\Math\Rotator.h   Quaternion.h
+update a much better use of SSE 																							// Engine\Core\Math\VectorSSE.h
+change implementations in Matrix to use the power of VectorSSE																// Engine\Core\Math\Private\Matrix.cpp
+Build Rotator and Quaternion with the power of VectorSSE (In test)															// Engine\Core\Math\Rotator.h   Quaternion.h
 Check code style, delete useless const, check const reference values										 
 add huge amount of math, mainly focus on Matrix, Rotator, Quaternion and angle math (in test)
 change #define into static const since define will overwrite each other if they have same name
 
 v1.10
 support 2D rotation using Rotator, rotator can be configured by lua
-fix some bugs within Matrix, check 2D collision works with rotation											 // Engine\Object\Private\Actor.cpp
-separate collision data from Actor, add collsionObject and collisionManager to do collision check			 // Engine\SubSystem\Collision\
+fix some bugs within Matrix, check 2D collision works with rotation															// Engine\Object\Private\Actor.cpp
+separate collision data from Actor, add collsionObject and collisionManager to do collision check							// Engine\SubSystem\Collision\
 Update structure of GameObject, Actor, every managers to fit in new subsystem designs
 made all const chars within the engine is supported by stringPool
 
 V1.11
+made all data in subsystem to be cache friendly
 add support for profile, add profilerManager, Accumulator and ScopedTimer, allow profiler for main update, each subsystem, each function, each function and so on
-																											 // Engine\Core\Profile\
-																											 
+																															// Engine\Core\Profile\
+Fixed bugs within PhysicsManager and collisionManager caused by reallocation of vectors		
+add support for collision response(not support rotation now). Add property to set collide type(Overlap, block) now		    // Engine\Manager\Collision\

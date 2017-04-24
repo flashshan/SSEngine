@@ -10,6 +10,8 @@
 class CollisionManager
 {
 public:
+	static const int32 maxCollisionObjects = 100;
+
 	static FORCEINLINE CollisionManager *CreateInstance();
 	static FORCEINLINE CollisionManager *GetInstance();
 	static FORCEINLINE void DestroyInstance();
@@ -64,6 +66,7 @@ FORCEINLINE void CollisionManager::DestroyInstance()
 FORCEINLINE CollisionManager::CollisionManager()
 {
 	InitializeCriticalSection(&criticalSection_);
+	collisionElements_.Reserve(CollisionManager::maxCollisionObjects);
 }
 
 inline CollisionManager::~CollisionManager()

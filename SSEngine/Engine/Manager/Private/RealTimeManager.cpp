@@ -17,10 +17,10 @@ void RealTimeManager::CalcLastFrameTime_ms()
 
 	if (lastFrameStartTick_.QuadPart) {
 		elapsedMS.QuadPart = (currentTick.QuadPart - lastMarkStartTick_.QuadPart);
-		lastMarkTime_ = (float)(elapsedMS.QuadPart) * 1000000 / float(frequency_.QuadPart);
+		lastMarkTime_ = static_cast<float>(elapsedMS.QuadPart) * 1000000 / static_cast<float>(frequency_.QuadPart);
 
 		elapsedMS.QuadPart = (currentTick.QuadPart - lastFrameStartTick_.QuadPart);
-		lastFrameTime_ = (float)(elapsedMS.QuadPart) * 1000000 / float(frequency_.QuadPart);
+		lastFrameTime_ = static_cast<float>(elapsedMS.QuadPart) * 1000000 / static_cast<float>(frequency_.QuadPart);
 	}
 	else {
 		lastFrameTime_ = 13.3f; // Assume a 60Hz frame for first call.

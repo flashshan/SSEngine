@@ -31,7 +31,7 @@ public:
 	FORCEINLINE void SetType(const char *i_type) { type_ = i_type ? StringPool::GetInstance()->add(i_type) : StringPool::GetInstance()->add(""); }
 	FORCEINLINE bool IsType(const char *i_type) { return (strcmp(type_, i_type) == 0); }
 	
-	FORCEINLINE bool GetCanCollision() const;
+	FORCEINLINE bool GetCanCollide() const;
 	FORCEINLINE void EnableCollision(bool i_value);
 	FORCEINLINE bool GetActive() const { return isActive_; }
 	FORCEINLINE void SetActive(bool i_value);
@@ -168,7 +168,7 @@ FORCEINLINE void Actor::SetActive(bool i_value)
 	gameObject_->SetActive(i_value);
 }
 
-FORCEINLINE bool Actor::GetCanCollision() const
+FORCEINLINE bool Actor::GetCanCollide() const
 {
 	if (collisionObject_)
 	{

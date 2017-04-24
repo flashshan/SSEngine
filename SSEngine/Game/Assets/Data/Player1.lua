@@ -13,7 +13,7 @@ Pawn =
 	
 	boundingBox = {
 		center = {0.0, 0.0, 0.0},
-		extend = {2.0, 2.0, 0.0}
+		extend = {3.0, 3.0, 0.0}
 	},
 	
 	renderObject = {
@@ -27,7 +27,7 @@ Pawn =
 	},
 	
 	collisionObject = {
-		collideType = "Overlap",
+		collideType = "Block",
 		active = true
 	},
 }

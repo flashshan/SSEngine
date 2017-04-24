@@ -243,6 +243,7 @@ inline Vector3 Matrix::GetScaledAxis(EAxis i_axis) const
 FORCEINLINE Vector4 Vector4::Mul(const Matrix &i_matrix) const
 {
 	ASSERT(!Float::IsNAN(i_matrix.M[0][0]));
+	// default mul is vector left, matrix right
 	return i_matrix.MultiplyLeft(*this);
 }
 

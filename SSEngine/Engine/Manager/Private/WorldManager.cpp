@@ -275,11 +275,11 @@ template<> WeakPtr<Actor> WorldManager::SpawnActorFromLua<Actor>(const char *i_l
 
 			CollisionType collisionType;
 			const char *type = lua_tostring(luaState, -2);
-			if (type == "Block")
+			if (strcmp(type, "Block"))
 			{
 				collisionType = CollisionType::EBlock;
 			}
-			else if (type == "Overlap")
+			else if (strcmp(type, "Overlap"))
 			{
 				collisionType = CollisionType::EOverlap;
 			}
@@ -472,11 +472,11 @@ template<> WeakPtr<Pawn> WorldManager::SpawnPawnFromLua<Pawn>(const char *i_luaF
 
 			CollisionType collisionType;
 			const char *type = lua_tostring(luaState, -2);
-			if (type == "Block")
+			if (strcmp(type, "Block") == 0)
 			{
 				collisionType = CollisionType::EBlock;
 			}
-			else if (type == "Overlap")
+			else if (strcmp(type, "Overlap") == 0)
 			{
 				collisionType = CollisionType::EOverlap;
 			}

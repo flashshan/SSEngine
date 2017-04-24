@@ -272,7 +272,7 @@ Matrix& Matrix::operator*=(const Matrix &i_other)
 	return *this;
 }
 
-// normally used, Matrix is on the left
+// normally used, vector is on the left
 Vector4 Matrix::MultiplyLeft(const Vector4 &i_vector) const
 {	
 	const VectorSSE vec(i_vector);
@@ -285,7 +285,7 @@ Vector4 Matrix::MultiplyLeft(const Vector4 &i_vector) const
 	return Vector4(VectorSSE::MultiplyAdd(vec.Replicate(3), matrix[3], temp));
 }
 
-// slower, matrix is on the right
+// slower, vector is on the right
 Vector4 Matrix::MultiplyRight(const Vector4 &i_vector) const
 {
 	Matrix transpose = GetTranspose();
@@ -300,7 +300,7 @@ Vector4 Matrix::MultiplyRight(const Vector4 &i_vector) const
 	return Vector4(VectorSSE::MultiplyAdd(vec.Replicate(3), matrix[3], temp));
 }
 
-
+// normally used, vectorSSE is on the left
 VectorSSE Matrix::MultiplyLeft(const VectorSSE &i_vector) const
 {
 	const VectorSSE *matrix = reinterpret_cast<const VectorSSE *>(this);
@@ -312,7 +312,7 @@ VectorSSE Matrix::MultiplyLeft(const VectorSSE &i_vector) const
 	return VectorSSE::MultiplyAdd(i_vector.Replicate(3), matrix[3], temp);
 }
 
-// slower, matrix is on the right
+// slower, vectorSSE is on the right
 VectorSSE Matrix::MultiplyRight(const VectorSSE &i_vector) const
 {
 	Matrix transpose = GetTranspose();

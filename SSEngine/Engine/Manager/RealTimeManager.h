@@ -95,9 +95,13 @@ FORCEINLINE float RealTimeManager::GetLastMarkTimeMS() const
 FORCEINLINE RealTimeManager::RealTimeManager()
 {
 	lastFrameStartTick_.QuadPart = 0;
+	lastMarkStartTick_.QuadPart = 0;
 
 	QueryPerformanceCounter(&startTick_);
 	QueryPerformanceFrequency(&frequency_);
+
+	//calculate once to get initial values
+	CalcLastFrameTime_ms();
 }
 
 FORCEINLINE void RealTimeManager::SetLastTimeMark()

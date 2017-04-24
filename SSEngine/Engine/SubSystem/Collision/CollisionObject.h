@@ -11,8 +11,16 @@ enum class CollisionType : uint8{
 
 struct CollisionElement;
 
+struct CollideRecord {
+	Vector3 Velocity;
+	float Time;
+	CollideRecord(const Vector3 &i_velocity, float i_time) : Velocity(i_velocity), Time(i_time) {}
+};
+
 class CollisionObject {
 public:
+	static const int32 maxCollideTimesWithinFrame = 5;
+
 	explicit FORCEINLINE CollisionObject(const WeakPtr<GameObject> &i_gameOject, CollisionType i_collideType = CollisionType::EBlock, bool i_active = true);
 	FORCEINLINE ~CollisionObject();
 	FORCEINLINE CollisionObject(const CollisionObject &i_other);
@@ -28,18 +36,26 @@ public:
 	FORCEINLINE void SetActive(bool &i_active) { active_ = i_active; }
 	FORCEINLINE bool IsValid() const;
 
+	FORCEINLINE void SetIsCollide(bool i_isCollide) { collideLastFrame_ = i_isCollide; }
+	FORCEINLINE bool GetIsCollide() { return collideLastFrame_; }
+	FORCEINLINE void AddCollideRecord(const CollideRecord &i_record) { collideInfoLastFrame_.Add(i_record); }
+	FORCEINLINE Array<CollideRecord>* GetCollideRecord() { return &collideInfoLastFrame_; }
+
 private:
-	void handleCollisionWith(const CollisionObject& i_other);
+	void handleCollisionWith(CollisionObject& i_other);
+	FORCEINLINE void resetCollideinfo();
 
 	WeakPtr<GameObject> gameObject_;
 	CollisionType collideType_;
 	bool active_;
+	bool collideLastFrame_;
+	Array<CollideRecord> collideInfoLastFrame_;
 };
 
 
 
 
-// hold a strongPointer and a PhysicsObject it point to, for cache cohorency
+// hold a strongPointer and a CollisionObject it point to, for cache cohorency
 struct CollisionElement {
 	FORCEINLINE CollisionElement(const CollisionObject &i_collisionObject);
 	FORCEINLINE CollisionElement(const CollisionElement &i_other);
@@ -56,8 +72,9 @@ private:
 
 
 FORCEINLINE CollisionObject::CollisionObject(const WeakPtr<GameObject> &i_gameOject, CollisionType i_collideType, bool i_active)
-	: gameObject_(i_gameOject), collideType_(i_collideType), active_(i_active)
+	: gameObject_(i_gameOject), collideType_(i_collideType), active_(i_active), collideLastFrame_(false)
 {
+	collideInfoLastFrame_.Reserve(CollisionObject::maxCollideTimesWithinFrame);
 }
 
 FORCEINLINE CollisionObject::~CollisionObject()
@@ -65,7 +82,8 @@ FORCEINLINE CollisionObject::~CollisionObject()
 }
 
 FORCEINLINE CollisionObject::CollisionObject(const CollisionObject &i_other)
-	: gameObject_(i_other.gameObject_), collideType_(i_other.collideType_), active_(i_other.active_)
+	: gameObject_(i_other.gameObject_), collideType_(i_other.collideType_), active_(i_other.active_), 
+	collideLastFrame_(i_other.collideLastFrame_), collideInfoLastFrame_(i_other.collideInfoLastFrame_)
 {
 }
 
@@ -74,6 +92,8 @@ FORCEINLINE CollisionObject& CollisionObject::operator=(const CollisionObject &i
 	gameObject_ = i_other.gameObject_;
 	collideType_ = i_other.collideType_;
 	active_ = i_other.active_;
+	collideLastFrame_ = i_other.collideLastFrame_;
+	collideInfoLastFrame_ = i_other.collideInfoLastFrame_;
 	return *this;
 }
 
@@ -81,6 +101,16 @@ FORCEINLINE bool CollisionObject::IsValid() const
 {
 	return gameObject_;
 }
+
+FORCEINLINE void CollisionObject::resetCollideinfo()
+{
+	collideLastFrame_ = false;
+	collideInfoLastFrame_.Clear();
+}
+
+
+
+
 
 
 
@@ -103,6 +133,7 @@ FORCEINLINE CollisionElement &CollisionElement::operator=(const CollisionElement
 	Pointer = &Object;
 	return *this;
 }
+
 
 
 

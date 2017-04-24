@@ -23,6 +23,8 @@ private:
 class PhysicsManager
 {
 public:
+	static const int32 maxPhysicsObjects = 10;
+
 	static FORCEINLINE PhysicsManager *CreateInstance();
 	static FORCEINLINE PhysicsManager *GetInstance();
 	static FORCEINLINE void DestroyInstance();
@@ -99,6 +101,7 @@ FORCEINLINE void PhysicsManager::DestroyInstance()
 FORCEINLINE PhysicsManager::PhysicsManager()
 {
 	InitializeCriticalSection(&criticalSection);
+	physicsElements_.Reserve(maxPhysicsObjects);
 }
 
 inline PhysicsManager::~PhysicsManager()
