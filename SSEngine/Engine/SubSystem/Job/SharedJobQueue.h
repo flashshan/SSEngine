@@ -3,7 +3,7 @@
 #include <Windows.h>
 #include "Core\Template\Queue.h"
 #include "Core\String\StringPool.h"
-#include "Jobs\IJob.h"
+#include "Object\Job\IJob.h"
 
 
 class SharedJobQueue

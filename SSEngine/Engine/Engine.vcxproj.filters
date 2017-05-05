@@ -4,9 +4,6 @@
     <Filter Include="Object">
       <UniqueIdentifier>{7fcc72ad-9ba4-4fa0-a1e6-decc2bfe9ba7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Object\Private">
-      <UniqueIdentifier>{2cc218a6-1556-46d2-ac25-62616dcd331c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Controller">
       <UniqueIdentifier>{e83de588-294b-44b7-a10f-d7fb10f1abbd}</UniqueIdentifier>
     </Filter>
@@ -93,12 +90,6 @@
     <Filter Include="SubSystem\Private\Job">
       <UniqueIdentifier>{09d29530-540d-408d-8b30-e6c516ac43ec}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Jobs">
-      <UniqueIdentifier>{61e38168-b0b5-43f5-ade1-47f927797708}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Jobs\Private">
-      <UniqueIdentifier>{c77c96f0-e43f-4c9b-b6fe-0e0a67a87033}</UniqueIdentifier>
-    </Filter>
     <Filter Include="SubSystem\Collision">
       <UniqueIdentifier>{3d97ed60-5980-4423-94bd-6d805a876063}</UniqueIdentifier>
     </Filter>
@@ -111,11 +102,26 @@
     <Filter Include="Core\Private\Profile">
       <UniqueIdentifier>{3b0c8365-2393-45ce-a654-0a010189ab50}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Object\Entity">
+      <UniqueIdentifier>{f92c7d45-4571-48bd-8d89-3ff58a270db6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Job">
+      <UniqueIdentifier>{21424e16-1fe0-4ce8-8383-b19404d77b64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Message">
+      <UniqueIdentifier>{03ff54f6-244d-4e64-9ab4-411e0ada3970}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Private">
+      <UniqueIdentifier>{b074d488-ee35-4016-863b-73446b6f6db6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Private\Entity">
+      <UniqueIdentifier>{4ce146ed-5b28-43d7-a173-7a66df65ace8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Private\Job">
+      <UniqueIdentifier>{8a9c233e-78f8-44d0-92a8-bcdfa928f596}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Object\GameObject.h">
-      <Filter>Object</Filter>
-    </ClInclude>
     <ClInclude Include="Controller\PlayerController.h">
       <Filter>Controller</Filter>
     </ClInclude>
@@ -124,9 +130,6 @@
     </ClInclude>
     <ClInclude Include="Manager\GameTimeManager.h">
       <Filter>Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\Pawn.h">
-      <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="Core\Memory\BitArray.h">
       <Filter>Core\Memory</Filter>
@@ -272,15 +275,6 @@
     <ClInclude Include="SubSystem\Job\SharedJobQueue.h">
       <Filter>SubSystem\Job</Filter>
     </ClInclude>
-    <ClInclude Include="Jobs\IJob.h">
-      <Filter>Jobs</Filter>
-    </ClInclude>
-    <ClInclude Include="Jobs\JobLoadActor.h">
-      <Filter>Jobs</Filter>
-    </ClInclude>
-    <ClInclude Include="Jobs\JobLoadPawn.h">
-      <Filter>Jobs</Filter>
-    </ClInclude>
     <ClInclude Include="Core\Template\Array.h">
       <Filter>Core\Template</Filter>
     </ClInclude>
@@ -314,14 +308,35 @@
     <ClInclude Include="Core\Profile\ScopedTimer.h">
       <Filter>Core\Profile</Filter>
     </ClInclude>
-    <ClInclude Include="Object\Actor.h">
-      <Filter>Object</Filter>
+    <ClInclude Include="Object\Entity\Actor.h">
+      <Filter>Object\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Entity\GameObject.h">
+      <Filter>Object\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Entity\Pawn.h">
+      <Filter>Object\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Job\IJob.h">
+      <Filter>Object\Job</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Job\JobLoadActor.h">
+      <Filter>Object\Job</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Job\JobLoadPawn.h">
+      <Filter>Object\Job</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Message\CollisionMessage.h">
+      <Filter>Object\Message</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Message\IMessage.h">
+      <Filter>Object\Message</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller\ConstantMoveController.h">
+      <Filter>Controller</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Object\Private\GameObject.cpp">
-      <Filter>Object\Private</Filter>
-    </ClCompile>
     <ClCompile Include="Controller\Private\PlayerController.cpp">
       <Filter>Controller\Private</Filter>
     </ClCompile>
@@ -330,12 +345,6 @@
     </ClCompile>
     <ClCompile Include="Manager\Private\GameTimeManager.cpp">
       <Filter>Manager\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="Object\Private\Actor.cpp">
-      <Filter>Object\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="Object\Private\Pawn.cpp">
-      <Filter>Object\Private</Filter>
     </ClCompile>
     <ClCompile Include="Core\Private\Basic\Assert.cpp">
       <Filter>Core\Private\Basic</Filter>
@@ -433,15 +442,6 @@
     <ClCompile Include="SubSystem\Private\Render\RenderObject.cpp">
       <Filter>SubSystem\Private\Render</Filter>
     </ClCompile>
-    <ClCompile Include="Jobs\Private\IJob.cpp">
-      <Filter>Jobs\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="Jobs\Private\JobLoadActor.cpp">
-      <Filter>Jobs\Private</Filter>
-    </ClCompile>
-    <ClCompile Include="Jobs\Private\JobLoadPawn.cpp">
-      <Filter>Jobs\Private</Filter>
-    </ClCompile>
     <ClCompile Include="Manager\Private\ResourceManagere.cpp">
       <Filter>Manager\Private</Filter>
     </ClCompile>
@@ -453,6 +453,27 @@
     </ClCompile>
     <ClCompile Include="Core\Private\Profile\ProfileManager.cpp">
       <Filter>Core\Private\Profile</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Private\Entity\Actor.cpp">
+      <Filter>Object\Private\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Private\Entity\GameObject.cpp">
+      <Filter>Object\Private\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Private\Entity\Pawn.cpp">
+      <Filter>Object\Private\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Private\Job\IJob.cpp">
+      <Filter>Object\Private\Job</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Private\Job\JobLoadActor.cpp">
+      <Filter>Object\Private\Job</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Private\Job\JobLoadPawn.cpp">
+      <Filter>Object\Private\Job</Filter>
+    </ClCompile>
+    <ClCompile Include="Controller\Private\ConstantMoveController.cpp">
+      <Filter>Controller\Private</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

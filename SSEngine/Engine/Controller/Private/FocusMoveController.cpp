@@ -1,5 +1,5 @@
 #include "Controller\FocusMoveController.h"
-#include "Object\Pawn.h"
+#include "Object\Entity\Pawn.h"
 
 #include "Manager\RealTimeManager.h"
 

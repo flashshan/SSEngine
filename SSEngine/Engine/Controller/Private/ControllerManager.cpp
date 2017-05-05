@@ -6,9 +6,9 @@ ControllerManager *ControllerManager::globalInstance_ = nullptr;
 void ControllerManager::RemoveMonsterController(const WeakPtr<IController> &i_monsterController)
 {
 	EnterCriticalSection(&criticalSection_);
-	uint32 size = static_cast<uint32>(monsterControllers_.Size());
 	
-	for (uint32 i = 0; i < size; ++i)
+	size_t count = monsterControllers_.Size();
+	for (size_t i = 0; i < count; ++i)
 	{
 		if (monsterControllers_[i])
 		{
@@ -26,8 +26,7 @@ void ControllerManager::RemoveMonsterController(const WeakPtr<IController> &i_mo
 void ControllerManager::UpdatePlayerController()
 {
 	EnterCriticalSection(&criticalSection_);
-	uint32 size = static_cast<uint32>(playerControllers_.Size());
-	for (uint32 i = 0; i < size; ++i)
+	for (size_t i = 0; i < playerControllers_.Size(); ++i)
 	{
 		if (playerControllers_[i]->GetControlledPawn()->GetActive())
 		{
@@ -40,8 +39,7 @@ void ControllerManager::UpdatePlayerController()
 void ControllerManager::UpdateMonsterController()
 {
 	EnterCriticalSection(&criticalSection_);
-	int32 size = static_cast<uint32>(monsterControllers_.Size());
-	for (int32 i = 0;i < size;++i)
+	for (size_t i = 0;i < monsterControllers_.Size();++i)
 	{
 		if (monsterControllers_[i]->IsValid())
 		{

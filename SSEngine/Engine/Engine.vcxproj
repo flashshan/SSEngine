@@ -152,6 +152,7 @@
   <ItemGroup>
     <ClInclude Include="Component\IComponent.h" />
     <ClInclude Include="Component\Transform.h" />
+    <ClInclude Include="Controller\ConstantMoveController.h" />
     <ClInclude Include="Controller\ControllerManager.h" />
     <ClInclude Include="Controller\FocusMoveController.h" />
     <ClInclude Include="Controller\IController.h" />
@@ -198,17 +199,19 @@
     <ClInclude Include="Core\Thread\Semaphore.h" />
     <ClInclude Include="Core\Thread\SingleWriterMultipleReader.h" />
     <ClInclude Include="Engine\Engine.h" />
-    <ClInclude Include="Jobs\IJob.h" />
-    <ClInclude Include="Jobs\JobLoadActor.h" />
-    <ClInclude Include="Jobs\JobLoadPawn.h" />
     <ClInclude Include="Manager\GameTimeManager.h" />
     <ClInclude Include="Manager\InputManager.h" />
     <ClInclude Include="Manager\RealTimeManager.h" />
     <ClInclude Include="Manager\ResourceManagere.h" />
     <ClInclude Include="Manager\WorldManager.h" />
-    <ClInclude Include="Object\Actor.h" />
-    <ClInclude Include="Object\GameObject.h" />
-    <ClInclude Include="Object\Pawn.h" />
+    <ClInclude Include="Object\Entity\Actor.h" />
+    <ClInclude Include="Object\Entity\GameObject.h" />
+    <ClInclude Include="Object\Entity\Pawn.h" />
+    <ClInclude Include="Object\Job\IJob.h" />
+    <ClInclude Include="Object\Job\JobLoadActor.h" />
+    <ClInclude Include="Object\Job\JobLoadPawn.h" />
+    <ClInclude Include="Object\Message\CollisionMessage.h" />
+    <ClInclude Include="Object\Message\IMessage.h" />
     <ClInclude Include="SubSystem\Collision\CollisionManager.h" />
     <ClInclude Include="SubSystem\Collision\CollisionObject.h" />
     <ClInclude Include="SubSystem\Job\JobRunner.h" />
@@ -221,6 +224,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Component\Private\Transform.cpp" />
+    <ClCompile Include="Controller\Private\ConstantMoveController.cpp" />
     <ClCompile Include="Controller\Private\ControllerManager.cpp" />
     <ClCompile Include="Controller\Private\FocusMoveController.cpp" />
     <ClCompile Include="Controller\Private\PlayerController.cpp" />
@@ -245,17 +249,17 @@
     <ClCompile Include="Core\Private\String\PooledString.cpp" />
     <ClCompile Include="Core\Private\String\StringPool.cpp" />
     <ClCompile Include="Engine\Private\Engine.cpp" />
-    <ClCompile Include="Jobs\Private\IJob.cpp" />
-    <ClCompile Include="Jobs\Private\JobLoadActor.cpp" />
-    <ClCompile Include="Jobs\Private\JobLoadPawn.cpp" />
     <ClCompile Include="Manager\Private\GameTimeManager.cpp" />
     <ClCompile Include="Manager\Private\InputManager.cpp" />
     <ClCompile Include="Manager\Private\RealTimeManager.cpp" />
     <ClCompile Include="Manager\Private\ResourceManagere.cpp" />
     <ClCompile Include="Manager\Private\WorldManager.cpp" />
-    <ClCompile Include="Object\Private\Actor.cpp" />
-    <ClCompile Include="Object\Private\GameObject.cpp" />
-    <ClCompile Include="Object\Private\Pawn.cpp" />
+    <ClCompile Include="Object\Private\Entity\Actor.cpp" />
+    <ClCompile Include="Object\Private\Entity\GameObject.cpp" />
+    <ClCompile Include="Object\Private\Entity\Pawn.cpp" />
+    <ClCompile Include="Object\Private\Job\IJob.cpp" />
+    <ClCompile Include="Object\Private\Job\JobLoadActor.cpp" />
+    <ClCompile Include="Object\Private\Job\JobLoadPawn.cpp" />
     <ClCompile Include="SubSystem\Private\Collision\CollisionManager.cpp" />
     <ClCompile Include="SubSystem\Private\Collision\CollisionObject.cpp" />
     <ClCompile Include="SubSystem\Private\Job\JobRunner.cpp" />

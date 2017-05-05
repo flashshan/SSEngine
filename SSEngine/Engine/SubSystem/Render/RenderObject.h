@@ -3,7 +3,7 @@
 #include "Glib\Glib.h"
 
 #include "Core\Template\Pointers.h"
-#include "Object\GameObject.h"
+#include "Object\Entity\GameObject.h"
 #include "Manager\ResourceManagere.h"
 
 class RenderObject {
@@ -85,7 +85,7 @@ FORCEINLINE bool RenderObject::IsValid() const
 
 FORCEINLINE void RenderObject::DoRender() const
 {
-	if (gameObject_ && gameObject_->GetActive())
+	if (gameObject_->GetActive())
 	{	
 		if (sprite_ != nullptr)
 		{

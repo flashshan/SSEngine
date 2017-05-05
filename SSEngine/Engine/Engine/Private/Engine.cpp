@@ -80,6 +80,8 @@ void Engine::Run()
 	WorldManager::GetInstance()->ActorsLateUpdate();
 	PROFILE_GROUP_SCOPE_END()
 
+	WorldManager::GetInstance()->FrameEndDestroy();
+
 	// calculate frame time of this frame
 	RealTimeManager::GetInstance()->CalcLastFrameTime_ms();
 

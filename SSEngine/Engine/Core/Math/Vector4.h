@@ -145,21 +145,21 @@ FORCEINLINE float Vector4::operator ^(const Vector4 &i_vector) const
 
 FORCEINLINE float Vector4::Distance(const Vector4 &i_vector1, const Vector4 &i_vector2)
 {
-	return static_cast<float>(sqrt((i_vector1.X - i_vector2.X) * (i_vector1.X - i_vector2.X) +
+	return sqrtf((i_vector1.X - i_vector2.X) * (i_vector1.X - i_vector2.X) +
 		(i_vector1.Y - i_vector2.Y) * (i_vector1.Y - i_vector2.Y) +
 		(i_vector1.Z - i_vector2.Z) * (i_vector1.Z - i_vector2.Z) +
-		(i_vector1.W - i_vector2.W) * (i_vector1.W - i_vector2.W)));
+		(i_vector1.W - i_vector2.W) * (i_vector1.W - i_vector2.W));
 }
 
 FORCEINLINE float Vector4::Distance(const Vector4 &i_vector) const
 {
-	return static_cast<float>(sqrt((X - i_vector.X) * (X - i_vector.X) + (Y - i_vector.Y) * (Y - i_vector.Y) +
-		(Z - i_vector.Z) * (Z - i_vector.Z) + (W - i_vector.W) * (W - i_vector.W)));
+	return sqrtf((X - i_vector.X) * (X - i_vector.X) + (Y - i_vector.Y) * (Y - i_vector.Y) +
+		(Z - i_vector.Z) * (Z - i_vector.Z) + (W - i_vector.W) * (W - i_vector.W));
 }
 
 FORCEINLINE float Vector4::Length() const
 {
-	return static_cast<float>(sqrt(X * X + Y * Y + Z * Z + W * W));
+	return sqrtf(X * X + Y * Y + Z * Z + W * W);
 }
 FORCEINLINE float Vector4::LengthSquare() const
 {

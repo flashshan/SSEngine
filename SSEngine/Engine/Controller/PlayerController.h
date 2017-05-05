@@ -22,6 +22,8 @@ private:
 	void handleBasicMoveFromUserInput() const;
 	void handlePhysicsMoveFromUserInput() const;
 
+	void createBulletFromInput() const;
+
 private:
 	// Controller can not be copy or assign
 	FORCEINLINE PlayerController(const PlayerController &i_other) {}

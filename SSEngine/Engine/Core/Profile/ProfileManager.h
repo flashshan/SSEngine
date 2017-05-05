@@ -92,10 +92,18 @@ FORCEINLINE void ProfilerManager::DestroyInstance()
 #define PROFILE_GROUP_SCOPE_END()    }
 
 
+
 #else // ENABLE_PROFILING not defined
 
-#define PROFILE_SCOPE_BEGIN(str)	NOOP
-#define PROFILE_SCOPE_END			NOOP
-#define PROFILE_UNSCOPED(str)		NOOP
+#define PROFILE_UNSCOPED(functionName)	NOOP;
+
+#define PROFILE_SCOPE_BEGIN(functionName)	NOOP;
+#define PROFILE_SCOPE_END()   NOOP;
+
+
+#define PROFILE_GROUP_UNSCOPED(systemName)	NOOP;
+
+#define PROFILE_GROUP_SCOPE_BEGIN(systemName)  NOOP;
+#define PROFILE_GROUP_SCOPE_END()   NOOP;
 
 #endif // ENABLE_PROFILING

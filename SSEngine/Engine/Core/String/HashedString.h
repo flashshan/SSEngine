@@ -11,7 +11,7 @@ class HashedString {
 public:
 	FORCEINLINE HashedString();
 	explicit FORCEINLINE HashedString(const char *i_string);
-	FORCEINLINE HashedString(const PooledString &i_pooledString);
+	explicit FORCEINLINE HashedString(const PooledString &i_pooledString);
 	FORCEINLINE HashedString(const HashedString &i_other);
 	inline ~HashedString();
 

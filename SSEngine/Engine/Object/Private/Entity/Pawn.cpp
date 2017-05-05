@@ -1,4 +1,4 @@
-#include "Object\Pawn.h"
+#include "Object\Entity\Pawn.h"
 
 Pawn::~Pawn()
 {

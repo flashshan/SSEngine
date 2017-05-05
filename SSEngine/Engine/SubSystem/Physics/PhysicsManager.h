@@ -23,7 +23,7 @@ private:
 class PhysicsManager
 {
 public:
-	static const int32 maxPhysicsObjects = 10;
+	static const int32 maxPhysicsObjects = 100;
 
 	static FORCEINLINE PhysicsManager *CreateInstance();
 	static FORCEINLINE PhysicsManager *GetInstance();

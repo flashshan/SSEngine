@@ -7,7 +7,7 @@
 #include "Core\Template\Queue.h"
 #include "Core\String\HashedString.h"
 
-#include "Object\Pawn.h"
+#include "Object\Entity\Pawn.h"
 
 // singleton class
 class WorldManager
@@ -25,11 +25,11 @@ public:
 	~WorldManager();
 
 	template <typename T> WeakPtr<T> SpawnActor(const Transform &i_transform, const char *i_name, const char *i_type);
-	template <typename T> WeakPtr<T> SpawnActorFromLua(const char *i_luaFileName);
+	template <typename T> WeakPtr<T> SpawnActorFromLua(const char *i_luaFileName, Transform &i_transform);
 	//typename std::enable_if<std::is_base_of<Pawn, T>::value>::type
 
 	template <typename T> WeakPtr<T> SpawnPawn(const Transform &i_transform, const char *i_name, const char *i_type);
-	template <typename T> WeakPtr<T> SpawnPawnFromLua(const char *i_luaFileName);
+	template <typename T> WeakPtr<T> SpawnPawnFromLua(const char *i_luaFileName, Transform &i_transform);
 
 	void AddNewActorsIntoArray();
 	void ActorsPreCalculation();
@@ -37,6 +37,7 @@ public:
 	void ActorsUpdate();
 	void ActorsActualUpdate();
 	void ActorsLateUpdate();
+	void FrameEndDestroy();
 	
 	FORCEINLINE size_t GetActorNumber() const { return actors_.Size(); }
 	FORCEINLINE size_t GetPlayerNumber() const { return players_.Size(); }
@@ -46,6 +47,7 @@ public:
 	FORCEINLINE WeakPtr<Pawn> GetPlayer(const size_t i_index);
 	FORCEINLINE WeakPtr<Pawn> GetPawn(const size_t i_index);
 
+	void DeleteAll();
 private:
 	FORCEINLINE WorldManager();
 	FORCEINLINE WorldManager(const WorldManager &i_other) {}

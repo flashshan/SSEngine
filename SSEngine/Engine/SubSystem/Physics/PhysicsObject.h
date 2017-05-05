@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core\Template\Pointers.h"
-#include "Object\GameObject.h"
+#include "Object\Entity\GameObject.h"
 
 class PhysicsObject {
 public:
@@ -30,7 +30,7 @@ private:
 
 
 FORCEINLINE PhysicsObject::PhysicsObject(const WeakPtr<GameObject> &i_gameOject, float i_mass, float i_drag)
-	: gameObject_(i_gameOject), mass_(i_mass), drag_(i_drag), force_(Vector3(0.0f, 0.0f, 0.0f))
+	: gameObject_(i_gameOject), mass_(i_mass), drag_(i_drag), force_(0.0f, 0.0f, 0.0f)
 {
 }
 
@@ -39,7 +39,7 @@ FORCEINLINE PhysicsObject::~PhysicsObject()
 }
 
 FORCEINLINE PhysicsObject::PhysicsObject(const PhysicsObject &i_other)
-	: gameObject_(i_other.gameObject_), mass_(i_other.mass_), drag_(i_other.drag_)
+	: gameObject_(i_other.gameObject_), mass_(i_other.mass_), drag_(i_other.drag_), force_(i_other.force_)
 {
 }
 
@@ -48,6 +48,7 @@ FORCEINLINE PhysicsObject& PhysicsObject::operator=(const PhysicsObject &i_other
 	gameObject_ = i_other.gameObject_;
 	mass_ = i_other.mass_;
 	drag_ = i_other.drag_;
+	force_ = i_other.force_;
 	return *this;
 }
 

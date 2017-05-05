@@ -131,11 +131,11 @@ FORCEINLINE float Vector2::operator ^(const Vector2 &i_vector) const
 
 FORCEINLINE float Vector2::Distance(const Vector2 &i_vector1, const Vector2 &i_vector2)
 {
-	return static_cast<float>(sqrt((i_vector1.X - i_vector2.X) * (i_vector1.X - i_vector2.X) + (i_vector1.Y - i_vector2.Y) * (i_vector1.Y - i_vector2.Y)));
+	return sqrtf((i_vector1.X - i_vector2.X) * (i_vector1.X - i_vector2.X) + (i_vector1.Y - i_vector2.Y) * (i_vector1.Y - i_vector2.Y));
 }
 FORCEINLINE float Vector2::Distance(const Vector2 &i_vector) const
 {
-	return static_cast<float>(sqrt((X - i_vector.X) * (X - i_vector.X) + (X - i_vector.X) * (X - i_vector.X)));
+	return sqrtf((X - i_vector.X) * (X - i_vector.X) + (X - i_vector.X) * (X - i_vector.X));
 }
 
 FORCEINLINE Vector2& Vector2::Normalize(float tolerance)

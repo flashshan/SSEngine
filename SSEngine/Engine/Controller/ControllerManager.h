@@ -6,7 +6,7 @@
 #include "Core\Template\Array.h"
 #include "Core\Memory\New.h"
 #include "PlayerController.h"
-#include "Object\Pawn.h"
+#include "Object\Entity\Pawn.h"
 
 // singleton class
 class ControllerManager
@@ -22,7 +22,7 @@ public:
 	FORCEINLINE void AddMonsterController(const StrongPtr<IController> &i_controller);
 	
 	void RemoveMonsterController(const WeakPtr<IController> &i_monsterController);
-	FORCEINLINE void RemoveMonsterControllerByIndex(uint32 i_index);
+	FORCEINLINE void RemoveMonsterControllerByIndex(size_t i_index);
 
 	FORCEINLINE WeakPtr<PlayerController> GetPlayerController(uint32 i_index);
 
@@ -97,7 +97,7 @@ FORCEINLINE void ControllerManager::AddMonsterController(const StrongPtr<IContro
 	LeaveCriticalSection(&criticalSection_);
 }
 
-FORCEINLINE void ControllerManager::RemoveMonsterControllerByIndex(uint32 i_index)
+FORCEINLINE void ControllerManager::RemoveMonsterControllerByIndex(size_t i_index)
 {
 	EnterCriticalSection(&criticalSection_);
 	monsterControllers_.NoOrderRemove(i_index);

@@ -111,4 +111,21 @@ made all data in subsystem to be cache friendly
 add support for profile, add profilerManager, Accumulator and ScopedTimer, allow profiler for main update, each subsystem, each function, each function and so on
 																															// Engine\Core\Profile\
 Fixed bugs within PhysicsManager and collisionManager caused by reallocation of vectors		
-add support for collision response(not support rotation now). Add property to set collide type(Overlap, block) now		    // Engine\Manager\Collision\
+add support for collision response(using some magic code but not message system, data stored in CollideObject. not support rotation now). Add property to set collide type(Overlap, block) now		    
+																															// Engine\Manager\Collision\
+
+V1.12
+add support for simple messaging system. Add Imessage and collisionMessage. Actor can handle collisionMessages.
+add interface to handle message in actor, but don't actually use messages now. I will add further support in the future until I totally understand message systems
+engine structure change, move actor, pawn and gameobject into Object/Entity, move Jobs/ into Object/Job, add Object/Message
+add mobility property into transform to replace isStatic in gameObject, support related functions in GameObject and Actor
+
+
+V1.13
+Add destroy behavior for actors, use worldManager to support destroy behaior
+Add constant move controller
+Add a lot of hardcode for simple gameplay, such as create bullets using space, collision events and so on
+support collision response with physics mass
+a bunch of debuging
+added a readme file in Solution Items Folder to explain gameplay															// Solution Items/Readme.txt
+

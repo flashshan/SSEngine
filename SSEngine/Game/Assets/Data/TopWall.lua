@@ -1,17 +1,17 @@
 Actor = 
 {
-	name = "RightWall",
+	name = "TopWall",
 	type = "Wall",
 	
 	mobility = "Static",
 	
 	boundingBox = {
-		center = {0, 0.0, 0.0},
-		extend = {20, 1200, 1.0}
+		center = {0.0, 10, 0.0},
+		extend = {1200, 20, 1.0}
 	},
 	
 	renderObject = {
-		path = "Assets\\Texture\\VerticalWall.dds",
+		path = "Assets\\Texture\\HorizonWall.dds",
 		priority = 0.0
 	},
 	

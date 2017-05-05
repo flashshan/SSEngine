@@ -106,7 +106,7 @@ template<> WeakPtr<Pawn> WorldManager::SpawnPawn<Pawn>(const Transform &i_transf
 }
 
 // work on jobs
-template<> WeakPtr<Actor> WorldManager::SpawnActorFromLua<Actor>(const char *i_luaFileName)
+template<> WeakPtr<Actor> WorldManager::SpawnActorFromLua<Actor>(const char *i_luaFileName, Transform &i_transform)
 {
 	lua_State * luaState = luaL_newstate();
 	ASSERT(luaState);
@@ -147,7 +147,7 @@ template<> WeakPtr<Actor> WorldManager::SpawnActorFromLua<Actor>(const char *i_l
 		actorType = _strdup(actorType);
 		lua_pop(luaState, 1);
 
-		lua_pushstring(luaState, "transform");
+		/*lua_pushstring(luaState, "transform");
 		type = lua_gettable(luaState, -2);
 		ASSERT(type == LUA_TTABLE);
 
@@ -174,19 +174,36 @@ template<> WeakPtr<Actor> WorldManager::SpawnActorFromLua<Actor>(const char *i_l
 		float scale[3] = { 0.0f };
 		ReadFloatArray(luaState, -1, scale, 3);
 		actorTransform.SetScale(Vector3(scale[0], scale[1], scale[2]));
-		lua_pop(luaState, 2);
+		lua_pop(luaState, 2);*/
 
-		lua_pushstring(luaState, "static");
+		lua_pushstring(luaState, "mobility");
 		type = lua_gettable(luaState, -2);
-		ASSERT(type == LUA_TBOOLEAN);
+		ASSERT(type == LUA_TSTRING);
 
-		int tempStatic = lua_toboolean(luaState, -1);
+		const char *mobilityStr = lua_tostring(luaState, -1);
+		if (strcmp(mobilityStr, "Movable") == 0)
+		{
+			i_transform.SetMobility(Mobility::EMovable);
+		}
+		else if (strcmp(mobilityStr, "Stationary") == 0)
+		{
+			i_transform.SetMobility(Mobility::EStationary);
+		}
+		else if (strcmp(mobilityStr, "Static") == 0)
+		{
+			i_transform.SetMobility(Mobility::EStatic);
+		}
+		else
+		{
+			ASSERT(false);
+		}
 		lua_pop(luaState, 1);
 
-		actor = new TRACK_NEW Actor(actorTransform, actorName, actorType, (tempStatic != 0));
+		actor = new TRACK_NEW Actor(i_transform, actorName, actorType);
 		ASSERT(actor != nullptr);
 		free(const_cast<char*>(actorName));
 		free(const_cast<char*>(actorType));
+
 
 		lua_pushstring(luaState, "boundingBox");
 		type = lua_gettable(luaState, -2);
@@ -302,7 +319,7 @@ template<> WeakPtr<Actor> WorldManager::SpawnActorFromLua<Actor>(const char *i_l
 }
 
 // work on jobs
-template<> WeakPtr<Pawn> WorldManager::SpawnPawnFromLua<Pawn>(const char *i_luaFileName)
+template<> WeakPtr<Pawn> WorldManager::SpawnPawnFromLua<Pawn>(const char *i_luaFileName, Transform &i_transform)
 {
 	lua_State * luaState = luaL_newstate();
 	ASSERT(luaState);
@@ -343,7 +360,7 @@ template<> WeakPtr<Pawn> WorldManager::SpawnPawnFromLua<Pawn>(const char *i_luaF
 		pawnType = _strdup(pawnType);
 		lua_pop(luaState, 1);
 
-		lua_pushstring(luaState, "transform");
+		/*lua_pushstring(luaState, "transform");
 		type = lua_gettable(luaState, -2);
 		ASSERT(type == LUA_TTABLE);
 
@@ -370,18 +387,37 @@ template<> WeakPtr<Pawn> WorldManager::SpawnPawnFromLua<Pawn>(const char *i_luaF
 		float scale[3] = { 0.0f };
 		ReadFloatArray(luaState, -1, scale, 3);
 		pawnTransform.SetScale(Vector3(scale[0], scale[1], scale[2]));
-		lua_pop(luaState, 2);
-	
-		lua_pushstring(luaState, "static");
+		lua_pop(luaState, 2);*/
+
+		lua_pushstring(luaState, "mobility");
 		type = lua_gettable(luaState, -2);
-		ASSERT(type == LUA_TBOOLEAN);
-		int tempStatic = lua_toboolean(luaState, -1);
+		ASSERT(type == LUA_TSTRING);
+
+		const char *mobilityStr = lua_tostring(luaState, -1);
+		if (strcmp(mobilityStr, "Movable") == 0)
+		{
+			i_transform.SetMobility(Mobility::EMovable);
+		}
+		else if (strcmp(mobilityStr, "Stationary") == 0)
+		{
+			i_transform.SetMobility(Mobility::EStationary);
+		}
+		else if (strcmp(mobilityStr, "Static") == 0)
+		{
+			i_transform.SetMobility(Mobility::EStatic);
+		}
+		else
+		{
+			ASSERT(false);
+		}
 		lua_pop(luaState, 1);
 
-		pawn = new TRACK_NEW Pawn(pawnTransform, pawnName, pawnType, (tempStatic != 0));
+		pawn = new TRACK_NEW Pawn(i_transform, pawnName, pawnType);
 		ASSERT(pawn != nullptr);
 		free(const_cast<char*>(pawnName));
 		free(const_cast<char*>(pawnType));
+
+		
 
 		lua_pushstring(luaState, "boundingBox");
 		type = lua_gettable(luaState, -2);
@@ -486,6 +522,13 @@ template<> WeakPtr<Pawn> WorldManager::SpawnPawnFromLua<Pawn>(const char *i_luaF
 			lua_pop(luaState, 2);
 		}
 
+		lua_pop(luaState, 1);
+
+		lua_pushstring(luaState, "HP");
+		type = lua_gettable(luaState, -2);
+		ASSERT(type == LUA_TNUMBER);
+		int32 hp = static_cast<int32>(lua_tonumber(luaState, -1));
+		pawn->SetHP(hp);
 		lua_pop(luaState, 2);
 
 		int stackHeight = lua_gettop(luaState);
@@ -591,5 +634,73 @@ void WorldManager::ActorsLateUpdate()
 	for (size_t i = 0; i < count; ++i)
 	{
 		pawns_[i]->LateUpdate();
+	}
+}
+
+void WorldManager::FrameEndDestroy()
+{
+	for (size_t i = 0; i < actors_.Size(); ++i)
+	{
+		if (actors_[i]->IsPendingKill())
+		{
+			if (actors_[i]->IsPendingOver())
+			{
+				actors_[i]->SetActive(false);
+				//actors_.NoOrderRemove(i);
+				//--i;
+			}
+			else
+			{
+				actors_[i]->UpdatePendingFrame();
+			}
+		}
+	}
+	for (size_t i = 0; i < players_.Size(); ++i)
+	{
+		if (players_[i]->IsPendingKill())
+		{
+			if (players_[i]->IsPendingOver())
+			{
+				players_[i]->SetActive(false);
+				//actors_.NoOrderRemove(i);
+				//--i;
+			}
+			else
+			{
+				players_[i]->UpdatePendingFrame();
+			}
+		}
+	}
+//  Player won't be destroyed unless playerController get deleted
+	for (size_t i = 0; i < pawns_.Size(); ++i)
+	{
+		if (pawns_[i]->IsPendingKill())
+		{
+			if (pawns_[i]->IsPendingOver())
+			{
+				pawns_[i]->SetActive(false);
+				//pawns_.NoOrderRemove(i);
+				//--i;
+			}
+			else
+			{
+				pawns_[i]->UpdatePendingFrame();
+			}
+		}
+	}
+}
+
+void WorldManager::DeleteAll()
+{
+	size_t count = actors_.Size();
+	for (size_t i = 0; i < count; ++i)
+	{
+		actors_[i]->DestroyActor();
+	}
+	//  Player won't be destroyed unless playerController get deleted
+	count = pawns_.Size();
+	for (size_t i = 0; i < count; ++i)
+	{
+		pawns_[i]->DestroyActor();
 	}
 }

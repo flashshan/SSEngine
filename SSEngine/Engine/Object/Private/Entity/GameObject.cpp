@@ -1,7 +1,14 @@
-#include "Object\GameObject.h"
+#include "Object\Entity\GameObject.h"
 #include "Manager\RealTimeManager.h"
 
 #include "SubSystem\Collision\CollisionObject.h"
+
+void GameObject::CalculateMatrix()
+{
+	objectToWorld_ = Matrix::CreateScale(transform_.GetScale()) * Matrix::CreateZRotation(Math::DegreesToRadians(transform_.GetRotation().Roll)) * Matrix::CreateTranslate(transform_.GetLocation());
+	worldToObject_ = objectToWorld_.GetInverse();
+}
+
 
 void GameObject::Update()
 {

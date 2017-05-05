@@ -22,8 +22,8 @@ public:
 
 	FORCEINLINE bool GetActive() const { return isActive_; }
 	FORCEINLINE void SetActive(bool i_value) { isActive_ = i_value; }
-	FORCEINLINE bool GetStatic() const { return isStatic_; }
-	FORCEINLINE void SetStatic(bool i_value) { isStatic_ = i_value; }
+	FORCEINLINE Mobility GetMobility() const { return transform_.GetMobility(); }
+	FORCEINLINE void SetMobility(Mobility i_mobility);
 	FORCEINLINE Actor *GetOwner() { return owner_; }
 	FORCEINLINE void SetOwner(Actor *i_actor) { owner_ = i_actor; }
 
@@ -49,6 +49,8 @@ public:
 	FORCEINLINE void SetObjectToWorld(const Matrix& i_matrix) { objectToWorld_ = i_matrix; }
 	FORCEINLINE Matrix GetWorldToObject() const { return worldToObject_; }
 	FORCEINLINE void SetWorldToObject(const Matrix& i_matrix) { worldToObject_ = i_matrix; }
+	
+	void CalculateMatrix();
 	void Update();
 	void Update(Array<CollideRecord> *i_record);
 
@@ -59,10 +61,7 @@ private:
 	Actor *owner_;
 	Transform transform_;
 	Box2D boundingBox_;
-	bool isStatic_;
 	bool isActive_;
-
-
 };
 
 
@@ -75,19 +74,19 @@ private:
 // implement forceinline
 // all gameObject are created with active = false
 inline GameObject::GameObject()
-	: velocity_(0.0f, 0.0f, 0.0f), transform_(Vector3(0.0f, 0.0f, 0.0f), Rotator(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f)), boundingBox_(), isStatic_(false), isActive_(false)
+	: velocity_(0.0f, 0.0f, 0.0f), transform_(Vector3(0.0f, 0.0f, 0.0f), Rotator(0.0f, 0.0f, 0.0f), Vector3(1.0f, 1.0f, 1.0f), Mobility::EMovable), boundingBox_(), isActive_(false)
 {
 }
 
 inline GameObject::GameObject(const Transform &i_transform, const Box2D &i_boundingBox, bool i_isStatic)
-	: velocity_(0.0f, 0.0f, 0.0f), transform_(i_transform), boundingBox_(i_boundingBox), isStatic_(i_isStatic), isActive_(false)
+	: velocity_(0.0f, 0.0f, 0.0f), transform_(i_transform), boundingBox_(i_boundingBox), isActive_(false)
 {
 }
 
 
 inline GameObject::GameObject(const GameObject &i_other)
 	: objectToWorld_(i_other.objectToWorld_), worldToObject_(i_other.worldToObject_), velocity_(i_other.velocity_), owner_(i_other.owner_),
-	transform_(i_other.transform_), boundingBox_(i_other.boundingBox_), isStatic_(i_other.isStatic_), isActive_(false)
+	transform_(i_other.transform_), boundingBox_(i_other.boundingBox_), isActive_(false)
 {
 }
 
@@ -101,7 +100,6 @@ inline GameObject::GameObject(GameObject &&i_other)
 	owner_ = i_other.owner_;
 	transform_ = i_other.transform_;
 	boundingBox_ = i_other.boundingBox_;
-	isStatic_ = i_other.isStatic_;
 }
 
 inline GameObject::~GameObject()
@@ -116,7 +114,6 @@ inline GameObject& GameObject::operator =(const GameObject &i_other)
 	owner_ = i_other.owner_;
 	transform_ = i_other.transform_;
 	boundingBox_ = i_other.boundingBox_;
-	isStatic_ = i_other.isStatic_;
 	isActive_ = false;
 	return *this;
 }
@@ -129,8 +126,16 @@ inline GameObject& GameObject::operator =(GameObject &&i_other)
 	owner_ = i_other.owner_;
 	transform_ = i_other.transform_;
 	boundingBox_ = i_other.boundingBox_;
-	isStatic_ = i_other.isStatic_;
 	isActive_ = false;
 	return *this;
 }
 
+
+FORCEINLINE void GameObject::SetMobility(Mobility i_mobility) 
+{ 
+	transform_.SetMobility(i_mobility);
+	if (i_mobility == Mobility::EStatic)
+	{
+		CalculateMatrix();
+	}
+}

@@ -21,9 +21,15 @@ public:
 	virtual void Update() override;
 	virtual void LateUpdate() override;
 
+	// hardcode stuff for HP
+	FORCEINLINE void TakeDamage() { --HP_; }
+	FORCEINLINE void SetHP(int i_hp) { HP_ = i_hp; }
+	FORCEINLINE int32 GetHP() { return HP_; };
+	
 private:
 	// Controller's life cycle is longer than pawn
 	WeakPtr<IController> controller_;
+	int32 HP_;
 };
 
 

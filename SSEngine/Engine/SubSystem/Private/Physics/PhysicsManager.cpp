@@ -5,8 +5,7 @@ PhysicsManager *PhysicsManager::globalInstance_ = nullptr;
 
 void PhysicsManager::PhysicsUpdate()
 {
-	size_t count = physicsElements_.Size();
-	for(size_t i=0; i<count;++i)
+	for(size_t i=0; i<physicsElements_.Size(); ++i)
 	{
 		if (physicsElements_[i].Pointer->IsValid())
 		{

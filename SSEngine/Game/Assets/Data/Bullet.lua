@@ -1,29 +1,27 @@
-Pawn = 
+Actor = 
 {
-	name = "Player1",
-	type = "Player",
+	name = "Bullet1",
+	type = "Bullet",
 	
 	mobility = "Movable",
 	
 	boundingBox = {
 		center = {0.0, 0.0, 0.0},
-		extend = {4.5, 4.5, 0.0}
+		extend = {1.5, 1.5, 1.0}
 	},
 	
 	renderObject = {
-		path = "Assets\\Texture\\Player.dds",
-		priority = 3000
+		path = "Assets\\Texture\\Bullet.dds",
+		priority = 0.0
 	},
 	
 	physicsObject = {
-		mass = 1.0,
-		drag = 0.001
+		mass = 0.05,
+		drag = 0.0001
 	},
 	
 	collisionObject = {
 		collideType = "Block",
 		active = true
 	},
-	
-	HP = 2,
 }

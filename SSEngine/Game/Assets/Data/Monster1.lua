@@ -3,17 +3,11 @@ Pawn =
 	name = "Monster1",
 	type = "FocusMoveMonster",
 	
-	transform = {
-		 location = {-100, -100, 0.0},
-		 rotation = {0.0, 0.0, 0},
-		 scale = {1.0, 1.0, 1.0}
-	},
-	
-	static = false,
+	mobility = "Movable",
 	
 	boundingBox = {
 		center = {0.0, 0.0, 0.0},
-		extend = {1.5, 1.5, 0.0}
+		extend = {3, 3, 0.0}
 	},
 	
 	renderObject = {
@@ -25,4 +19,6 @@ Pawn =
 		collideType = "Block",
 		active = true
 	},
+	
+	HP = 2,
 }

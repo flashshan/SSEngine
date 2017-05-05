@@ -1,5 +1,5 @@
 #include "Controller\RandomMoveController.h"
-#include "Object\Pawn.h"
+#include "Object\Entity\Pawn.h"
 
 RandomMoveController::~RandomMoveController()
 {
@@ -16,5 +16,5 @@ void RandomMoveController::UpdateController()
 void RandomMoveController::randomMovePawn()
 {
 	const float speed = 20.0f;
-	(*pawn_).SetActorVelocity(Vector3(Vector2::RandomNormal() * speed));
+	pawn_->SetActorVelocity(Vector3(Vector2::RandomNormal() * speed));
 }

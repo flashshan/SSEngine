@@ -2,7 +2,7 @@
 
 #include "Core\Template\Array.h"
 #include "Core\Template\Pointers.h"
-#include "Object\GameObject.h"
+#include "Object\Entity\GameObject.h"
 
 enum class CollisionType : uint8{
 	EBlock,
@@ -19,7 +19,7 @@ struct CollideRecord {
 
 class CollisionObject {
 public:
-	static const int32 maxCollideTimesWithinFrame = 5;
+	static const int32 maxCollideTimesWithinFrame = 10;
 
 	explicit FORCEINLINE CollisionObject(const WeakPtr<GameObject> &i_gameOject, CollisionType i_collideType = CollisionType::EBlock, bool i_active = true);
 	FORCEINLINE ~CollisionObject();
@@ -40,10 +40,11 @@ public:
 	FORCEINLINE bool GetIsCollide() { return collideLastFrame_; }
 	FORCEINLINE void AddCollideRecord(const CollideRecord &i_record) { collideInfoLastFrame_.Add(i_record); }
 	FORCEINLINE Array<CollideRecord>* GetCollideRecord() { return &collideInfoLastFrame_; }
+	
+	FORCEINLINE void ResetCollideinfo();
 
 private:
 	void handleCollisionWith(CollisionObject& i_other);
-	FORCEINLINE void resetCollideinfo();
 
 	WeakPtr<GameObject> gameObject_;
 	CollisionType collideType_;
@@ -102,7 +103,7 @@ FORCEINLINE bool CollisionObject::IsValid() const
 	return gameObject_;
 }
 
-FORCEINLINE void CollisionObject::resetCollideinfo()
+FORCEINLINE void CollisionObject::ResetCollideinfo()
 {
 	collideLastFrame_ = false;
 	collideInfoLastFrame_.Clear();

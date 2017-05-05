@@ -168,14 +168,14 @@ FORCEINLINE Vector3 Vector3::operator |(const Vector3 &i_vector) const
 
 FORCEINLINE float Vector3::Distance(const Vector3 &i_vector1, const Vector3 &i_vector2)
 {
-	return static_cast<float>(sqrt((i_vector1.X - i_vector2.X) * (i_vector1.X - i_vector2.X) +
+	return sqrtf((i_vector1.X - i_vector2.X) * (i_vector1.X - i_vector2.X) +
 		(i_vector1.Y - i_vector2.Y) * (i_vector1.Y - i_vector2.Y) +
-		(i_vector1.Z - i_vector2.Z) * (i_vector1.Z - i_vector2.Z)));
+		(i_vector1.Z - i_vector2.Z) * (i_vector1.Z - i_vector2.Z));
 }
 
 FORCEINLINE float Vector3::Distance(const Vector3 &i_vector) const
 {
-	return static_cast<float>(sqrt((X - i_vector.X) * (X - i_vector.X) + (Y - i_vector.Y) * (Y - i_vector.Y) + (Z - i_vector.Z) * (Z - i_vector.Z)));
+	return sqrtf((X - i_vector.X) * (X - i_vector.X) + (Y - i_vector.Y) * (Y - i_vector.Y) + (Z - i_vector.Z) * (Z - i_vector.Z));
 }
 
 FORCEINLINE float Vector3::Length() const

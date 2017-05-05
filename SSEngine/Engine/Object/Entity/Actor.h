@@ -6,6 +6,7 @@
 #include "SubSystem\Collision\CollisionManager.h"
 #include "Component\IComponent.h"
 #include "Core\String\StringPool.h"
+#include "Object\Message\IMessage.h"
 
 #define NAME_LENGTH  50
 
@@ -21,16 +22,14 @@ public:
 	inline Actor& operator =(const Actor &i_other);
 	inline Actor& operator =(Actor &&i_other);
 
-	void InitCalculation();
-
 	FORCEINLINE const char *GetName() const { return name_; }
-	FORCEINLINE HashedString GetType() const { return type_; }
+	FORCEINLINE HashedString GetType() const { return HashedString(type_); }
 	FORCEINLINE WeakPtr<GameObject> GetGameObject() const { return gameObject_; }
 
 	FORCEINLINE void SetName(const char *i_name) { name_ = i_name ? StringPool::GetInstance()->add(i_name) : StringPool::GetInstance()->add(""); }
 	FORCEINLINE void SetType(const char *i_type) { type_ = i_type ? StringPool::GetInstance()->add(i_type) : StringPool::GetInstance()->add(""); }
 	FORCEINLINE bool IsType(const char *i_type) { return (strcmp(type_, i_type) == 0); }
-	
+
 	FORCEINLINE bool GetCanCollide() const;
 	FORCEINLINE void EnableCollision(bool i_value);
 	FORCEINLINE bool GetActive() const { return isActive_; }
@@ -54,6 +53,7 @@ public:
 
 	FORCEINLINE void AddForce(const Vector3 &i_force);
 
+	void InitCalculation();
 	void PreCalculation();
 	virtual void EarlyUpdate() {}    // TO DO
 	virtual void Update() {}
@@ -62,19 +62,31 @@ public:
 
 	FORCEINLINE void AddRenderObject(const RenderObject &i_renderObject);
 	FORCEINLINE void RemoveRenderObject();
+	FORCEINLINE void SetRenderObject(const WeakPtr<RenderObject> &i_renderObject) { renderObject_ = i_renderObject; }
 	FORCEINLINE WeakPtr<RenderObject> GetRenderObject() { return renderObject_; }
 
 	FORCEINLINE void AddPhysicsObject(const PhysicsObject &i_physicsObject);
 	FORCEINLINE void RemovePhysicsObject();
+	FORCEINLINE void SetPhysicsObject(const WeakPtr<PhysicsObject> &i_physicsObject) { physicsObject_ = i_physicsObject; }
 	FORCEINLINE WeakPtr<PhysicsObject> GetPhysicsObject() { return physicsObject_; }
 
 	FORCEINLINE void AddCollisionObject(const CollisionObject &i_collisionObject);
 	FORCEINLINE void RemoveCollisionObject();
+	FORCEINLINE void SetCollisionObject(const WeakPtr<CollisionObject> &i_collisionObject_) { collisionObject_ = i_collisionObject_; }
 	FORCEINLINE WeakPtr<CollisionObject> GetCollisionObject() { return collisionObject_; }
+
+	FORCEINLINE void HandleMessage(const IMessage &i_message);
+
+	FORCEINLINE void DestroyActor(uint32 i_frames = 0);
+	FORCEINLINE void UpdatePendingFrame();
+	FORCEINLINE bool IsPendingKill() const;
+	FORCEINLINE bool IsPendingOver() const;
+
 private:
 
 	const char *name_;
 	const char *type_;
+	int32 pendingKillFrames_;   // pendingKill frames
 	bool isActive_;
 	//uint32 guid_;
 
@@ -96,39 +108,45 @@ private:
 // implement forceinline
 // all actors are created with active = false
 inline Actor::Actor()
-	: name_(StringPool::GetInstance()->add("defaultName")), type_(StringPool::GetInstance()->add("defaultType")), isActive_(false),
-	gameObject_(new TRACK_NEW GameObject()), renderObject_(nullptr), physicsObject_(nullptr), collisionObject_(nullptr)
+	: name_(StringPool::GetInstance()->add("defaultName")), type_(StringPool::GetInstance()->add("defaultType")), isActive_(false), pendingKillFrames_(-1),
+	gameObject_(new (NewAlignment::EAlign16) GameObject()), renderObject_(nullptr), physicsObject_(nullptr), collisionObject_(nullptr)
 {
 	gameObject_->SetOwner(this);
-	if (gameObject_->GetStatic())
+	InitCalculation();
+
+	/*if (gameObject_->GetMobility() == Mobility::EStatic)
 	{
-		InitCalculation();
-	}
+	}*/
 }
 
 inline Actor::Actor(const Transform &i_transform, const char *i_name, const char *i_type, bool i_static)
-	: name_(StringPool::GetInstance()->add(i_name)), type_(StringPool::GetInstance()->add(i_type)), isActive_(false),
-	gameObject_(new TRACK_NEW GameObject(i_transform, Box2D(), i_static)), renderObject_(nullptr), physicsObject_(nullptr), collisionObject_(nullptr)
+	: name_(StringPool::GetInstance()->add(i_name)), type_(StringPool::GetInstance()->add(i_type)), isActive_(false), pendingKillFrames_(-1),
+	gameObject_(new (NewAlignment::EAlign16) GameObject(i_transform, Box2D(), i_static)), renderObject_(nullptr), physicsObject_(nullptr), collisionObject_(nullptr)
 {
 	gameObject_->SetOwner(this);
-	if (gameObject_->GetStatic())
+	InitCalculation();
+
+	/*if (gameObject_->GetMobility() == Mobility::EStatic)
 	{
 		InitCalculation();
-	}
+	}*/
 }
 
+// active is not copied because they are controlled by managers
 inline Actor::Actor(const Actor &i_other)
-	: name_(i_other.name_), type_(i_other.type_), isActive_(false),
+	: name_(i_other.name_), type_(i_other.type_), isActive_(false), pendingKillFrames_(i_other.pendingKillFrames_),
 	gameObject_(i_other.gameObject_), renderObject_(i_other.renderObject_), collisionObject_(i_other.collisionObject_), components_(i_other.components_)
 {
 	gameObject_->SetOwner(this);
 }
 
+// no use for current version since actor don't hold resources
 inline Actor::Actor(Actor &&i_other)
 	: isActive_(false)
 {
 	name_ = i_other.name_;
 	type_ = i_other.type_;
+	pendingKillFrames_ = i_other.pendingKillFrames_;
 	Basic::Swap(gameObject_, i_other.gameObject_);
 	Basic::Swap(renderObject_, i_other.renderObject_);
 	Basic::Swap(collisionObject_, i_other.collisionObject_);
@@ -142,6 +160,7 @@ inline Actor& Actor::operator =(const Actor &i_other)
 	name_ = i_other.name_; 
 	type_ = i_other.type_;
 	isActive_ = false;
+	pendingKillFrames_ = i_other.pendingKillFrames_;
 	gameObject_ = i_other.gameObject_; 
 	renderObject_ = i_other.renderObject_;
 	collisionObject_ = i_other.collisionObject_;
@@ -149,11 +168,13 @@ inline Actor& Actor::operator =(const Actor &i_other)
 	return *this;
 }
 
+// no use for current version since actor don't hold resources
 inline Actor& Actor::operator =(Actor &&i_other)
 {
 	name_ = i_other.name_;
 	type_ = i_other.type_;
 	isActive_ = false;
+	pendingKillFrames_ = i_other.pendingKillFrames_;
 	Basic::Swap(gameObject_, i_other.gameObject_);
 	Basic::Swap(renderObject_, i_other.renderObject_);
 	Basic::Swap(collisionObject_, i_other.collisionObject_);
@@ -247,5 +268,37 @@ FORCEINLINE void Actor::AddForce(const Vector3 &i_force)
 		physicsObject_->SetForce(i_force);
 	}
 }
+FORCEINLINE void Actor::HandleMessage(const IMessage &i_message)
+{
+	switch (i_message.GetType())
+	{
+	case MessageType::ECollision :
+	{
+		// TO DO
+	}
+	break;
+	default :
+		break;
+	}
+}
 
 
+FORCEINLINE void Actor::DestroyActor(uint32 i_frames)
+{
+	pendingKillFrames_ = i_frames; 
+}
+
+FORCEINLINE void Actor::UpdatePendingFrame()
+{ 
+	--pendingKillFrames_; 
+}
+
+FORCEINLINE bool Actor::IsPendingKill() const
+{ 
+	return pendingKillFrames_ >= 0; 
+}
+
+FORCEINLINE bool Actor::IsPendingOver() const
+{ 
+	return pendingKillFrames_ == 0; 
+}

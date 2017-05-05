@@ -10,17 +10,19 @@
 class CollisionManager
 {
 public:
-	static const int32 maxCollisionObjects = 100;
+	static const int32 maxCollisionObjects = 200;
 
 	static FORCEINLINE CollisionManager *CreateInstance();
 	static FORCEINLINE CollisionManager *GetInstance();
 	static FORCEINLINE void DestroyInstance();
 	inline ~CollisionManager();
 
+	// now have trouble with handling more than 2 objects collide within a frame
 	void CollisionUpdate();
+
 	FORCEINLINE WeakPtr<CollisionObject> AddCollisionObject(const CollisionObject &i_collisionObject);
 	void Remove(const WeakPtr<CollisionObject> &i_collisionObject);
-	FORCEINLINE void RemoveByIndex(size_t i_index);
+	void RemoveByIndex(size_t i_index);
 
 private:
 	FORCEINLINE CollisionManager();
@@ -74,12 +76,6 @@ inline CollisionManager::~CollisionManager()
 	collisionElements_.Clear();
 }
 
-FORCEINLINE void CollisionManager::RemoveByIndex(size_t i_index)
-{
-	EnterCriticalSection(&criticalSection_);
-	collisionElements_.NoOrderRemove(i_index);
-	LeaveCriticalSection(&criticalSection_);
-}
 
 FORCEINLINE WeakPtr<CollisionObject> CollisionManager::AddCollisionObject(const CollisionObject &i_collisionObject)
 {
