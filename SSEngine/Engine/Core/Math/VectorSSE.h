@@ -2,6 +2,8 @@
 
 #include "Vector4.h"
 
+#include <emmintrin.h>
+
 struct Matrix;
 
 // an encapsulation of __m128

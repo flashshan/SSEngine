@@ -354,7 +354,7 @@ template<typename T> FORCEINLINE void WeakPtr<T>::Prefetch() const
 
 
 
-template<typename T> FORCEINLINE UniquePtr<T>::UniquePtr(T * i_ptr = nullptr)
+template<typename T> FORCEINLINE UniquePtr<T>::UniquePtr(T * i_ptr)
 	: object_(i_ptr)
 {
 }

@@ -3,6 +3,7 @@
 #include "BasicTypes.h"
 #include "Assert.h"
 
+#include <xmmintrin.h>
 
 namespace Basic {
 	template<typename T> FORCEINLINE void Swap(T &i_Left, T &i_Right);
