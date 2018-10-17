@@ -147,35 +147,6 @@ template<> WeakPtr<Actor> WorldManager::SpawnActorFromLua<Actor>(const char *i_l
 		actorType = _strdup(actorType);
 		lua_pop(luaState, 1);
 
-		/*lua_pushstring(luaState, "transform");
-		type = lua_gettable(luaState, -2);
-		ASSERT(type == LUA_TTABLE);
-
-		Transform actorTransform;
-		lua_pushstring(luaState, "location");
-		type = lua_gettable(luaState, -2);
-		ASSERT(type == LUA_TTABLE);
-		float location[3] = { 0.0f };
-		ReadFloatArray(luaState, -1, location, 3);
-		actorTransform.SetLocation(Vector3(location[0], location[1], location[2]));
-		lua_pop(luaState, 1);
-
-		lua_pushstring(luaState, "rotation");
-		type = lua_gettable(luaState, -2);
-		ASSERT(type == LUA_TTABLE);
-		float rotation[3] = { 0.0f };
-		ReadFloatArray(luaState, -1, rotation, 3);
-		actorTransform.SetRotation(Rotator(rotation[0], rotation[1], rotation[2]));
-		lua_pop(luaState, 1);
-
-		lua_pushstring(luaState, "scale");
-		type = lua_gettable(luaState, -2);
-		ASSERT(type == LUA_TTABLE);
-		float scale[3] = { 0.0f };
-		ReadFloatArray(luaState, -1, scale, 3);
-		actorTransform.SetScale(Vector3(scale[0], scale[1], scale[2]));
-		lua_pop(luaState, 2);*/
-
 		lua_pushstring(luaState, "mobility");
 		type = lua_gettable(luaState, -2);
 		ASSERT(type == LUA_TSTRING);

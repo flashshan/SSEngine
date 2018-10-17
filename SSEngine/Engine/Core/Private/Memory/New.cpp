@@ -15,7 +15,6 @@ void * operator new(size_t i_size)
 void operator delete(void * i_ptr)
 {
 	DEBUG_PRINT("Calling delete( void * ) with ( %" PRIxPTR " ).\n", i_ptr);
-
 	if (i_ptr)
 	{
 		HeapManager::GetInstance()->Free(i_ptr);

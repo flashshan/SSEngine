@@ -404,7 +404,7 @@ void HeapAllocator::collect()
 	LeaveCriticalSection(&criticalSection_);
 }
 
-size_t	HeapAllocator::getLargestFreeBlock() const
+size_t	HeapAllocator::GetLargestFreeBlock() const
 {
 	size_t res = 0;
 	BlockDescriptor *temp = freeList_;
@@ -417,7 +417,7 @@ size_t	HeapAllocator::getLargestFreeBlock() const
 	return res;
 }
 
-size_t  HeapAllocator::getLargestUsedBlock() const
+size_t  HeapAllocator::GetLargestUsedBlock() const
 {
 	size_t res = 0;
 	BlockDescriptor *temp = usedList_;
@@ -430,7 +430,7 @@ size_t  HeapAllocator::getLargestUsedBlock() const
 	return res;
 }
 
-size_t	HeapAllocator::getTotalFreeMemory() const
+size_t	HeapAllocator::GetTotalFreeMemory() const
 {
 	size_t res = 0;
 	BlockDescriptor *temp = freeList_;
@@ -442,7 +442,7 @@ size_t	HeapAllocator::getTotalFreeMemory() const
 	return res;
 }
 
-size_t	HeapAllocator::getTotalUsedMemory() const
+size_t	HeapAllocator::GetTotalUsedMemory() const
 {
 	size_t res = 0;
 	BlockDescriptor *temp = usedList_;
@@ -454,7 +454,7 @@ size_t	HeapAllocator::getTotalUsedMemory() const
 	return res;
 }
 
-uint32 HeapAllocator::getFreeCount() const
+uint32 HeapAllocator::GetFreeCount() const
 {
 	uint32 res = 0;
 	BlockDescriptor *temp = freeList_;
@@ -466,7 +466,7 @@ uint32 HeapAllocator::getFreeCount() const
 	return res;
 }
 
-uint32 HeapAllocator::getUsedCount() const
+uint32 HeapAllocator::GetUsedCount() const
 {
 	uint32 res = 0;
 	BlockDescriptor *temp = usedList_;

@@ -16,10 +16,18 @@
 #include <stdint.h>
 #include <string.h>
 
+
+
 #include "Manager\InputManager.h"
 #include "Manager\RealTimeManager.h"
 #include "Manager\WorldManager.h"
+
+#include "Core\Basic\ErrorMessage.h"
 #include "Core\Basic\LuaData.h"
+
+#include "Core\Memory\HeapAllocator.h"
+#include "Core\Memory\FixedSizeAllocator.h"
+
 #include "Core\Basic\FileIO.h"
 #include "Core\Template\CircleQueue.h"
 #include "Core\Template\List.h"
@@ -32,14 +40,16 @@
 
 // for Unit_test
 
-//#define TestHeapManager
+#define TestHeapManager
 //#define TestVector
-//#define TestFixedAllocator
+#define TestFixedAllocator
 //#define TestBitArray
-#define TestContainer
+//#define TestContainer
 //#define TestSmartPointer
 //#define TestMatrix
 //#define TestLua
+
+//#define TEST_SINGLE_LARGE_ALLOCATION
 
 
 #ifdef TestHeapManager
@@ -54,48 +64,50 @@ bool HeapManager_UnitTest()
 	assert(pHeapMemory);
 
 	// Create a heap manager for my test heap.
-	HeapManager * pHeapManager = HeapManager::CreateHeapManager(pHeapMemory, sizeHeap, numDescriptors);
-	assert(pHeapManager);
+	HeapAllocator * pHeapAllocator = HeapAllocator ::Create(pHeapMemory, sizeHeap, numDescriptors);
+	assert(pHeapAllocator);
 
-	if (pHeapManager == nullptr)
+	if (pHeapAllocator == nullptr)
 		return false;
 
 #ifdef TEST_SINGLE_LARGE_ALLOCATION
 	// This is a test I wrote to check to see if using the whole block if it was almost consumed by 
 	// an allocation worked. Also helped test my ShowFreeBlocks() and ShowOutstandingAllocations().
 	{
-		ShowFreeBlocks(pHeapManager);
+		const size_t MinToLeave = 50;
 
-		size_t largestBeforeAlloc = GetLargestFreeBlock(pHeapManager);
-		void * pPtr = alloc(pHeapManager, largestBeforeAlloc - HeapManager::s_MinumumToLeave);
+		pHeapAllocator->ShowFreeBlocks();
+
+		size_t largestBeforeAlloc = pHeapAllocator->GetLargestFreeBlock();
+		void * pPtr = pHeapAllocator->alloc(largestBeforeAlloc - MinToLeave);
 
 		if (pPtr)
 		{
-			ShowFreeBlocks(pHeapManager);
+			pHeapAllocator->ShowFreeBlocks();
 			printf("\n");
 #ifdef __TRACK_ALLOCATIONS
 			ShowOutstandingAllocations(pHeapManager);
 #endif // __TRACK_ALLOCATIONS
 			printf("\n");
 
-			size_t largestAfterAlloc = GgetLargestFreeBlock(pHeapManager);
-			free(pHeapManager, pPtr);
+			size_t largestAfterAlloc = pHeapAllocator->GetLargestFreeBlock();
+			pHeapAllocator->free(pPtr);
 
-			ShowFreeBlocks(pHeapManager);
+			pHeapAllocator->ShowFreeBlocks();
 #ifdef __TRACK_ALLOCATIONS
 			ShowOutstandingAllocations(pHeapManager);
 #endif // __TRACK_ALLOCATIONS
 			printf("\n");
 
-			Collect(pHeapManager);
+			pHeapAllocator->collect();
 
-			ShowFreeBlocks(pHeapManager);
+			pHeapAllocator->ShowFreeBlocks();
 #ifdef __TRACK_ALLOCATIONS
 			ShowOutstandingAllocations(pHeapManager);
 #endif // __TRACK_ALLOCATIONS
 			printf("\n");
 
-			size_t largestAfterCollect = GetLargestFreeBlock(pHeapManager);
+			size_t largestAfterCollect = pHeapAllocator->GetLargestFreeBlock();
 		}
 	}
 #endif
@@ -109,8 +121,8 @@ bool HeapManager_UnitTest()
 	bool	done = false;
 
 	printf_s("Start test HeapManager.\n");
-	pHeapManager->ShowFreeBlocks();
-	pHeapManager->ShowUsedBlocks();
+	pHeapAllocator->ShowFreeBlocks();
+	pHeapAllocator->ShowUsedBlocks();
 
 	// allocate memory of random sizes up to 1024 bytes from the heap manager
 	// until it runs out of memory
@@ -126,15 +138,15 @@ bool HeapManager_UnitTest()
 
 		size_t			sizeAlloc = 1 + (rand() & (maxTestAllocationSize - 1));
 
-		void * pPtr = pHeapManager->alloc(sizeAlloc, alignment);
+		void * pPtr = pHeapAllocator->alloc(sizeAlloc, alignment);
 
 		assert((reinterpret_cast<uintptr_t>(pPtr) & (alignment - 1)) == 0);
 
 		if (pPtr == nullptr)
 		{
-			pHeapManager->collect();
+			pHeapAllocator->collect();
 
-			pPtr = pHeapManager->alloc(sizeAlloc, alignment);
+			pPtr = pHeapAllocator->alloc(sizeAlloc, alignment);
 
 			if (pPtr == nullptr)
 			{
@@ -155,7 +167,7 @@ bool HeapManager_UnitTest()
 			void * pPtr = AllocatedAddresses.back();
 			AllocatedAddresses.pop_back();
 
-			bool success = pHeapManager->free(pPtr);
+			bool success = pHeapAllocator->free(pPtr);
 			assert(success);
 
 			numFrees++;
@@ -163,7 +175,7 @@ bool HeapManager_UnitTest()
 
 		if ((rand() % garbageCollectAboutEvery) == 0)
 		{
-			pHeapManager->collect();
+			pHeapAllocator->collect();
 
 			numCollects++;
 		}
@@ -172,8 +184,8 @@ bool HeapManager_UnitTest()
 
 	printf("After exhausting allocations:\n");
 
-	pHeapManager->ShowFreeBlocks();
-	pHeapManager->ShowUsedBlocks();
+	pHeapAllocator->ShowFreeBlocks();
+	pHeapAllocator->ShowUsedBlocks();
 
 #ifdef __TRACK_ALLOCATIONS
 	//pHeapManager->ShowOutstandingAllocations();
@@ -192,49 +204,49 @@ bool HeapManager_UnitTest()
 			void * pPtr = AllocatedAddresses.back();
 			AllocatedAddresses.pop_back();
 
-			bool success = pHeapManager->Contains(pPtr);
+			bool success = pHeapAllocator->Contains(pPtr);
 			assert(success);
 
-			success = pHeapManager->IsAllocated(pPtr);
+			success = pHeapAllocator->IsAllocated(pPtr);
 			assert(success);
 
-			success = pHeapManager->free(pPtr);
+			success = pHeapAllocator->free(pPtr);
 			assert(success);
 		}
 
 		printf("After freeing allocations:\n");
 
-		pHeapManager->ShowFreeBlocks();
-		pHeapManager->ShowUsedBlocks();
+		pHeapAllocator->ShowFreeBlocks();
+		pHeapAllocator->ShowUsedBlocks();
 #ifdef __TRACK_ALLOCATIONS
 		//ShowOutstandingAllocations(pHeapManager);
 #endif // __TRACK_ALLOCATIONS
 
 		// do garbage collection
-		pHeapManager->collect();
+		pHeapAllocator->collect();
 		// our heap should be one single block, all the memory it started with
 
 		printf("After garbage collection:\n");
 
-		pHeapManager->ShowFreeBlocks();
-		pHeapManager->ShowUsedBlocks();
+		pHeapAllocator->ShowFreeBlocks();
+		pHeapAllocator->ShowUsedBlocks();
 #ifdef __TRACK_ALLOCATIONS
 		//ShowOutstandingAllocations(pHeapManager);
 #endif // __TRACK_ALLOCATIONS
 
 		printf("\n");		// do a large test allocation to see if garbage collection worked
-		void * pPtr = pHeapManager->alloc(sizeHeap / 2);
+		void * pPtr = pHeapAllocator->alloc(sizeHeap / 2);
 		assert(pPtr);
 
 		if (pPtr)
 		{
-			bool success = pHeapManager->free(pPtr);
+			bool success = pHeapAllocator->free(pPtr);
 			assert(success);
 		}
 	}
 
-	pHeapManager->destroy();
-	pHeapManager = nullptr;
+	pHeapAllocator->~HeapAllocator();
+	pHeapAllocator = nullptr;
 
 	_aligned_free(pHeapMemory);
 
@@ -422,13 +434,13 @@ bool FixedAllocator_UnitTest()
 
 	// Allocate memory for my test heap.
 	void * pHeapMemory = _aligned_malloc(sizeHeap, defaultAlignment);
-	SLOW_ASSERT(pHeapMemory, ErrorMessage::kNullPointer);
+	SLOW_ASSERT(pHeapMemory, ErrorType::ENullPointer);
 
 	// Create a heap manager for my test heap.
-	HeapManager * pHeapManager = HeapManager::CreateHeapManager(pHeapMemory, sizeHeap, numDescriptors);
-	SLOW_ASSERT(pHeapManager, ErrorMessage::kNullPointer);
+	HeapAllocator * pHeapAllocator = HeapAllocator::Create(pHeapMemory, sizeHeap, numDescriptors);
+	SLOW_ASSERT(pHeapAllocator, ErrorType::ENullPointer);
 
-	if (pHeapManager == nullptr)
+	if (pHeapAllocator == nullptr)
 		return false;
 
 	printf_s("Alloc FixedAllocators.\n");
@@ -447,11 +459,11 @@ bool FixedAllocator_UnitTest()
 	size_t fixedMemorySize32 = fixedBlockNumber32 * 32 + additionalSize;
 	size_t fixedMemorySize64 = fixedBlockNumber64 * 64 + additionalSize;
 
-	void *fixedMemoryBase4 = pHeapManager->alloc(fixedMemorySize8, 4);
-	void *fixedMemoryBase8 = pHeapManager->alloc(fixedMemorySize8, 8);
-	void *fixedMemoryBase16 = pHeapManager->alloc(fixedMemorySize16, 16);
-	void *fixedMemoryBase32 = pHeapManager->alloc(fixedMemorySize32, 32);
-	void *fixedMemoryBase64 = pHeapManager->alloc(fixedMemorySize64, 64);
+	void *fixedMemoryBase4 = pHeapAllocator->alloc(fixedMemorySize8, 4);
+	void *fixedMemoryBase8 = pHeapAllocator->alloc(fixedMemorySize8, 8);
+	void *fixedMemoryBase16 = pHeapAllocator->alloc(fixedMemorySize16, 16);
+	void *fixedMemoryBase32 = pHeapAllocator->alloc(fixedMemorySize32, 32);
+	void *fixedMemoryBase64 = pHeapAllocator->alloc(fixedMemorySize64, 64);
 
 	FixedSizeAllocator *fixedAllocator4 = FixedSizeAllocator::Create(fixedMemoryBase4, fixedMemorySize4, fixedBlockNumber4, 4);
 	FixedSizeAllocator *fixedAllocator8 = FixedSizeAllocator::Create(fixedMemoryBase8, fixedMemorySize8, fixedBlockNumber8, 8);
@@ -467,8 +479,8 @@ bool FixedAllocator_UnitTest()
 
 	bool	done = false;
 
-	pHeapManager->ShowFreeBlocks();
-	pHeapManager->ShowUsedBlocks();
+	pHeapAllocator->ShowFreeBlocks();
+	pHeapAllocator->ShowUsedBlocks();
 
 	// allocate memory of random sizes up to 1024 bytes from the heap manager
 	// until it runs out of memory
@@ -508,14 +520,13 @@ bool FixedAllocator_UnitTest()
 			ptr = fixedAllocator64->alloc();
 
 		if (ptr == nullptr || sizeAlloc > 64)
-			ptr = pHeapManager->alloc(sizeAlloc, defaultAlignment);
+			ptr = pHeapAllocator->alloc(sizeAlloc, defaultAlignment);
 
 		if (ptr == nullptr)
 		{
+			pHeapAllocator->collect();
 
-			pHeapManager->collect();
-
-			ptr = pHeapManager->alloc(sizeAlloc, defaultAlignment);
+			ptr = pHeapAllocator->alloc(sizeAlloc, defaultAlignment);
 
 			if (ptr == nullptr)
 			{
@@ -548,7 +559,7 @@ bool FixedAllocator_UnitTest()
 			else if (fixedAllocator64->Contains(pPtr))
 				success = fixedAllocator64->free(pPtr);
 			else
-				success = pHeapManager->free(pPtr);
+				success = pHeapAllocator->free(pPtr);
 			assert(success);
 
 			numFrees++;
@@ -556,7 +567,7 @@ bool FixedAllocator_UnitTest()
 
 		if ((rand() % garbageCollectAboutEvery) == 0)
 		{
-			pHeapManager->collect();
+			pHeapAllocator->collect();
 
 			numCollects++;
 		}
@@ -566,8 +577,8 @@ bool FixedAllocator_UnitTest()
 	printf("After exhausting allocations:\n");
 	printf("Total allocation times %d.\n\n", numAllocs);
 
-	pHeapManager->ShowFreeBlocks();
-	pHeapManager->ShowUsedBlocks();
+	pHeapAllocator->ShowFreeBlocks();
+	pHeapAllocator->ShowUsedBlocks();
 
 	printf("\n");
 
@@ -628,9 +639,9 @@ bool FixedAllocator_UnitTest()
 			}
 			else
 			{
-				success = pHeapManager->IsAllocated(pPtr);
+				success = pHeapAllocator->IsAllocated(pPtr);
 				assert(success);
-				success = pHeapManager->free(pPtr);
+				success = pHeapAllocator->free(pPtr);
 				assert(success);
 			}
 		}
@@ -638,40 +649,40 @@ bool FixedAllocator_UnitTest()
 		printf("After freeing allocations:\n");
 
 		// do garbage collection
-		pHeapManager->collect();
+		pHeapAllocator->collect();
 
-		pHeapManager->ShowFreeBlocks();
-		pHeapManager->ShowUsedBlocks();
+		pHeapAllocator->ShowFreeBlocks();
+		pHeapAllocator->ShowUsedBlocks();
 
 		printf("Freeing fixed size allocators\n");
 
-		pHeapManager->free(fixedAllocator4);
-		pHeapManager->free(fixedAllocator8);
-		pHeapManager->free(fixedAllocator16);
-		pHeapManager->free(fixedAllocator32);
-		pHeapManager->free(fixedAllocator64);
+		pHeapAllocator->free(fixedAllocator4);
+		pHeapAllocator->free(fixedAllocator8);
+		pHeapAllocator->free(fixedAllocator16);
+		pHeapAllocator->free(fixedAllocator32);
+		pHeapAllocator->free(fixedAllocator64);
 
 		// do garbage collection
-		pHeapManager->collect();
+		pHeapAllocator->collect();
 
-		pHeapManager->ShowFreeBlocks();
-		pHeapManager->ShowUsedBlocks();
+		pHeapAllocator->ShowFreeBlocks();
+		pHeapAllocator->ShowUsedBlocks();
 
 		printf("\n");		// do a large test allocation to see if garbage collection worked
-		void * pPtr = pHeapManager->alloc(sizeHeap / 2);
+		void * pPtr = pHeapAllocator->alloc(sizeHeap / 2);
 		assert(pPtr);
 
 		if (pPtr)
 		{
-			bool success = pHeapManager->free(pPtr);
+			bool success = pHeapAllocator->free(pPtr);
 			assert(success);
 		}
 	}
 
-	pHeapManager->destroy();
+	pHeapAllocator->~HeapAllocator();
 	_aligned_free(pHeapMemory);
 
-	pHeapManager = nullptr;
+	pHeapAllocator = nullptr;
 
 	// we succeeded
 	return true;
@@ -1091,6 +1102,7 @@ int WINAPI wWinMain(HINSTANCE i_hInstance, HINSTANCE i_hPrevInstance, LPWSTR i_l
 
 	engine.EngineShutdown();
 
+	system("Pause");
 
 #if defined(_DEBUG)
 	_CrtDumpMemoryLeaks();

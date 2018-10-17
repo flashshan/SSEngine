@@ -49,14 +49,14 @@ public:
 	// query whether a given pounsigned_inter is an outstanding allocation
 	inline bool IsAllocated(const void * i_ptr) const;
 
-	size_t getLargestFreeBlock() const;
-	size_t getTotalFreeMemory() const;
+	size_t GetLargestFreeBlock() const;
+	size_t GetTotalFreeMemory() const;
 
-	size_t getLargestUsedBlock() const;
-	size_t getTotalUsedMemory() const;
+	size_t GetLargestUsedBlock() const;
+	size_t GetTotalUsedMemory() const;
 
-	uint32 getFreeCount() const;
-	uint32 getUsedCount() const;
+	uint32 GetFreeCount() const;
+	uint32 GetUsedCount() const;
 
 	inline void ShowFreeBlocks() const;
 	inline void ShowUsedBlocks() const;
@@ -127,17 +127,17 @@ inline bool HeapAllocator::IsAllocated(const void * i_ptr) const
 
 inline void HeapAllocator::ShowFreeBlocks() const
 {
-	printf_s("Total Free block number is %d \n", getFreeCount());
-	printf_s("Total Free block size is %zu \n", getTotalFreeMemory());
-	printf_s("The largest block size is %zu \n", getLargestFreeBlock());
+	printf_s("Total Free block number is %d \n", GetFreeCount());
+	printf_s("Total Free block size is %zu \n", GetTotalFreeMemory());
+	printf_s("The largest block size is %zu \n", GetLargestFreeBlock());
 	printf_s("\n");
 }
 
 inline void HeapAllocator::ShowUsedBlocks() const
 {
-	printf_s("Total Used block number is %d \n", getUsedCount());
-	printf_s("Total Used block size is %zu \n", getTotalUsedMemory());
-	printf_s("The largest block size is %zu \n", getLargestUsedBlock());
+	printf_s("Total Used block number is %d \n", GetUsedCount());
+	printf_s("Total Used block size is %zu \n", GetTotalUsedMemory());
+	printf_s("The largest block size is %zu \n", GetLargestUsedBlock());
 	printf_s("\n");
 }
 
